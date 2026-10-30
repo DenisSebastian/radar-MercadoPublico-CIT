@@ -313,3 +313,7 @@ figcaption.figure-caption{
   color: #b45309;
   font-weight: 600;
 }
+.diagrama-wrap { margin: 8px 0 4px; }
+.captura .quarto-figure-center,
+.captura figure { text-align: center; }
+.captura img { display: inline-block; }

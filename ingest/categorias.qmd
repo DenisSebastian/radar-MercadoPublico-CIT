@@ -1,59 +1,46 @@
 # Categorías {#sec-categorias}
 
-Los productos de Mercado Público se clasifican con el estándar {{< var unspsc.sigla >}}, una jerarquía de cuatro niveles codificada en 8 dígitos:
+Los códigos de producto de Mercado Público siguen el {{< var unspsc.name >}} ({{< var unspsc.sigla >}}). Es una clasificación jerárquica: los primeros dígitos dicen el rubro general y los siguientes lo van precisando. Esa jerarquía es la que permite tratar miles de productos distintos como unas pocas categorías.
 
-| Nivel | Dígitos | Ejemplo |
+## Cómo se lee un código
+
+Un código tiene 8 dígitos, agrupados de a dos:
+
+| Nivel | Código | Significado |
 |---|---|---|
-| Segmento | `80 00 00 00` | Servicios de gestión, comerciales y administrativos |
-| Familia | `80 10 00 00` | Servicios de asesoría de gestión |
-| Clase | `80 10 15 00` | Servicios de consultoría de negocios y administración corporativa |
-| Producto | `80 10 15 04` | Servicios de asesoramiento sobre planificación estratégica |
+| Segmento | `80`000000 | Servicios de gestión, comerciales y administrativos |
+| Familia | `8010`0000 | Servicios de asesoría de gestión |
+| Clase | `801015`00 | Consultoría de negocios y administración |
+| Producto | `80101504` | Asesoramiento sobre planificación estratégica |
 
-: Jerarquía UNSPSC {#tbl-unspsc}
+: Ejemplo de jerarquía UNSPSC {#tbl-unspsc}
 
-ChileCompra agrega su propia jerarquía de **rubros** (tres niveles) sobre las clases UNSPSC.
+ChileCompra agrega encima su propia agrupación en tres niveles de **rubros**. La tabla `product_category` guarda cada clase con sus tres rubros, y se carga desde Datos Abiertos.
 
-## Tabla `product_category`
+## Para qué sirven las categorías
 
-| Campo | Descripción |
-|---|---|
-| `codigo_categoria` | Clase UNSPSC (8 dígitos, termina en `00`) |
-| `rubro1`, `rubro2`, `rubro3` | Jerarquía de rubros de ChileCompra |
+### Descartar rubros completos
 
-: Tabla `product_category` {#tbl-category}
+Cada perfil tiene una lista de **segmentos** que la unidad nunca provee. El perfil del CIT excluye **43 segmentos**, entre ellos:
 
-Se carga desde Datos Abiertos al importar cada mes. Cada ítem (`tender_item.codigo_categoria`) apunta a su clase.
+- `10` plantas y animales vivos, `15` combustibles,
+- `22` maquinaria de construcción, `25` vehículos,
+- `42` equipos médicos, `44` equipos de oficina.
 
-## Uso de las categorías
+La regla es conservadora: una licitación se excluye solo si **todos** sus productos caen en segmentos excluidos. Una compra de computadores que incluye un servicio de capacitación sigue en carrera.
 
-### Exclusión por segmento
+### Comparar con el histórico
 
-El perfil define prefijos UNSPSC de rubros que el centro nunca provee (`rules.exclude_unspsc` en `cit.yaml`). Hoy son **43 prefijos** de segmento, por ejemplo:
+La [vista de mercado](organismos.qmd) busca licitaciones de las mismas **clases** que la licitación en revisión para estimar competencia y montos. Comparar por clase es más grueso que comparar por significado, pero cubre todo el histórico sin cálculos adicionales.
 
-| Prefijo | Rubro |
-|---|---|
-| `10` | Plantas y animales vivos |
-| `15` | Combustibles y lubricantes |
-| `22` | Maquinaria de construcción |
-| `25` | Vehículos |
-| `42` | Equipos médicos |
-| `44` | Equipos y suministros de oficina |
+### Señal de servicios
 
-: Ejemplos de prefijos excluidos {#tbl-prefijos}
-
-La regla es conservadora: una licitación se excluye **solo si todos sus ítems** caen en prefijos excluidos y solo se comparan códigos UNSPSC de 8 dígitos.
-
-### Mercado por categoría
-
-Para estimar competencia y montos, la vista de mercado busca licitaciones de los últimos 24 meses con ítems en las **mismas clases UNSPSC** que la licitación en revisión. Es más grueso que la similitud semántica, pero cubre todo el histórico sin calcular embeddings ([Digest de organismos](../digest/organismos.qmd)).
-
-### Categorías de servicios del centro
-
-Se espera que las oportunidades del CIT se concentren en segmentos de servicios como `80` (gestión y administración), `81` (ingeniería e investigación), `86` (educación y formación) y `77` (servicios medioambientales). Esta hipótesis aún no se ha medido sobre las etiquetas.
+Se espera que las oportunidades de las unidades UAI se concentren en segmentos de servicios como `80` (gestión), `81` (ingeniería e investigación), `86` (educación y formación) y `77` (servicios ambientales). Esta hipótesis todavía no se ha medido con etiquetas del equipo. [pendiente]{.pendiente}
 
 ::: {.callout-tip}
-## Por completar
+## En resumen
 
-- Tabla de clases UNSPSC más frecuentes entre las licitaciones etiquetadas como relevantes, para usarla como señal positiva. [pendiente]{.pendiente}
-- Validar la lista de segmentos de servicios contra las etiquetas del equipo. [pendiente]{.pendiente}
+- El código UNSPSC organiza los productos en segmentos, familias y clases.
+- Los segmentos permiten descartar rubros enteros; las clases permiten comparar con el histórico.
+- Con los datos ya guardados, la parte siguiente, **Matching**, decide qué licitaciones sirven.
 :::

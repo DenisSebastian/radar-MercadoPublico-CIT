@@ -1,58 +1,67 @@
 # Usuarios {#sec-digest-usuarios}
 
-Los usuarios del centro reciben las oportunidades por dos vías: la **bandeja web**, que consultan cuando quieren ([Pantallas](../plataforma/pantallas.qmd)), y el **digest diario por correo**, que les llega sin que lo pidan.
+Dentro de cada unidad hay personas que revisan oportunidades y deciden si postular. Este capítulo explica cómo les llega la información y cómo su criterio vuelve a la plataforma.
 
-## Digest diario
+## Dos formas de recibir oportunidades
 
-::: {.columns}
-::: {.column width="45%"}
+- **El correo diario** llega sin que la persona lo pida. Sirve para enterarse.
+- **La bandeja web** se consulta cuando se quiere. Sirve para revisar con calma, filtrar y etiquetar ([Pantallas](../plataforma/pantallas.qmd)).
+
+## El correo diario
+
+Después del matching, la plataforma arma un correo con las oportunidades **nuevas** del día. Para cada una muestra prioridad, servicio, puntaje, comprador, monto, fecha de cierre y el resumen escrito por el juez, con enlaces a la bandeja y a la ficha en Mercado Público (@fig-correo).
+
 ::: {.captura}
-![Correo de digest](../images/v2/digest.png){width="100%"}
-:::
-:::
-::: {.column width="5%"}
-:::
-::: {.column width="50%"}
-- Después del matching diario, un correo con las oportunidades **nuevas** de las prioridades elegidas (por defecto alta + media, solo abiertas).
-- Cada licitación se avisa **una sola vez**: la tabla `alert` registra qué se avisó y cuándo.
-- Para cada oportunidad: prioridad, servicio, puntaje, comprador, monto, cierre y el resumen del juez.
-- Enlaces directos a la bandeja y a la ficha en Mercado Público.
-:::
+![Correo diario de oportunidades](../images/v2/digest.png){#fig-correo width="55%" fig-align="center"}
 :::
 
-## Envío
+Tres reglas evitan que el correo se vuelva ruido:
 
-| Situación | Comportamiento |
-|---|---|
-| Con `SMTP_*` en `.env` | Se envía por correo a los destinatarios configurados |
-| Sin SMTP | Se guarda como `.eml` en `data/outbox/` para revisarlo antes de activar el envío |
-| Alertas desactivadas en el perfil | No se envía (salvo `--force`) |
+1. Solo incluye las **prioridades elegidas** (por defecto, alta y media).
+2. Solo incluye licitaciones **abiertas**.
+3. Cada licitación se avisa **una sola vez**: la tabla `alert` registra lo ya enviado.
 
-: Envío del digest {#tbl-envio}
+El 27 de octubre, el correo del CIT habría incluido la consultoría de la Subdere con su resumen: *«Es una oportunidad directa para postular bajo el servicio de políticas públicas y planificación estratégica…»*.
+
+### Cómo se envía
+
+Si la plataforma tiene configurado un servidor de correo (variables `SMTP_*` en `.env`), envía el mensaje a los destinatarios de la unidad. Si no lo tiene, guarda el correo como archivo `.eml` en `data/outbox/`, para revisarlo antes de activar el envío real. En ambos casos se puede ver una **vista previa** en Configuración → Alertas sin marcar nada como enviado.
 
 ```bash
-uv run radar digest --preview digest.html   # ver el próximo digest sin enviar
-uv run radar digest --force                 # enviar aunque estén desactivadas
+uv run radar digest --preview digest.html   # vista previa en un archivo
 ```
 
-La vista previa también está en Configuración → Alertas (`GET /profiles/{id}/digest/preview`), y no marca nada como enviado.
+### Qué se configura
 
-## Configuración de alertas
+En Configuración → Alertas, por cada perfil: si las alertas están activas, qué prioridades se avisan, si solo se incluyen las abiertas y la lista de destinatarios.
 
-En Configuración → Alertas se define, por perfil:
+## El ciclo de retroalimentación
 
-- si las alertas están activas;
-- qué prioridades se avisan (alta, media, baja);
-- si solo se avisan licitaciones abiertas;
-- los destinatarios.
+Lo que una persona hace con una oportunidad es la información más valiosa para mejorar la plataforma. Por eso la bandeja permite **etiquetar** cada licitación con una tecla:
 
-## Retroalimentación de los usuarios
+| Tecla | Etiqueta | Significa |
+|---|---|---|
+| `1` | Relevante | Sirve a la unidad |
+| `2` | No relevante | No sirve; idealmente con un comentario de por qué |
+| `3` | Dudoso | No está claro; requiere conversar |
+| `p` | Postular | La unidad decidió preparar una oferta |
 
-Las alertas son el inicio del ciclo: lo que el usuario hace con cada oportunidad vuelve al sistema como **etiqueta** (`feedback`): relevante, no relevante, dudoso o postulado, con nombre, fecha y comentario. Esas etiquetas alimentan las métricas, la calibración y los ejemplos *few-shot* del juez ([Modelos de priorización](../matching/priorizacion.qmd)).
+: Etiquetas del equipo {#tbl-etiquetas}
+
+Cada etiqueta guarda quién la puso y cuándo. Con ellas la plataforma mide su precisión y recall, calibra los umbrales y muestra al juez casos parecidos ya decididos ([Modelos de priorización](../matching/priorizacion.qmd)). Una persona que etiqueta diez licitaciones a la semana mejora la bandeja de todo su equipo.
 
 ::: {.callout-warning}
 ## Pendiente para el uso real
 
-- Configurar **SMTP** y la lista de destinatarios del CIT. [pendiente]{.pendiente}
-- Hoy los usuarios no tienen cuenta: la etiqueta guarda un nombre libre. Usuarios con inicio de sesión, preferencias por persona (servicios, regiones, frecuencia) y resúmenes semanales personales son parte de [Trabajos futuros](../futuro/index.qmd).
+- Configurar el servidor de correo y la lista de destinatarios del CIT. [pendiente]{.pendiente}
+- Comenzar a etiquetar: hoy no hay etiquetas del equipo. [pendiente]{.pendiente}
+- Hoy las personas no tienen cuenta y la etiqueta guarda un nombre escrito a mano. Inicio de sesión, preferencias personales (servicios, regiones, frecuencia) y resúmenes semanales son parte de [Trabajos futuros](../futuro/index.qmd).
+:::
+
+::: {.callout-tip}
+## En resumen
+
+- Las personas reciben un correo diario sin repeticiones y revisan la bandeja cuando quieren.
+- Sus etiquetas son la señal con que la plataforma aprende.
+- La parte siguiente, **Plataforma**, muestra la web en detalle.
 :::

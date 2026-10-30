@@ -35,11 +35,12 @@ book:
         - ingest/categorias.qmd
     - part: matching/index.qmd
       chapters:
+        - matching/embeddings.qmd
         - matching/decision.qmd
         - matching/priorizacion.qmd
     - part: digest/index.qmd
       chapters:
-        - digest/organismos.qmd
+        - digest/unidades.qmd
         - digest/usuarios.qmd
     - part: plataforma/index.qmd
       chapters:
@@ -61,6 +62,7 @@ format:
     theme: cosmo
     html-math-method: katex
     css: style.css
+    include-after-body: diagramas-autoalto.html
     toc: true
     toc-expand: 1
     toc-title: "Contenidos"

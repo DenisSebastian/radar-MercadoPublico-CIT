@@ -1,0 +1,43 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Triaje con modelo de decisión",
+    "quality_profile": "showcase"
+  },
+  "lanes": [
+    { "id": "ia", "label": "Modelo de decisión (nimble)" },
+    { "id": "pipe", "label": "Licitación recuperada" },
+    { "id": "exc", "label": "No pasa al juez", "variant": "exception" }
+  ],
+  "phases": [
+    { "id": "ph-q1", "label": "Pregunta 1: ¿postular?", "fromCol": 0, "toCol": 1 },
+    { "id": "ph-q2", "label": "Pregunta 2: ¿qué entregable?", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "ph-judge", "label": "Juicio", "fromCol": 4, "toCol": 4 }
+  ],
+  "mainPath": ["rec", "yesno", "cat", "gate", "judge"],
+  "nodes": [
+    { "id": "nimble", "lane": "ia", "col": 2, "type": "backend", "label": "nimble", "sublabel": "responde una letra", "tag": "~1 s", "width": 150 },
+    { "id": "rec", "lane": "pipe", "col": 0, "type": "database", "label": "Recuperadas", "sublabel": "todas las del día", "tag": "~140", "width": 150 },
+    { "id": "yesno", "lane": "pipe", "col": 1, "type": "security", "label": "Sí / No", "sublabel": "alto recall", "width": 150 },
+    { "id": "cat", "lane": "pipe", "col": 2, "type": "backend", "label": "Categoría", "sublabel": "orden normal e invertido", "width": 150 },
+    { "id": "gate", "lane": "pipe", "col": 3, "type": "security", "label": "¿Relevante?", "sublabel": "estudio · plataforma · cap. esp.", "width": 160 },
+    { "id": "judge", "lane": "pipe", "col": 4, "type": "backend", "label": "Juez LLM", "sublabel": "hasta 25 por día", "width": 150 },
+    { "id": "no", "lane": "exc", "col": 1, "type": "security", "label": "Descartada", "sublabel": "respondió No", "width": 150 },
+    { "id": "other", "lane": "exc", "col": 3, "type": "security", "label": "Descartada", "sublabel": "obra, persona, operación…", "width": 170 }
+  ],
+  "edges": [
+    { "from": "rec", "to": "yesno", "role": "main", "variant": "emphasis" },
+    { "from": "yesno", "to": "cat", "label": "Sí", "role": "main", "variant": "emphasis" },
+    { "from": "cat", "to": "gate", "role": "main", "variant": "emphasis" },
+    { "from": "gate", "to": "judge", "label": "sí", "role": "main", "variant": "emphasis" },
+    { "from": "cat", "to": "nimble", "label": "pregunta", "role": "branch", "variant": "dashed" },
+    { "from": "yesno", "to": "no", "label": "No", "role": "error", "variant": "security" },
+    { "from": "gate", "to": "other", "label": "no", "role": "error", "variant": "security" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Dos preguntas baratas", "items": ["Sí/No deja pasar casi todo lo relevante", "La categoría del entregable bota el ruido típico"] },
+    { "dot": "amber", "title": "Si duda, no descarta", "items": ["Basta que una de las dos respuestas sea relevante", "Si el modelo falla, la licitación sigue al juez"] },
+    { "dot": "emerald", "title": "Resultado medido", "items": ["Recall 96 % y precisión 52 % en decision-v1", "El juez solo ve lo que pasa el triaje"] }
+  ]
+}

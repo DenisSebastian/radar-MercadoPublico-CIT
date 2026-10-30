@@ -2,7 +2,7 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "Etapa 2 — Matching de un día (match_day)",
+    "title": "Matching de un día",
     "quality_profile": "showcase",
     "legend": {
       "entries": {
@@ -60,13 +60,13 @@
       "id": "ph-retrieve",
       "label": "Recuperar",
       "fromCol": 2,
-      "toCol": 3,
+      "toCol": 2,
       "variant": "emphasis"
     },
     {
       "id": "ph-judge",
-      "label": "Juzgar y puntuar",
-      "fromCol": 4,
+      "label": "Triar, juzgar y puntuar",
+      "fromCol": 3,
       "toCol": 5
     }
   ],
@@ -74,7 +74,7 @@
     "day",
     "filters",
     "retrieval",
-    "topk",
+    "triage",
     "judge",
     "score",
     "prio"
@@ -128,12 +128,12 @@
       "width": 140
     },
     {
-      "id": "topk",
+      "id": "triage",
       "lane": "pipe",
       "col": 3,
-      "type": "backend",
-      "label": "Top-k",
-      "sublabel": "25 por día",
+      "type": "security",
+      "label": "Triaje",
+      "sublabel": "sí/no + categoría",
       "width": 140
     },
     {
@@ -173,12 +173,12 @@
       "width": 140
     },
     {
-      "id": "unjudged",
+      "id": "trdisc",
       "lane": "exc",
       "col": 3,
       "type": "external",
-      "label": "Sin evaluar",
-      "sublabel": "fuera del top-k",
+      "label": "Descartada",
+      "sublabel": "por el triaje",
       "width": 140
     },
     {
@@ -187,7 +187,17 @@
       "col": 4,
       "type": "security",
       "label": "Descartada",
-      "sublabel": "score < 60",
+      "sublabel": "juez: score < 60",
+      "width": 140
+    },
+    {
+      "id": "nimble",
+      "lane": "ia",
+      "col": 3,
+      "type": "backend",
+      "label": "nimble",
+      "sublabel": "modelo de decisión",
+      "tag": "~1 s/pregunta",
       "width": 140
     }
   ],
@@ -206,12 +216,12 @@
     },
     {
       "from": "retrieval",
-      "to": "topk",
+      "to": "triage",
       "role": "main",
       "variant": "emphasis"
     },
     {
-      "from": "topk",
+      "from": "triage",
       "to": "judge",
       "role": "main",
       "variant": "emphasis"
@@ -250,10 +260,11 @@
       "variant": "security"
     },
     {
-      "from": "topk",
-      "to": "unjudged",
-      "role": "branch",
-      "variant": "dashed"
+      "from": "triage",
+      "to": "trdisc",
+      "role": "error",
+      "variant": "security",
+      "label": "no"
     },
     {
       "from": "judge",
@@ -261,6 +272,13 @@
       "label": "no",
       "role": "error",
       "variant": "security"
+    },
+    {
+      "from": "triage",
+      "to": "nimble",
+      "label": "pregunta",
+      "role": "branch",
+      "variant": "dashed"
     }
   ],
   "cards": [
@@ -282,9 +300,10 @@
     },
     {
       "dot": "emerald",
-      "title": "3. Juzgar y puntuar",
+      "title": "3. Triar, juzgar y puntuar",
       "items": [
-        "Solo el top-k va al LLM (cuello de botella)",
+        "El triaje revisa todas las recuperadas en ~1 s cada una",
+        "Solo lo que pasa va al juez LLM (~13 s)",
         "final = 0,60 LLM + 0,15 retrieval + 0,15 monto + 0,10 plazo"
       ]
     }

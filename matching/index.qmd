@@ -1,60 +1,68 @@
 # Matching {.unnumbered}
 
-El matching cruza cada licitación del día con el catálogo de servicios de un perfil y decide **si sirve** (modelos de decisión) y **cuánto importa** (modelos de priorización). Va de ~500 licitaciones a unas 10 oportunidades.
+Matching es el corazón de Radar MP: compara cada licitación del día con el perfil de una unidad. Primero mide **a qué servicio se parece** cada licitación con una búsqueda por significado ([Búsqueda por significado](embeddings.qmd)). Luego responde dos preguntas, en este orden:
+
+1. **¿Le sirve?** Es una pregunta de sí o no. La responden los [modelos de decisión](decision.qmd).
+2. **¿Cuánto importa?** Es una pregunta de orden: entre las que sirven, ¿cuál revisar primero? La responden los [modelos de priorización](priorizacion.qmd).
+
+## El embudo de un día
+
+El matching funciona como un embudo. Cada paso es más inteligente y más caro que el anterior, y por eso recibe menos licitaciones.
 
 ```{=html}
-<iframe class="diagrama alto" src="../diagramas/03-matching.html?theme=light&embed=1" loading="lazy"></iframe>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama alto" src="../diagramas/03-matching.html?theme=light&embed=1"></iframe>
 <a class="diagrama-link" href="../diagramas/03-matching.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
 ```
 
-| Paso | Qué hace | Costo | Capítulo |
+| Paso | Qué hace | Cuánto tarda | Ejemplo del 27-oct |
 |---|---|---|---|
-| 1. Filtros duros | Reglas por título y rubro UNSPSC | instantáneo | [Decisión](decision.qmd) |
-| 2. Retrieval híbrido | Similitud semántica + palabras clave contra cada servicio | ~85 licitaciones/s | [Priorización](priorizacion.qmd) |
-| 3. Triaje | Modelo de decisión local: sí/no + categoría del entregable | ~1 s por pregunta | [Decisión](decision.qmd) |
-| 4. Juez LLM | Juicio con JSON validado, evidencia y riesgos | ~13 s por licitación | [Decisión](decision.qmd) |
-| 5. Puntaje final | LLM + retrieval + monto + plazo → prioridad | instantáneo | [Priorización](priorizacion.qmd) |
+| Filtros | Descarta lo evidentemente ajeno con reglas | instantáneo | 518 → 152 |
+| Búsqueda por significado | Convierte textos en *embeddings*, mide la cercanía con cada servicio y propone el más cercano | milisegundos | ordena las 152 |
+| Triaje | Un modelo pequeño pregunta «¿postular?» y «¿qué se entrega?» | ~1 s por pregunta | 152 → 8 |
+| Juez | Un modelo de lenguaje evalúa, justifica y cita evidencia | ~13 s | 8 juzgadas |
+| Puntaje | Combina juicio, cercanía, monto y plazo | instantáneo | 5 alta + media |
 
-: Pasos del matching {#tbl-pasos}
+: El embudo del matching {#tbl-pasos}
 
-```bash
-uv run radar match --date 2026-10-27        # evalúa un día y muestra el ranking
-uv run radar ranking --date 2025-12-01 --until 2025-12-11
-uv run radar match --date 2026-10-28 --rejudge     # vuelve a llamar al juez
-uv run radar match --date 2026-10-28 --no-triage   # fuerza el top-k clásico
-```
+Los capítulos siguientes recorren el embudo: la [búsqueda por significado](embeddings.qmd) explica los *embeddings* y la cercanía; los [modelos de decisión](decision.qmd), los filtros, el triaje y el juez; y los [modelos de priorización](priorizacion.qmd), el puntaje final.
 
-Re-ejecutar recalcula retrieval y puntajes sin volver a llamar al LLM (salvo `--rejudge`); el triaje se reutiliza si ya se hizo con el mismo modelo (salvo `--retriage`). El worker corre el matching después de cada ingesta diaria.
+## El punto de partida: el catálogo de servicios
 
-## Catálogo de servicios
+Todo el matching se apoya en el **catálogo** del perfil: la lista de lo que la unidad sabe hacer. El perfil del CIT tiene diez servicios:
 
-El matching parte del catálogo del perfil. El perfil `cit` tiene **10 servicios**:
+- Análisis territorial y SIG
+- Planificación urbana y vivienda
+- Movilidad y accesibilidad
+- Medioambiente, cambio climático y riesgo
+- Energía y territorio
+- Seguridad pública y análisis delictual
+- Ciencia de datos, plataformas e IA
+- Estudios socioeconómicos, demográficos y encuestas
+- Políticas públicas, evaluación y planificación estratégica
+- Capacitación y formación
 
-| Slug | Servicio |
-|---|---|
-| `analisis-territorial-sig` | Análisis territorial y SIG |
-| `planificacion-urbana-vivienda` | Planificación urbana y vivienda |
-| `movilidad-accesibilidad` | Movilidad y accesibilidad |
-| `medioambiente-clima-riesgo` | Medioambiente, cambio climático y riesgo |
-| `energia-territorio` | Energía y territorio |
-| `seguridad-analisis-delictual` | Seguridad pública y análisis delictual |
-| `datos-plataformas-ia` | Ciencia de datos, plataformas e IA |
-| `estudios-socioeconomicos` | Estudios socioeconómicos, demográficos y encuestas |
-| `politicas-publicas-evaluacion` | Políticas públicas, evaluación y planificación estratégica |
-| `capacitacion` | Capacitación y formación |
+Cada servicio se describe con tres elementos: un **texto** que explica qué hace el centro, **ejemplos** de títulos de licitaciones que sí calzan y **palabras clave**. La calidad del matching depende mucho de esa descripción: un servicio descrito de forma demasiado amplia trae ruido, y uno demasiado estrecho pierde oportunidades. Cómo editarlo se explica en [Administración](../plataforma/administracion.qmd).
 
-: Servicios del perfil CIT {#tbl-servicios}
+## Qué estados puede tener una licitación
 
-Cada servicio tiene una **descripción** (qué hace el centro), **ejemplos** de licitaciones que sí calzan y **palabras clave**. La descripción y cada ejemplo se convierten en vectores.
-
-## Ciclo de vida de una licitación
+Al terminar el matching, cada licitación queda en uno de estos estados, y cada uno tiene su propia vista en la bandeja. Nada se pierde en silencio.
 
 ```{=html}
-<iframe class="diagrama" src="../diagramas/05-ciclo-vida.html?theme=light&embed=1" loading="lazy"></iframe>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/05-ciclo-vida.html?theme=light&embed=1"></iframe>
 <a class="diagrama-link" href="../diagramas/05-ciclo-vida.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
 ```
 
-- `match.stage`: `excluded` → `retrieved` → `judged`.
-- `match.prioridad`: `alta` · `media` · `baja` · `descartada` · `sin_evaluar` · `excluida`.
-- **Sin evaluar** no es definitivo: reprocesar o subir el tope de juicios la lleva al juez.
-- Nada se pierde en silencio: excluidas, descartadas y sin evaluar tienen su propia vista en la bandeja.
+| Estado | Significa |
+|---|---|
+| **Alta / Media / Baja** | Sirve; ordenada por puntaje |
+| **Descartada** | El triaje o el juez concluyeron que no sirve |
+| **Sin evaluar** | Pasó los filtros, pero no alcanzó a ser juzgada (por ejemplo, por el tope diario) |
+| **Excluida** | La eliminó una regla |
+
+: Estados finales {#tbl-estados}
+
+«Sin evaluar» no es definitivo: al reprocesar el día o subir el tope de juicios, la licitación vuelve a la fila del juez.

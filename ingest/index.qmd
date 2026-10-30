@@ -1,34 +1,43 @@
 # Ingest {.unnumbered}
 
-La etapa de ingesta lleva los datos de Mercado Público a PostgreSQL. Usa dos fuentes complementarias:
+Ingest es la etapa que **trae los datos de Mercado Público y los guarda en la base de datos**. Todo lo que viene después depende de ella: si una licitación no se ingiere, nadie la verá.
 
-- la **{{< var mp.api >}}**, para lo nuevo de cada día con descripción completa: es lo que se juzga;
-- los **{{< var chilecompra.datos >}}**, para el histórico, los estados finales y las adjudicaciones.
+## Dos fuentes que se complementan
+
+Mercado Público ofrece dos formas de obtener datos, y Radar MP usa ambas:
+
+- La **{{< var mp.api >}}** entrega las licitaciones del día con su descripción completa. Es rápida para lo nuevo, pero lenta para el pasado: acepta una consulta cada dos segundos.
+- Los **{{< var chilecompra.datos >}}** publican un archivo por mes con todas las licitaciones, sus productos, las ofertas recibidas y a quién se adjudicaron. Llegan con un mes de desfase, pero traen lo que la API no tiene: el **resultado** de cada licitación.
+
+En pocas palabras, la API alimenta la **bandeja de hoy** y los Datos Abiertos alimentan la **memoria histórica**.
 
 ```{=html}
-<iframe class="diagrama alto" src="../diagramas/02-ingesta.html?theme=light&embed=1" loading="lazy"></iframe>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama alto" src="../diagramas/02-ingesta.html?theme=light&embed=1"></iframe>
 <a class="diagrama-link" href="../diagramas/02-ingesta.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
 ```
 
-| Entidad | Tabla | Fuente | Capítulo |
+## Qué se guarda
+
+Una licitación de Mercado Público tiene cuatro piezas de información, y cada capítulo de esta parte se ocupa de una:
+
+| Pieza | Pregunta | Tabla | Capítulo |
 |---|---|---|---|
-| Ofertas (licitaciones) | `tender` | API + Datos Abiertos | [Ofertas](ofertas.qmd) |
-| Organismos compradores | `buyer` (+ unidad de compra en `tender`) | API + Datos Abiertos | [Organismos](organismos.qmd) |
-| Productos (ítems) y adjudicaciones | `tender_item`, `tender_award` | API + Datos Abiertos (adjudicaciones solo DA) | [Productos](productos.qmd) |
-| Categorías UNSPSC | `product_category` | Datos Abiertos | [Categorías](categorias.qmd) |
+| La licitación | ¿Qué se compra, cuándo cierra y por cuánto? | `tender` | [Ofertas](ofertas.qmd) |
+| El comprador | ¿Quién compra y dónde? | `buyer` | [Organismos compradores](organismos.qmd) |
+| Los productos | ¿Qué ítems concretos se piden y quién los ganó? | `tender_item`, `tender_award` | [Productos](productos.qmd) |
+| Las categorías | ¿A qué rubro pertenece cada producto? | `product_category` | [Categorías](categorias.qmd) |
 
-: Entidades de la ingesta {#tbl-entidades}
+: Piezas de una licitación {#tbl-entidades}
 
-## Volumen cargado
+## Volumen actual
 
-| Métrica | Valor |
-|---|---|
-| Licitaciones (2024-01 → 2026-10) | ~339 mil |
-| Ítems con código UNSPSC | ~1,49 millones |
-| Líneas adjudicadas con proveedor y monto | ~1,06 millones |
-| Organismos compradores | 1.152 |
-| Tamaño en Postgres | ~1 GB |
+La base contiene el histórico desde enero de 2024 hasta octubre de 2026:
 
-: Volumen histórico {#tbl-volumen}
+- ~**339 mil** licitaciones,
+- ~**1,49 millones** de productos pedidos,
+- ~**1,06 millones** de líneas adjudicadas, con proveedor y monto,
+- **1.152** organismos compradores,
 
-Cada corrida —diaria, de catch-up, de Datos Abiertos— queda registrada en `ingest_run` con sus parámetros, estado, estadísticas y error, y se ve en la pantalla de **Operación**.
+en aproximadamente 1 GB de PostgreSQL. Cada carga queda registrada en la tabla `ingest_run` y se puede revisar en la pantalla de [Operación](../plataforma/pantallas.qmd).

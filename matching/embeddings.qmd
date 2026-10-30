@@ -1,0 +1,183 @@
+# Búsqueda por significado {#sec-embeddings}
+
+Antes de que un modelo de lenguaje lea una licitación, la plataforma ya tiene una primera idea de **a qué servicio se parece** y **cuánto**. Esa idea sale de los *embeddings*: una forma de convertir textos en números para poder compararlos por su significado y no solo por sus palabras. Este capítulo explica qué son, cómo se calculan y cómo se usan, con ejemplos reales del 27 de octubre.
+
+## El problema: las mismas ideas, otras palabras
+
+Las licitaciones se escriben de muchas formas. El CIT tiene un servicio de *Políticas públicas, evaluación y planificación estratégica* cuyas palabras clave incluyen «plan de desarrollo» y «estrategia regional». La licitación de la Subdere que sigue este libro se llama:
+
+> CONSULTORÍA DISEÑO MODELO GOBERNANZA E10486-2026 — «Consultoría diseño de modelo de gobernanza para **planes** de desarrollo de zonas extremas y zonas en desarrollo»
+
+Ninguna palabra clave aparece tal cual: dice «planes», no «plan», y «gobernanza» no está en la lista. Una búsqueda por palabras le da **cero**. Sin embargo, cualquier persona del CIT reconoce que es exactamente su tipo de trabajo. Los *embeddings* existen para resolver ese caso.
+
+## Qué es un embedding
+
+Un **embedding** es una lista de números que representa el significado de un texto. Radar MP usa el modelo `embeddinggemma`, que corre localmente en Ollama y entrega **768 números** por texto.
+
+La propiedad útil es esta: textos que hablan de lo mismo quedan con listas parecidas, aunque usen palabras distintas. «Catastro de campamentos» y «levantamiento de asentamientos informales» quedan cerca; «suministro de indumentaria corporativa» queda lejos de ambos.
+
+La cercanía entre dos listas se mide con el **coseno**: un número que vale 1 si apuntan exactamente en la misma dirección y baja a medida que se alejan. En la práctica, con este modelo, dos textos sin relación tienen un coseno cercano a 0,10 y dos textos muy afines superan 0,45.
+
+```{=html}
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/12-embeddings.html?theme=light&embed=1"></iframe>
+<a class="diagrama-link" href="../diagramas/12-embeddings.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
+```
+
+## Qué texto se convierte
+
+### La licitación: un vector
+
+De cada licitación se arma un solo texto con su nombre, su descripción (hasta 1.500 caracteres) y los nombres y descripciones de sus ítems (hasta 600 caracteres). `embeddinggemma` pide marcar el texto como **documento**, con un prefijo:
+
+```text
+title: CONSULTORÍA DISEÑO MODELO GOBERNANZA E10486-2026 | text: CONTRATAR EL SERVICIO
+DENOMINADO "CONSULTORÍA DISEÑO DE MODELO DE GOBERNANZA PARA PLANES DE DESARROLLO DE
+ZONAS EXTREMAS Y ZONAS EN DESARROLLO" … Ítems: …
+```
+
+El vector se guarda en la tabla `tender_embedding` junto con un *hash* del texto. Si la licitación no cambia, el vector no se vuelve a calcular. Hoy hay 4.644 licitaciones con vector.
+
+### El servicio: varios vectores
+
+Un servicio no se representa con un solo texto, sino con **uno por su descripción y uno por cada ejemplo**. Se marcan como **consulta**, que es lo que se busca:
+
+```text
+task: search result | query: Políticas públicas, evaluación y planificación estratégica. Diseño y …
+task: search result | query: Asesoría para la elaboración de la estrategia regional de desarrollo
+task: search result | query: Diagnóstico y fortalecimiento institucional municipal
+task: search result | query: Actualización del plan de desarrollo comunal PLADECO
+task: search result | query: Evaluación de resultados e impacto de programa público
+```
+
+Estos vectores se guardan en `service_vector`. Los diez servicios del CIT suman entre 4 y 6 vectores cada uno. Se recalculan cada vez que alguien guarda un servicio en el Catálogo.
+
+## Cómo se compara
+
+Para cada licitación y cada servicio, la plataforma calcula el coseno contra **todos** los vectores del servicio y se queda con el **más alto**. Así basta que la licitación se parezca a la descripción **o** a uno de los ejemplos.
+
+Para la licitación de la Subdere y el servicio de políticas públicas:
+
+| Vector del servicio | Coseno |
+|---|---|
+| Descripción del servicio | **0,437** |
+| Ejemplo: estrategia regional de desarrollo | 0,418 |
+| Ejemplo: fortalecimiento institucional municipal | 0,302 |
+| Ejemplo: actualización del PLADECO | 0,269 |
+| Ejemplo: evaluación de impacto de programa | 0,229 |
+
+: Coseno de la licitación de la Subdere con cada vector del servicio {#tbl-emb-subdere}
+
+La similitud con el servicio es 0,437. Repetido para los diez servicios, el ranking queda:
+
+| Servicio | Coseno máximo |
+|---|---|
+| Políticas públicas, evaluación y planificación estratégica | **0,437** |
+| Planificación urbana y vivienda | 0,351 |
+| Capacitación y formación | 0,316 |
+| Ciencia de datos, plataformas e IA | 0,314 |
+
+: Los cuatro servicios más cercanos a la licitación de la Subdere {#tbl-emb-ranking}
+
+El servicio más cercano se propone como **servicio de la licitación**; es el que verá el equipo en la bandeja. Los puntajes de los demás quedan guardados y se pueden revisar en el detalle.
+
+La comparación se hace dentro de PostgreSQL con la extensión `pgvector`, donde `<=>` es la distancia coseno:
+
+```sql
+select te.tender_codigo, sv.service_id,
+       max(1 - (te.embedding <=> sv.embedding)) as sim
+from tender_embedding te
+cross join service_vector sv
+join service s on s.id = sv.service_id
+where te.tender_codigo = any(:codigos) and s.profile_id = :profile and s.activo
+group by 1, 2
+```
+
+## De coseno a cercanía
+
+### Reescalar el coseno
+
+Los cosenos de este modelo viven en un rango estrecho. Entre las 152 licitaciones que pasaron los filtros el 27 de octubre, la mitad tuvo un coseno máximo bajo 0,23, el 90 % bajo 0,36 y la más alta llegó a 0,48. Para que el número sea legible se reescala a 0–1 con un **piso de 0,30** y un **techo de 0,60**:
+
+$$
+\text{similitud} = \operatorname{clip}\left(\frac{\cos - 0{,}30}{0{,}60 - 0{,}30},\ 0,\ 1\right)
+$$
+
+Bajo 0,30 la similitud vale 0: la licitación no se parece a nada del catálogo. Para la Subdere: $(0{,}437 - 0{,}30) / 0{,}30 = 0{,}455$.
+
+### Sumar las palabras clave
+
+Las palabras clave siguen siendo útiles para términos muy específicos (`pladeco`, `catastr`, `geoespacial`). Cada palabra encontrada suma, pero cada vez menos:
+
+$$
+\text{léxico} = 1 - 0{,}6^{\,\text{aciertos}}
+$$
+
+Una palabra da 0,40; dos, 0,64; tres, 0,78. Las palabras se buscan como **comienzo de palabra** en el texto sin tildes ni puntuación: `catastr` encuentra «catastro» y «catastral», pero «plan de desarrollo» no encuentra «planes de desarrollo».
+
+### La cercanía final
+
+$$
+\text{retrieval} = 0{,}75\cdot\text{similitud} + 0{,}25\cdot\text{léxico}
+$$
+
+Para la Subdere: $0{,}75 \cdot 0{,}455 + 0{,}25 \cdot 0 = 0{,}342$. Sin los embeddings, esta licitación habría tenido cercanía cero.
+
+## Qué tan bien funciona: ejemplos del 27 de octubre
+
+| Licitación | Servicio propuesto | Coseno | Léxico | Retrieval | Triaje |
+|---|---|---|---|---|---|
+| Asesoría técnica integral programa MI… | Políticas públicas | 0,481 | 0,40 | **0,553** | no |
+| Diplomado en asesoría legislativa o parlamentaria | Capacitación | 0,442 | 0,40 | 0,455 | sí → media |
+| Asesoría en gestión y gobernanza MuCA | Políticas públicas | 0,434 | 0,40 | 0,436 | sí → media |
+| Talleres teórico-prácticos | Capacitación | 0,395 | 0,78 | 0,433 | no |
+| Consultoría modelo de gobernanza (Subdere) | Políticas públicas | 0,437 | 0 | 0,342 | sí → **alta** |
+| Silvicultura preventiva La Araucanía | Medioambiente | 0,276 | 0,78 | 0,196 | no |
+| Suministro de indumentaria corporativa | — | 0,113 | 0 | 0 | — |
+
+: Cercanía de algunas licitaciones del 27 de octubre {#tbl-emb-ejemplos}
+
+La tabla deja tres lecciones:
+
+1. **Los embeddings encuentran lo que las palabras no ven.** La Subdere no tiene ninguna palabra clave y aun así queda con cercanía alta y el servicio correcto.
+2. **Las palabras clave solas engañan.** «Silvicultura preventiva» coincide con tres palabras del servicio de medioambiente, pero su significado está lejos; el coseno bajo la deja abajo en la fila.
+3. **La cercanía ordena, no decide.** La licitación más cercana del día (0,553) era una asesoría para un programa social que el triaje descartó, y los talleres de capacitación genérica también quedaron fuera. Parecerse a un servicio no basta para que la unidad pueda postular: eso lo deciden el triaje y el juez ([Modelos de decisión](decision.qmd)).
+
+Ese día, 51 de las 152 licitaciones superaron el piso de 0,30, 54 tuvieron al menos una palabra clave y 75 quedaron con cercanía cero.
+
+## Para qué se usa la cercanía
+
+- **Proponer el servicio** de cada licitación, que aparece en la bandeja y en el correo.
+- **Ordenar la fila** del triaje y del juez: las más cercanas se evalúan primero, lo que importa cuando se alcanza el tope de juicios diarios.
+- **Aportar al puntaje final** con un peso de 15 % ([Modelos de priorización](priorizacion.qmd)).
+- **Reemplazar al juez** cuando una licitación no fue juzgada: su puntaje es la cercanía por 100.
+
+Los mismos vectores se usan en otras partes de la plataforma:
+
+- **«Probar»** en el Catálogo muestra qué licitaciones de los últimos 30 días traería un servicio antes de guardarlo ([Administración](../plataforma/administracion.qmd)).
+- **Casos parecidos para el juez**: se buscan licitaciones ya etiquetadas por el equipo cuyo coseno con la licitación a juzgar sea al menos 0,55, y se le muestran como ejemplos.
+- **Muestras de evaluación**: para medir si los filtros botan oportunidades, la muestra que etiqueta el equipo incluye licitaciones excluidas que aun así se parecen a algún servicio.
+
+## Cómo mejorar la búsqueda
+
+Como la similitud se toma del vector más parecido, la herramienta principal son los **ejemplos** de cada servicio:
+
+- Agregar ejemplos **variados** amplía lo que el servicio reconoce. Un ejemplo sobre «modelo de gobernanza regional» habría subido la cercanía de la Subdere.
+- Una descripción que dice **qué se entrega** («estudios», «planes», «plataformas») acerca las licitaciones de servicios profesionales y aleja las compras de bienes.
+- Las palabras clave sirven para términos técnicos inequívocos; no conviene usarlas para palabras generales como «capacitación» o «asesoría».
+
+::: {.callout-note}
+## Parámetros
+
+El piso (0,30), el techo (0,60) y el peso del significado frente a las palabras (0,75) se configuran por perfil en Configuración → Puntaje. Los valores actuales se fijaron mirando la distribución real de cosenos de `embeddinggemma`; si se cambia de modelo de embeddings hay que revisarlos, porque cada modelo tiene su propio rango.
+:::
+
+::: {.callout-tip}
+## En resumen
+
+- Un embedding convierte un texto en 768 números; textos con el mismo significado quedan cerca aunque usen otras palabras.
+- Cada servicio tiene un vector por su descripción y uno por cada ejemplo; vale el más parecido.
+- La cercanía combina 75 % significado y 25 % palabras clave, propone el servicio y ordena la fila, pero no decide.
+- El capítulo siguiente, **Modelos de decisión**, explica cómo se decide si una licitación sirve.
+:::

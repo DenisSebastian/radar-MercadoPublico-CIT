@@ -1,43 +1,77 @@
-# Organismos {#sec-digest-organismos}
+# Centros y facultades {#sec-unidades}
 
-Decidir si postular no depende solo de si la licitación calza: también importa **contra quién se compite**, **cuánto se suele pagar** y **cómo se comporta el comprador**. Radar MP responde esas preguntas con el histórico de Datos Abiertos (~1,06 millones de líneas adjudicadas) en el panel **Mercado** del detalle de cada licitación.
+Este capítulo trata de los organismos **de la universidad**: los centros, escuelas y facultades de la UAI que pueden vender servicios al Estado. Los llamamos **unidades UAI**. (Los organismos del Estado que compran se tratan en [Organismos compradores](../ingest/organismos.qmd).)
 
-::: {.captura}
-![Panel de mercado en el detalle de una licitación](../images/v2/detalle-mercado.png){width="100%"}
+La pregunta del capítulo es: **¿qué recibe cada unidad y cómo se mantiene separado lo de cada una?**
+
+## Una unidad, un perfil
+
+En Radar MP, cada unidad se representa con un **perfil**. El perfil reúne todo lo que hace distinta a la unidad:
+
+- su **catálogo de servicios**: qué sabe hacer, con descripción, ejemplos y palabras clave;
+- sus **reglas de exclusión**: qué no hace nunca;
+- sus **criterios**: pesos del puntaje, umbrales de prioridad y configuración del triaje;
+- sus **alertas**: a quién avisar y qué prioridades;
+- las **etiquetas** que pone su equipo.
+
+Hoy existe un solo perfil, `cit`, para el Centro de Inteligencia Territorial. La plataforma, sin embargo, ya está construida para tener varios.
+
+```{=html}
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/11-unidades.html?theme=light&embed=1"></iframe>
+<a class="diagrama-link" href="../diagramas/11-unidades.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
+```
+
+## Lo compartido y lo propio
+
+El diseño separa lo que es igual para todas las unidades de lo que cambia en cada una:
+
+| Compartido por todas | Propio de cada unidad |
+|---|---|
+| La descarga de licitaciones (se hace una sola vez) | El catálogo de servicios |
+| El histórico y la vista de mercado | Las reglas de exclusión |
+| El texto y los *embeddings* de cada licitación | Los pesos y umbrales |
+| Los modelos de IA | La bandeja, las etiquetas y las alertas |
+
+: Qué se comparte y qué no {#tbl-compartido}
+
+Gracias a esta separación, agregar una unidad no multiplica el trabajo de descarga: solo agrega una pasada de matching con su catálogo. Una misma licitación puede ser relevante para varias unidades —por ejemplo, un estudio de movilidad para el CIT y para la Facultad de Ingeniería— y cada una la verá en su propia bandeja con su propio puntaje.
+
+## Qué recibe una unidad
+
+Cada mañana, después del matching, cada unidad cuenta con:
+
+1. **Su bandeja web**, con las oportunidades priorizadas según sus criterios y las vistas de descartadas y excluidas para revisar.
+2. **Su correo diario**, con las oportunidades nuevas, enviado a la lista de destinatarios de la unidad ([Usuarios](usuarios.qmd)).
+3. **El contexto de mercado** de cada oportunidad: competencia, montos típicos y comportamiento del comprador ([Organismos compradores](../ingest/organismos.qmd)).
+4. **Sus métricas**, calculadas solo con las etiquetas de su equipo: lo que el CIT considera irrelevante no afecta a otra unidad.
+
+## Cómo se incorpora una nueva unidad
+
+Incorporar un centro o una facultad tiene cuatro pasos:
+
+1. **Describir sus servicios.** Con el equipo de la unidad, escribir qué sabe hacer, con ejemplos reales de licitaciones que le habrían servido. Es el paso más importante.
+2. **Crear el perfil.** Cargar un archivo YAML con el catálogo, partiendo de una copia del perfil del CIT ([Administración](../plataforma/administracion.qmd)).
+3. **Probar.** Con «Probar» en el catálogo, revisar qué licitaciones de los últimos 30 días traería cada servicio y ajustar descripciones hasta que el resultado tenga sentido.
+4. **Operar y etiquetar.** Activar las alertas y pedir al equipo que etiquete durante las primeras semanas para calibrar umbrales.
+
+Cada unidad tiene particularidades. Para educación ejecutiva, por ejemplo, las capacitaciones genéricas que hoy son ruido para el CIT son justamente su oportunidad: su perfil tendría que marcar la categoría «capacitación genérica» como relevante en el triaje.
+
+::: {.callout-warning}
+## Lo que falta para varias unidades
+
+- **Usuarios y permisos**: hoy cualquier persona con acceso a la web ve y modifica todos los perfiles. Hace falta inicio de sesión y roles por unidad. [pendiente]{.pendiente}
+- **Triaje por unidad**: las categorías relevantes del triaje están pensadas para el CIT y deben poder configurarse en cada perfil. [pendiente]{.pendiente}
+- **Resumen para la dirección**: un informe periódico por unidad con oportunidades, postulaciones y resultados. [pendiente]{.pendiente}
+
+Estas líneas se desarrollan en [Integración de otros centros](../futuro/otros-centros.qmd).
 :::
 
-## Qué se calcula
-
-El módulo `backend/src/radar/market.py` (`market_for`) toma las clases UNSPSC de los ítems de la licitación y busca, en una ventana de **24 meses** (`months`), licitaciones con ítems en esas mismas clases.
-
-| Bloque | Contenido |
-|---|---|
-| **Competencia** | Proveedores que más ganan en esas categorías, cuántas veces con este comprador y si son universidades o la propia UAI |
-| **Montos de referencia** | Monto adjudicado típico (mediana) y rango central; comparación con el presupuesto de la licitación |
-| **Comportamiento del comprador** | Porcentaje de licitaciones del organismo adjudicadas, desiertas y revocadas |
-| **Historial propio** | Adjudicaciones de la UAI (RUT en `proveedores_propios`) |
-
-: Bloques de la vista de mercado {#tbl-mercado}
-
-Ejemplo: un estudio que presupuesta $80 millones frente a $16 millones típico en su categoría es una señal de que el alcance es mayor de lo habitual o de que el comprador sobrestima.
-
-La consulta responde en menos de 1 segundo y se expone en:
-
-```
-GET /profiles/{id}/matches/{codigo}/mercado?months=24
-```
-
-## Limitaciones
-
-- La coincidencia por clase UNSPSC es **gruesa**: dos licitaciones de «servicios de consultoría» pueden ser muy distintas. Es una aproximación barata que cubre todo el histórico sin embeddings.
-- Las adjudicaciones vienen solo de Datos Abiertos, con un mes de desfase.
-- Las universidades se reconocen por el nombre del proveedor.
-
 ::: {.callout-tip}
-## Por completar
+## En resumen
 
-- **Ficha de organismo**: página propia por comprador con sus licitaciones afines al centro, tasa de desiertas, montos y proveedores habituales. [pendiente]{.pendiente}
-- **Digest de organismos**: resumen periódico de los organismos que más compran servicios del catálogo, por región y sector. [pendiente]{.pendiente}
-- Competencia por **similitud semántica** (licitaciones parecidas, no solo de la misma clase). [pendiente]{.pendiente}
-- Probabilidad de adjudicación y calendario estacional de compras por organismo ([Trabajos futuros](../futuro/index.qmd)).
+- Cada centro o facultad es un perfil con su catálogo, criterios, bandeja y alertas.
+- La descarga y los modelos se comparten; el criterio es propio de cada unidad.
+- Dentro de cada unidad trabajan personas: el capítulo siguiente trata de ellas.
 :::

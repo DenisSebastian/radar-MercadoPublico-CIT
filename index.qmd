@@ -1,34 +1,40 @@
 # Prefacio {.unnumbered}
 
-Este libro documenta **Radar MP**, la plataforma del {{< var cit.name >}} ({{< var cit.sigla >}}) de la {{< var uai.name >}} para detectar, priorizar y alertar las licitaciones de {{< var mp.name >}} que calzan con los servicios de investigación aplicada y consultoría del centro.
+Este libro explica **Radar MP**, la plataforma con la que el {{< var cit.name >}} ({{< var cit.sigla >}}) de la {{< var uai.name >}} encuentra, cada mañana, las pocas licitaciones de {{< var mp.name >}} que calzan con lo que el centro sabe hacer.
 
-Radar MP nació como un prototipo en R (versión 1, 2025) que filtraba licitaciones por palabras clave del título y le pedía a un modelo de lenguaje una evaluación de las candidatas. La versión 2 (2026), que describe este libro, es una reconstrucción completa en Python: ingesta diaria desde la API de Mercado Público, histórico desde los Datos Abiertos de ChileCompra, búsqueda semántica con embeddings, modelos de decisión y un juez LLM que corren **localmente**, una web para el uso diario del equipo y un ciclo de evaluación y mejora basado en etiquetas.
+Está escrito para tres tipos de lectores:
 
-## Cómo leer este libro
+- **Quien usa la plataforma** (analistas y dirección del centro): le interesa entender por qué una licitación aparece arriba en la bandeja y cómo dar retroalimentación. Puede leer la Introducción, la parte de Matching sin detenerse en las fórmulas, y la parte de Plataforma.
+- **Quien la administra** (define qué busca cada centro o facultad): además de lo anterior, debe leer los capítulos de Modelos de decisión, Modelos de priorización y Administración.
+- **Quien la mantiene o la extiende** (equipo técnico): todo el libro, con las referencias al código y a la configuración.
 
-El libro sigue el recorrido de una licitación por la plataforma:
+## Cómo está organizado
 
-| Parte | Pregunta que responde |
-|---|---|
-| [Introducción](intro.qmd), [Objetivos](objetivos.qmd) y [Diseño general](diseno.qmd) | ¿Qué problema se resuelve, con qué metas y con qué arquitectura? |
-| [Ingest](ingest/index.qmd) | ¿Qué datos se traen de Mercado Público y cómo se guardan? |
-| [Matching](matching/index.qmd) | ¿Cómo se decide si una licitación sirve y cuánto importa? |
-| [Digest](digest/index.qmd) | ¿Qué información se entrega sobre los organismos y a los usuarios? |
-| [Plataforma](plataforma/index.qmd) | ¿Cómo se usa y se administra la web? |
-| [Trabajos futuros](futuro/index.qmd) | ¿Hacia dónde crece la plataforma? |
+El libro sigue el camino que recorre una licitación dentro de la plataforma, desde que el Estado la publica hasta que una persona decide si postular:
 
-Cada capítulo combina una explicación conceptual con referencias al código del repositorio (`backend/src/radar/…`), a la configuración (`backend/catalogs/cit.yaml`) y a las pantallas de la web.
+1. **Introducción, Objetivos y Diseño general** presentan el problema, las metas y la arquitectura completa en una sola vista.
+2. **Ingest** explica qué datos se traen de Mercado Público (licitaciones, organismos compradores, productos y categorías) y cómo se guardan.
+3. **Matching** explica cómo se decide si una licitación le sirve a una unidad de la universidad (*modelos de decisión*) y qué tan importante es (*modelos de priorización*).
+4. **Digest** explica qué recibe cada unidad de la universidad —centros y facultades— y cada persona que trabaja en ellas.
+5. **Plataforma** muestra las pantallas, el uso diario y la administración.
+6. **Trabajos futuros** describe hacia dónde puede crecer la plataforma.
 
-::: {.callout-note}
+Cada capítulo termina con un recuadro **En resumen** que conecta con el siguiente.
+
+## Un ejemplo que recorre el libro
+
+Para que las piezas se entiendan juntas, varios capítulos vuelven sobre el mismo caso real. El 27 de octubre de 2026 la Subsecretaría de Desarrollo Regional (Subdere) publicó una **consultoría para diseñar un modelo de gobernanza** de los planes de desarrollo de zonas extremas (código `761-27-LP26`, $80 millones). Ese día se publicaron otras 517 licitaciones. Veremos cómo esta consultoría llegó a la base de datos, por qué sobrevivió a los filtros, qué respondieron los modelos de IA, por qué terminó con prioridad **alta** (puntaje 76,2) y cómo llegó al equipo del CIT.
+
 ## Estado del documento
 
-Esta es la **primera versión** del libro (30 de octubre de 2026). Refleja el estado de la rama `feat/triaje-decision`, que incorpora el triaje con modelos de decisión. Las secciones marcadas como [pendiente]{.pendiente} se completarán a medida que avance el uso real de la plataforma (etiquetas del equipo, envío de correos, nuevos perfiles).
+::: {.callout-note}
+Esta es la **primera versión** del libro (30 de octubre de 2026). Describe la plataforma tal como está en la rama `feat/triaje-decision`, que incorpora el triaje con modelos de decisión. Lo que todavía no se ha construido o medido está marcado como [pendiente]{.pendiente}.
 :::
 
 ## Material complementario
 
-- Presentación técnica *Radar MP v2* (`keynotes-mp/radar-mp-v2.qmd`): resumen visual de la arquitectura y las etapas.
+- Presentación técnica *Radar MP v2* (`keynotes-mp/radar-mp-v2.qmd`).
 - Presentación de avance de la versión 1 (`keynotes-mp/avance-general.qmd`).
-- `README.md` del repositorio: levantamiento, comandos y endpoints.
-- `docs/PLAN_MIGRACION.md`: plan de migración de la v1 a la v2.
+- `README.md` del repositorio: instalación, comandos y endpoints de la API.
 - `backend/reference/decision-v1/`: dataset de referencia para evaluar los modelos de decisión.
+- Diagramas interactivos en `book-mp/diagramas/` (se abren con el enlace bajo cada diagrama).

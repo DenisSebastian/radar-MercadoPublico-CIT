@@ -1,76 +1,98 @@
 # Ofertas {#sec-ofertas}
 
-En este libro llamamos **ofertas** a las oportunidades de negocio que publica el Estado: las licitaciones de Mercado Público. Cada una se identifica por su código externo (por ejemplo `1351461-5-LR25`) y se guarda en la tabla `tender`.
+En este libro usamos **ofertas** u **ofertas públicas** para referirnos a las licitaciones que publica el Estado: son las oportunidades de negocio que Radar MP busca. Este capítulo explica cómo llegan a la base de datos y qué información se guarda de cada una.
 
-## Fuente diaria: API de Mercado Público
+## Cada mañana: la API de Mercado Público
 
-El cliente `MPClient` (`backend/src/radar/mp_client/`) usa dos llamadas:
+Todos los días a las 06:00 el worker pregunta a la API por las licitaciones publicadas el día anterior. El proceso tiene dos pasos:
 
-- **Listado**: `licitaciones.json?fecha=DDMMAAAA&estado=publicada` → códigos, nombre, estado y fecha de cierre de las licitaciones publicadas ese día.
-- **Detalle**: `licitaciones.json?codigo=…` → descripción, comprador, unidad de compra, montos, fechas, tipo y los ítems con su código UNSPSC.
+1. **Listado.** Una consulta por fecha devuelve los códigos de las licitaciones publicadas, con su nombre, estado y fecha de cierre. Esto toma segundos.
+2. **Detalle.** Para cada código se pide la ficha completa: descripción, comprador, monto estimado, fechas y lista de productos. Esto es lo lento.
 
-La API responde **429 / código 10500** («peticiones simultáneas») si se le pide rápido: con 1 s entre requests falla ~50 % de las veces; con 2 s, ~13 %. Por eso el cliente serializa las llamadas con un **mínimo de 2 s** entre requests (`MP_MIN_INTERVAL_S`) y reintenta con *backoff* exponencial hasta 6 veces. Un día típico (~500 licitaciones con detalle) tarda unos **20 minutos**. El ticket de acceso nunca aparece en errores ni registros.
+La API rechaza las consultas si se le pide muy rápido: con un segundo entre consultas falla la mitad de las veces. Por eso el cliente (`backend/src/radar/mp_client/`) espera **dos segundos** entre consultas y, si igual recibe un rechazo, espera cada vez más antes de reintentar, hasta seis veces. Con ~500 licitaciones, un día completo tarda unos **20 minutos**.
 
-```bash
-uv run radar ingest --date 2026-10-27      # un día (por defecto, ayer en hora de Chile)
-uv run radar ingest --catch-up             # días pendientes desde la última corrida completa
-```
+### Días incompletos y recuperación
 
-Opciones útiles: `--until` (rango), `--no-details` (solo listado), `--limit` (máximo de detalles), `--refresh` (volver a pedir detalles).
-
-### Escritura
-
-- `upsert_listing` → `tender` (código, nombre, estado, cierre, `first_seen_date`).
-- `upsert_detail` → `tender` + `tender_item` + `buyer`; `raw` guarda el JSON original y `detail_fetched_at` la fecha del detalle.
-
-`first_seen_date` es la fecha del listado en que la licitación apareció por primera vez: es el «día» con que el matching agrupa las licitaciones.
-
-### Catch-up y completitud
-
-Un día se considera **completo** solo si su corrida terminó `ok`, con detalles, sin límite y con **0 detalles fallidos**. Cada mañana el worker ingiere desde el día siguiente al último completo hasta ayer, con un máximo de 14 días; las brechas mayores se cubren con Datos Abiertos.
-
-## Fuente histórica: Datos Abiertos
-
-ChileCompra publica un ZIP mensual (`lic-da/AAAA-M.zip`, 15–35 MB) con un CSV que tiene una fila por licitación × ítem × oferta.
+Un día cuenta como **completo** solo si se obtuvo el detalle de todas sus licitaciones sin errores. Si el computador estuvo apagado o la API falló, la siguiente ejecución recupera automáticamente los días pendientes (hasta 14 hacia atrás). Si falta más tiempo, se completa con Datos Abiertos. La pantalla de Operación muestra la cobertura de los últimos 14 días y permite reprocesar cualquier día con un botón.
 
 ```bash
-uv run radar opendata 2024-01 2025-09              # ZIPs ya descargados
-uv run radar opendata 2025-10 2026-09 --download   # descarga los que falten
+uv run radar ingest --date 2026-10-27   # un día específico
+uv run radar ingest --catch-up          # todos los días pendientes
 ```
 
-- El archivo viene en **cp1252** con separador `;`: se transcodifica a UTF-8 y se lee con **DuckDB por nombre de columna** (105 columnas hasta 2025, 110 desde 2026).
-- Defectos tolerados y contados: decimales con coma (`5,2e+08`), montos absurdos (≥ 10¹⁵ → nulo), filas sin `CodigoExterno` (`omitidas`) y líneas con comillas o separadores corruptos (`malformadas`, p. ej. 849 de 160 mil en 2026-03, recuperadas con el módulo `csv` de Python).
-- Un mes tarda ~10 s. El worker carga el mes anterior el día 3 de cada mes.
+## Cada mes: Datos Abiertos
 
-### Regla de fusión entre fuentes
+El día 3 de cada mes el worker descarga el archivo del mes anterior desde ChileCompra. Es un ZIP de 15 a 35 MB con un CSV donde cada fila combina una licitación, uno de sus productos y una de las ofertas recibidas. Se lee con DuckDB y un mes completo se carga en unos **10 segundos**.
 
-| Si la licitación… | Entonces |
+El archivo tiene defectos conocidos que el importador tolera y cuenta: viene en una codificación antigua (cp1252), usa coma decimal, trae montos imposibles y algunas líneas corruptas (849 de 160 mil en marzo de 2026).
+
+### Cómo se combinan las dos fuentes
+
+Cuando una licitación llega por ambas vías, la regla es simple: **la API manda en el contenido, Datos Abiertos manda en el resultado**.
+
+- Si la licitación ya tiene la ficha de la API, el archivo solo rellena los campos vacíos.
+- El **estado** siempre se actualiza desde el archivo: así se sabe si terminó adjudicada, desierta o revocada.
+- Las **adjudicaciones** solo vienen del archivo y siempre se reemplazan.
+
+## Cómo vienen los datos de Mercado Público
+
+Cada licitación llega como cuatro bloques de información: la **licitación** misma (más de cincuenta campos), sus **ítems** (los productos pedidos), sus **fechas** (publicación, cierre, adjudicación y otras) y el **comprador** (organismo y unidad de compra). La @fig-mp-original muestra esa estructura tal como la entrega la fuente.
+
+::: {.column-page-right .captura}
+![Estructura de los datos de una licitación en Mercado Público](../images/ddbb-original.png){#fig-mp-original fig-align="center"}
+:::
+
+No todos los campos sirven igual. Radar MP usa tres grupos, marcados en las pestañas siguientes:
+
+::: {.panel-tabset}
+### Variables de filtro
+
+Estado, fecha de cierre, monto estimado y categoría de los ítems: permiten descartar o priorizar sin leer el texto.
+
+::: {.column-page-right .captura}
+![Variables de filtro](../images/vars_filtro.png){fig-align="center"}
+:::
+
+### Variables semánticas
+
+Descripción de la licitación, nombre y descripción de los productos y nombre de la unidad compradora: es el texto que leen la búsqueda por similitud y los modelos de lenguaje.
+
+::: {.column-page-right .captura}
+![Variables semánticas (LLM)](../images/vars_semanticas.png){fig-align="center"}
+:::
+
+### Variables espaciales
+
+Nombre, dirección, comuna y región de la unidad compradora: permiten ubicar la demanda en el territorio.
+
+::: {.column-page-right .captura}
+![Variables espacializables](../images/vars_espaciales.png){fig-align="center"}
+:::
+:::
+
+## Qué se guarda de cada licitación
+
+La tabla `tender` guarda una fila por licitación. Los campos más usados son:
+
+| Campo | Para qué se usa |
 |---|---|
-| ya tiene detalle de la API | el archivo **solo rellena campos vacíos** |
-| cambió de estado | el **estado** siempre se actualiza (adjudicada, desierta, revocada…) |
-| no tiene detalle de la API | los ítems se reemplazan con los del archivo |
-| tiene adjudicaciones | siempre se reemplazan: vienen solo de esta fuente |
+| `codigo` | Identificador; enlaza a la ficha en Mercado Público |
+| `nombre` y `descripcion` | Lo que leen las reglas, la búsqueda y los modelos |
+| `estado` | Saber si sigue abierta o cómo terminó |
+| `monto_estimado` | Componente económico del puntaje |
+| `fecha_cierre` | Componente de plazo del puntaje y filtro «solo abiertas» |
+| `codigo_organismo`, `region` | Quién compra y dónde (ver [Organismos compradores](organismos.qmd)) |
+| `first_seen_date` | El día en que apareció; agrupa la bandeja por día |
+| `raw` | Copia íntegra de la respuesta de la API, por si se necesita otro dato |
 
-: Fusión API ↔ Datos Abiertos {#tbl-fusion}
+: Campos principales de `tender` {#tbl-tender}
 
-`opendata_month` registra el último archivo mensual que trajo cada licitación.
+La consultoría de gobernanza de la Subdere quedó guardada así el 27 de octubre: su nombre y descripción completos, la Subdere como comprador, su fecha de cierre y la lista de productos pedidos. Con eso basta para que el matching la evalúe.
 
-## Campos principales de `tender`
+::: {.callout-tip}
+## En resumen
 
-| Campo | Descripción |
-|---|---|
-| `codigo` | Código externo (clave primaria) |
-| `nombre`, `descripcion` | Título y descripción completa |
-| `codigo_estado`, `estado` | Estado en Mercado Público (publicada, cerrada, adjudicada, desierta, revocada…) |
-| `tipo` | Tipo de licitación (L1, LE, LP, LR…) según monto |
-| `monto_estimado`, `moneda` | Presupuesto informado (cuando lo publica el comprador) |
-| `fecha_publicacion`, `fecha_cierre` | Fechas clave; el cierre alimenta el puntaje de plazo |
-| `codigo_organismo`, `unidad_*`, `comuna`, `region` | Comprador y localización (ver [Organismos](organismos.qmd)) |
-| `first_seen_date` | Día en que se vio por primera vez |
-| `raw` | JSON original de la API |
-
-: Campos de la tabla `tender` {#tbl-tender}
-
-## Texto para los modelos
-
-Para el embedding y los modelos de decisión, cada licitación se representa como título + descripción + nombres de sus ítems, normalizado (`radar.text.normalize`: minúsculas y sin tildes para reglas y palabras clave). El embedding se recalcula solo si cambia el hash del texto ([Modelos de decisión](../matching/decision.qmd)).
+- La API trae lo nuevo cada mañana; Datos Abiertos trae el histórico y el resultado cada mes.
+- Los días incompletos se recuperan solos.
+- Saber *qué* se compra no basta: el capítulo siguiente trata de *quién* compra.
+:::

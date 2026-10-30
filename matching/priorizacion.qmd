@@ -1,88 +1,92 @@
 # Modelos de priorización {#sec-priorizacion}
 
-Una vez decidido que una licitación sirve, hay que decidir **cuánto importa**: qué tan cerca está de los servicios del centro, cuánta plata hay en juego y cuánto plazo queda. La priorización combina esas señales en un puntaje final de 0 a 100 y una prioridad.
+Los modelos de decisión dicen qué licitaciones sirven. Este capítulo responde la segunda pregunta: **¿en qué orden revisarlas?** Para eso cada licitación recibe un **puntaje final** de 0 a 100 que combina cuatro señales, y ese puntaje define su prioridad.
 
-## Retrieval híbrido
+## Señal 1: cercanía con los servicios
 
-Antes de cualquier modelo de lenguaje, cada licitación no excluida se puntúa contra **todos** los servicios del catálogo.
-
-**Embeddings.** `embeddinggemma` (768 dimensiones) con prefijos de tarea:
-
-- licitación → `title: … | text: descripción + ítems`
-- servicio → `task: search result | query: …`
-
-Los vectores de licitaciones se guardan en `tender_embedding` (índice HNSW coseno) y se recalculan solo si cambia el hash del texto. Cada servicio tiene un vector por su descripción y uno por cada ejemplo (`service_vector`); la similitud con el servicio es el **máximo** entre todos ellos.
-
-**Normalización.** El coseno de `embeddinggemma` vive en un rango estrecho (calibrado en dic-2025 sobre 3.089 licitaciones: p50 0,26 · p90 0,33 · p99 0,41 · máx 0,66), así que se lleva a 0–1 con un piso y un techo:
+La primera señal es la **cercanía** (*retrieval*) calculada en la [búsqueda por significado](embeddings.qmd): un número de 0 a 1 que combina 75 % de similitud por *embeddings* y 25 % de palabras clave.
 
 $$
-\text{sim\_norm} = \operatorname{clip}\left(\frac{\cos - 0{,}30}{0{,}60 - 0{,}30},\ 0,\ 1\right)
+\text{retrieval} = 0{,}75\cdot\text{similitud} + 0{,}25\cdot\text{léxico}
 $$
 
-**Puntaje léxico.** Cada palabra clave del servicio encontrada en el texto normalizado suma con rendimientos decrecientes:
+Para la Subdere vale 0,342: similitud 0,455 y ninguna palabra clave.
+
+## Señales 2, 3 y 4: juez, monto y plazo
+
+- **Juez** (0–100): el puntaje que dio el modelo de lenguaje. Si la licitación no fue juzgada, se usa la cercanía multiplicada por 100.
+- **Monto** (0–100): más dinero, más prioridad. Sin monto informado vale 40; hasta $10 millones vale 20; desde $300 millones vale 100; entre medio crece en línea recta.
+- **Plazo** (0–100): una licitación que cierra pronto deja poco tiempo para preparar una oferta. Cerrada vale 0; menos de 3 días, 20; menos de 7 días, 60; 7 días o más, 100.
+
+## El puntaje final
 
 $$
-\text{léxico} = 1 - 0{,}6^{\,\text{aciertos}}
+\text{final} = 0{,}60\cdot\text{juez} + 0{,}15\cdot\text{retrieval}\cdot 100 + 0{,}15\cdot\text{monto} + 0{,}10\cdot\text{plazo}
 $$
 
-**Retrieval.**
+El juez pesa más porque es la señal que mejor entiende la licitación. Los pesos se pueden cambiar en Configuración (deben sumar 1).
 
-$$
-\text{retrieval} = \alpha \cdot \text{sim\_norm} + (1-\alpha)\cdot\text{léxico}, \qquad \alpha = 0{,}75
-$$
+## La prioridad
 
-Gana el servicio con mayor `retrieval`, pero se guardan los puntajes de todos. Sin triaje, el top-k del día (`llm_top_k`, 25) pasa al juez; con triaje, el retrieval define el orden y el universo de recuperadas.
-
-## Puntaje final
-
-$$
-\text{final} = 0{,}60\cdot\text{LLM} + 0{,}15\cdot\text{retrieval}\cdot 100 + 0{,}15\cdot\text{económico} + 0{,}10\cdot\text{plazo}
-$$
-
-| Componente | Cálculo |
+| Prioridad | Regla |
 |---|---|
-| LLM | Puntaje 0–100 del juez (sin juicio: retrieval × 100) |
-| Económico | Sin monto: 40 · ≤ $10 M: 20 · ≥ $300 M: 100 · lineal entre medio |
-| Plazo | Cerrada: 0 · < 3 días: 20 · < 7 días: 60 · ≥ 7 días: 100 |
-
-: Componentes del puntaje final {#tbl-componentes-puntaje}
-
-Los pesos deben sumar 1 y se editan en Configuración; los montos (`economico.monto_min`, `monto_max`) también.
-
-## Prioridad
-
-| Prioridad | Condición |
-|---|---|
-| **Alta** | juzgada relevante y final ≥ 75 |
-| **Media** | juzgada relevante y final ≥ 55 |
-| **Baja** | juzgada relevante y final < 55 |
-| **Descartada** | el juez (o el triaje) dijo no relevante; el puntaje se topa en 30 |
-| **Sin evaluar** | recuperada pero sin juicio (fuera del tope o falla del modelo) |
-| **Excluida** | eliminada por un filtro duro |
+| **Alta** | El juez dijo que sirve y el puntaje final es 75 o más |
+| **Media** | El juez dijo que sirve y el puntaje final está entre 55 y 75 |
+| **Baja** | El juez dijo que sirve, pero el puntaje final es menor a 55 |
+| **Descartada** | El triaje o el juez dijeron que no sirve (puntaje topado en 30) |
 
 : Reglas de prioridad {#tbl-prioridad}
 
-La bandeja muestra por defecto alta + media. Tras cambiar pesos o umbrales, «Recalcular 14 días sin LLM» reaplica los puntajes en segundos.
+La bandeja muestra por defecto alta y media.
 
-## Calibración con etiquetas
+### El ejemplo de la Subdere, paso a paso
 
-Las etiquetas del equipo (relevante, no relevante, dudoso, postulado) permiten ajustar los umbrales con datos:
+| Señal | Valor | Por qué | Aporte |
+|---|---:|---|---:|
+| Juez | 92 | Calce directo con políticas públicas | 0,60 × 92 = 55,2 |
+| Cercanía | 0,34 | Parecido moderado con el servicio | 0,15 × 34,2 = 5,1 |
+| Monto | 39,3 | Presupuesto de $80 millones | 0,15 × 39,3 = 5,9 |
+| Plazo | 100 | Cierra el 16 de noviembre, con más de 7 días | 0,10 × 100 = 10,0 |
+| **Final** | | | **76,2** |
 
-- **Calibración** (Configuración → Aprendizaje, `GET /profiles/{id}/calibration`): precisión, recall y F1 por umbral; sugiere el umbral **media** (mejor F1) y **alta** (precisión ≥ 80 %) cuando hay ≥ 10 etiquetas de cada clase. También muestra cuántas relevantes quedaron fuera por top-k, reglas, triaje o juez.
-- **Muestra estratificada** (`radar eval sample → import → report`): cada licitación pertenece a un estrato (juzgada, top no juzgada, resto, excluida similar, excluida al azar, triaje no…) con un peso igual a población / etiquetadas, de modo que precisión y recall estiman todo el período, no solo lo etiquetado.
+: Puntaje de la consultoría 761-27-LP26 {#tbl-ejemplo-puntaje}
+
+Con 76,2 puntos supera el umbral de 75 y queda con prioridad **alta**. Notar que su cercanía por significado era apenas moderada: sin el triaje y el juez, una búsqueda solo por parecido la habría dejado más abajo.
+
+## Cómo mejora con el uso
+
+Los umbrales de 75 y 55 y los pesos son un punto de partida razonable, no una verdad. La plataforma usa las etiquetas del equipo para ajustarlos.
 
 ```{=html}
-<iframe class="diagrama" src="../diagramas/08-aprendizaje.html?theme=light&embed=1" loading="lazy"></iframe>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/08-aprendizaje.html?theme=light&embed=1"></iframe>
 <a class="diagrama-link" href="../diagramas/08-aprendizaje.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
 ```
 
-## Aprendizaje *few-shot*
+**Etiquetas.** En la bandeja, cada persona marca una licitación como relevante, no relevante, dudosa o «postular». Cada etiqueta guarda quién la puso y cuándo.
 
-Al juzgar, el modelo ve hasta **4 licitaciones parecidas** (coseno ≥ 0,55) ya etiquetadas por el equipo, balanceando relevantes y no relevantes, con sus comentarios. Qué casos vio cada juicio queda en `match.llm_context` y se muestra en el detalle. Así el criterio del equipo entra por el prompt, sin reentrenar.
+**Calibración.** Con al menos diez etiquetas de cada clase, la pantalla de Configuración → Aprendizaje calcula precisión y recall para cada posible umbral y sugiere dos: el umbral de **media** que mejor equilibra ambas medidas, y el de **alta** que asegura al menos 80 % de precisión. También muestra en qué paso se perdieron las licitaciones relevantes: reglas, triaje, juez o puntaje.
 
-Las adjudicaciones de la UAI **no** se usan como ejemplos positivos por defecto: de 27 licitaciones ganadas ($14 mil millones), casi todas son cursos y diplomados, y sesgarían al juez hacia capacitación.
+**Casos de ejemplo para el juez.** Al juzgar una licitación, el juez recibe hasta cuatro licitaciones **parecidas** que el equipo ya etiquetó, mitad relevantes y mitad no, con sus comentarios. Así el criterio del equipo entra en la decisión sin reentrenar ningún modelo. En el detalle se ve qué casos consultó.
 
-## Hallazgos
+**Medición sin sesgo.** Etiquetar solo lo que aparece en la bandeja no dice cuánto se perdió fuera de ella. Por eso `radar eval sample` arma muestras que incluyen también licitaciones excluidas, descartadas y sin evaluar, y les da un peso según cuántas representan. Así las métricas estiman todo el período.
 
-- En el backtest de dic-2025, v2 propone 23 oportunidades alta + media frente a 10 candidatas de v1, con hallazgos nuevos como PLADECOs, planes de reducción de riesgo y catastros de vivienda.
-- El 27-oct-2026, 5 de las 10 oportunidades fueron capacitación genérica: el servicio de capacitación es demasiado amplio. El triaje por categoría (`cap_gen` vs `cap_esp`) apunta a ese ruido; falta acotar también la descripción y los ejemplos del servicio. [pendiente]{.pendiente}
+::: {.callout-note}
+## Por qué no se usan las adjudicaciones de la UAI como ejemplos
+
+La UAI ha ganado 27 licitaciones (unos $14 mil millones), pero casi todas son cursos y diplomados. Si se usaran como ejemplos positivos, el juez empezaría a favorecer cualquier capacitación. Por eso están desactivadas por defecto.
+:::
+
+## Lo que muestran los datos
+
+- Al revisar diciembre de 2025, la versión 2 propuso 23 oportunidades alta o media, frente a 10 de la versión 1, con hallazgos nuevos como PLADECOs, planes de reducción de riesgo y catastros de vivienda.
+- Antes del triaje, 5 de las 10 oportunidades del 27 de octubre de 2026 eran capacitaciones genéricas, porque el servicio de capacitación está descrito de forma demasiado amplia. Con el triaje por categoría, ese día quedó con 5 oportunidades, ninguna de capacitación genérica. Falta además acotar la descripción del servicio. [pendiente]{.pendiente}
+
+::: {.callout-tip}
+## En resumen
+
+- Cuatro señales —juez, cercanía, monto y plazo— forman un puntaje de 0 a 100.
+- El puntaje define la prioridad; los umbrales se calibran con las etiquetas del equipo.
+- La parte siguiente, **Digest**, explica cómo llegan estas oportunidades a cada unidad y a cada persona.
+:::

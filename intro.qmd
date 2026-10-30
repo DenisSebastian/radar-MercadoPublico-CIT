@@ -1,44 +1,72 @@
 # Introducción {#sec-intro}
 
-## El problema
+## El problema: muchas licitaciones, pocas útiles
 
-{{< var mp.name >}} es la plataforma donde el Estado de Chile publica sus compras. Cada día aparecen **alrededor de 500 licitaciones** —unas 15.000 al mes— de municipios, gobiernos regionales, ministerios y servicios públicos. La gran mayoría compra bienes, obras o servicios operativos: aseo, guardias, alimentación, combustible, insumos médicos, mantención.
+{{< var mp.name >}} es la plataforma donde el Estado de Chile publica sus compras. Cada día aparecen **alrededor de 500 licitaciones**, unas 15.000 al mes, de municipios, gobiernos regionales, ministerios y servicios públicos.
 
-Al {{< var cit.sigla >}} le sirven muy pocas: estudios territoriales, sistemas de información geográfica (SIG), plataformas de datos, evaluación de políticas públicas, medioambiente y riesgo, seguridad, movilidad, energía y capacitación especializada. Encontrarlas a mano significa leer cientos de títulos y descripciones cada semana, y aun así se pierden oportunidades que no usan las palabras esperadas: un *«Diagnóstico para la actualización del PLADECO»* o un *«Catastro de campamentos»* no dicen «SIG» ni «territorial», pero son exactamente el tipo de trabajo que hace el centro.
+Casi todas compran cosas que una universidad no vende: aseo, guardias, alimentación, combustible, insumos médicos, obras o mantención. Al {{< var cit.sigla >}} le sirven muy pocas: estudios territoriales, sistemas de información geográfica (SIG), plataformas de datos, evaluación de políticas públicas, medioambiente y riesgo, seguridad, movilidad, energía y capacitación especializada. En un día típico son **entre cinco y diez**.
 
-## De la versión 1 a la versión 2
+Encontrarlas a mano tiene dos costos. El primero es el tiempo: alguien tiene que leer cientos de títulos cada semana. El segundo es menos visible: se pierden oportunidades que no usan las palabras esperadas. Un *«Diagnóstico para la actualización del PLADECO»* o un *«Catastro de campamentos»* no dicen «SIG» ni «territorial», pero son exactamente el tipo de trabajo que hace el centro.
 
-La primera versión (2025, en R con `targets`) probó la idea con un flujo de tres puertas: un filtro léxico sobre el título, una clasificación con LLM de las candidatas y un umbral de selección. Funcionó como demostración, pero tenía límites claros:
+## La idea: filtrar como lo haría una persona experta, pero todos los días
 
-- solo veía lo que pasaba el filtro de palabras del título;
-- la decisión del LLM no se validaba ni se guardaba de forma trazable;
-- no había histórico, ni forma de medir aciertos, ni una herramienta de uso diario.
+Radar MP lee todas las licitaciones del día y repite, de forma automática, el razonamiento que haría una persona del centro:
 
-La versión 2 reconstruye la plataforma con otros principios:
+1. **Descartar lo evidente.** Si el título dice «servicio de aseo» o todos los productos son vehículos, no hace falta pensar más.
+2. **Buscar parecido con lo que el centro hace.** Comparar el texto de la licitación con la descripción de cada servicio del centro, por significado y no solo por palabras.
+3. **Preguntarse qué se pide entregar.** ¿Es un estudio, una plataforma, una capacitación especializada… o es una obra, un curso genérico, la contratación de una persona?
+4. **Leer con atención los casos que quedan.** Un modelo de lenguaje evalúa cada candidata, explica por qué sirve, cita evidencia del texto y señala riesgos.
+5. **Ordenar.** Combinar ese juicio con el monto y el plazo para decidir qué revisar primero.
 
-| Aspecto | v1 (R, 2025) | v2 (2026) |
+El resultado es una **bandeja corta y explicada** que el equipo revisa cada mañana, más un correo con las oportunidades nuevas.
+
+## De dónde venimos: la versión 1
+
+La primera versión (2025) se construyó en R y probó la idea con tres pasos: un filtro de palabras clave sobre el título, una evaluación con un modelo de lenguaje de las candidatas y un umbral de selección. Funcionó como demostración, pero tenía tres límites:
+
+- solo veía lo que pasaba el filtro de palabras, así que repetía el problema de vocabulario;
+- las decisiones del modelo no se validaban ni quedaban registradas de forma revisable;
+- no había histórico, ni forma de medir aciertos, ni una herramienta para el uso diario.
+
+La versión 2 (2026), que describe este libro, es una reconstrucción completa en Python:
+
+| Aspecto | Versión 1 (2025) | Versión 2 (2026) |
 |---|---|---|
-| Fuente | RDS con títulos | API diaria con detalle + Datos Abiertos con ítems y adjudicaciones |
-| Filtro | Palabras clave en el título | Reglas + búsqueda semántica (embeddings) + palabras clave |
-| Decisión | LLM sobre lo que pasaba el filtro léxico | Triaje con modelo de decisión + juez LLM local con salida JSON validada y evidencia verificada |
-| Almacenamiento | Archivos RDS | PostgreSQL + pgvector, historial completo desde 2024 |
-| Uso | Script y CSV | Web: bandeja, detalle, catálogo, configuración, operación |
-| Operación | Manual | Worker diario, reprocesos desde la web, alertas por email |
-| Calidad | Sin medición | Evaluación ponderada, calibración, dataset de referencia y aprendizaje desde etiquetas |
+| Datos | Títulos de licitaciones | Licitación completa (descripción, comprador, productos) e histórico desde 2024 con adjudicaciones |
+| Búsqueda | Palabras clave en el título | Reglas + búsqueda por significado (embeddings) + palabras clave |
+| Decisión | Un modelo de lenguaje | Modelo de decisión rápido (triaje) + modelo de lenguaje que justifica con evidencia |
+| Uso | Script y planilla | Web con bandeja, detalle, configuración y operación; correo diario |
+| Calidad | Sin medición | Etiquetas del equipo, métricas, calibración y dataset de referencia |
 
-: Comparación entre versiones {#tbl-versiones}
+: Versión 1 y versión 2 {#tbl-versiones}
 
-El código R quedó en `legacy/` como referencia; la lógica útil (normalización de texto, criterios del centro) se portó a Python.
+## Cuatro principios
 
-## Principios de diseño
+Las decisiones técnicas del resto del libro se explican por cuatro principios:
 
-Cuatro ideas guían todas las decisiones técnicas que se describen en el libro:
+**Local primero.** La base de datos, la web y los modelos de inteligencia artificial corren en un computador del centro. Internet se usa solo para traer datos de Mercado Público y enviar correos. Los criterios del centro y las etiquetas del equipo no salen de la máquina.
 
-1. **Local primero.** La base de datos, la API, la web y los modelos de IA corren en un computador del centro. Internet se usa solo para traer datos de Mercado Público y enviar correos. Los criterios del centro y las etiquetas del equipo no salen de la máquina.
-2. **Barato antes que caro.** Reglas → similitud semántica → modelo de decisión → juez LLM: cada etapa reduce el volumen que llega a la siguiente. El LLM grande es el recurso escaso.
-3. **Trazable.** Por cada licitación y perfil se guarda una fila `match` con todos los puntajes, la decisión del triaje, el juicio del LLM, la evidencia citada y los casos de ejemplo que vio el juez.
-4. **Configurable sin código.** Catálogo de servicios, pesos, umbrales, reglas y alertas se editan desde la web; el YAML del repositorio es el punto de partida.
+**Barato antes que caro.** Cada paso es más costoso que el anterior y procesa menos licitaciones: las reglas son instantáneas, la búsqueda por significado tarda milisegundos, el triaje un segundo y el juez trece. Así el paso más caro solo trabaja con lo que de verdad lo necesita.
 
-## Resultado típico
+**Trazable.** Para cada licitación queda guardado qué regla la excluyó, qué puntajes obtuvo, qué respondieron los modelos y qué evidencia citaron. Cualquier decisión se puede revisar y discutir.
 
-El 27 de octubre de 2026 se publicaron 518 licitaciones. Las reglas excluyeron 377, la búsqueda semántica recuperó 141, el juez evaluó 25 y la bandeja mostró **10 oportunidades** de prioridad alta o media: entre ellas una consultoría de modelo de gobernanza para la Subdere, una caracterización ambiental y paisajística para el sitio Chinchorro y antecedentes expropiatorios para una avenida en Magallanes. Ese es el objetivo de la plataforma: transformar ~500 licitaciones diarias en una bandeja corta, explicada y medible.
+**Configurable sin programar.** Qué busca cada unidad (sus servicios), qué descarta (sus reglas) y cómo ordena (sus pesos) se edita desde la web.
+
+## El resultado en un día
+
+El 27 de octubre de 2026 se publicaron **518 licitaciones**. Así las procesó la plataforma en su versión actual:
+
+- las reglas descartaron **366** por ser evidentemente ajenas al centro;
+- las **152** restantes se compararon con los servicios del CIT;
+- el modelo de triaje consideró que **8** valían la pena;
+- el juez las evaluó y la bandeja mostró **5 oportunidades** de prioridad alta o media.
+
+Entre ellas, la consultoría de gobernanza de la Subdere que seguiremos a lo largo del libro, una caracterización ambiental y paisajística del sitio Chinchorro y un estudio de antecedentes expropiatorios en Magallanes. Antes de incorporar el triaje, ese mismo día mostraba 10 oportunidades, pero la mitad eran capacitaciones genéricas: el triaje eliminó ese ruido sin perder los estudios.
+
+::: {.callout-tip}
+## En resumen
+
+- El problema no es la falta de oportunidades, sino encontrarlas entre ~500 licitaciones diarias.
+- Radar MP automatiza el razonamiento de una persona experta en pasos cada vez más finos.
+- El capítulo siguiente fija qué debe lograr la plataforma y cómo se sabe si lo logra.
+:::

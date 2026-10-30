@@ -2,33 +2,54 @@
 
 ## Objetivo general
 
-Que el equipo del {{< var cit.sigla >}} vea cada mañana **las pocas licitaciones de Mercado Público que calzan con sus servicios**, ordenadas por prioridad y con una explicación de por qué sirven, usando modelos de IA que corren dentro del propio centro.
+Que cada unidad de la universidad que vende servicios al Estado —empezando por el CIT— vea cada mañana **las pocas licitaciones de Mercado Público que calzan con lo que sabe hacer**, ordenadas y con una explicación de por qué sirven, usando modelos de IA que corren dentro de la universidad.
 
 ## Objetivos específicos
 
-1. **Cobertura completa.** Ingerir todas las licitaciones publicadas cada día, con su descripción, comprador e ítems, y mantener un histórico desde 2024 con estados finales y adjudicaciones ([Ingest](ingest/index.qmd)).
-2. **Detección con alto recall.** No perder oportunidades relevantes por diferencias de vocabulario: combinar reglas, búsqueda semántica y modelos de decisión para revisar *todas* las licitaciones recuperadas del día, no solo un subconjunto ([Modelos de decisión](matching/decision.qmd)).
-3. **Priorización explicable.** Ordenar las oportunidades con un puntaje que combine el juicio del LLM, la cercanía con los servicios, el monto y el plazo, y mostrar evidencia literal de la licitación ([Modelos de priorización](matching/priorizacion.qmd)).
-4. **Inteligencia sobre los organismos.** Mostrar quién gana en cada categoría, montos típicos y cómo compra cada organismo, a partir de más de un millón de adjudicaciones ([Digest de organismos](digest/organismos.qmd)).
-5. **Alertas oportunas.** Avisar por correo, una sola vez, las oportunidades nuevas de las prioridades elegidas ([Digest de usuarios](digest/usuarios.qmd)).
-6. **Uso diario y administración sin código.** Una web con bandeja, detalle, catálogo, configuración y operación, donde el equipo etiqueta con el teclado y los administradores ajustan criterios ([Plataforma](plataforma/index.qmd)).
-7. **Medición y mejora continua.** Guardar cada decisión, medir precisión y recall contra etiquetas del equipo y un dataset de referencia, calibrar umbrales y alimentar al juez con casos ya etiquetados.
+Los objetivos siguen el mismo orden que las partes del libro.
 
-## Indicadores de éxito
+**1. No perder datos (Ingest).** Traer todas las licitaciones publicadas cada día, con su descripción, comprador y productos, y mantener un histórico desde 2024 con el resultado de cada una: si se adjudicó, a quién y por cuánto.
 
-| Indicador | Meta | Estado (oct-2026) |
+**2. No perder oportunidades (Matching: decisión).** Encontrar casi todas las licitaciones relevantes aunque usen otras palabras. Esto exige revisar *todas* las candidatas del día, no una muestra, y preferir dejar pasar una licitación dudosa antes que botar una buena.
+
+**3. Mostrar primero lo más importante (Matching: priorización).** Ordenar las oportunidades con un puntaje que combine qué tan bien calzan, cuánto dinero hay en juego y cuánto plazo queda, y explicar cada puntaje con evidencia del texto.
+
+**4. Entregar a quien corresponde (Digest).** Que cada centro o facultad reciba solo lo que le sirve, y que cada persona reciba un aviso oportuno, una sola vez, de las oportunidades nuevas.
+
+**5. Ser fácil de usar y de ajustar (Plataforma).** Una web donde el equipo revisa y etiqueta con el teclado, y donde quien administra cambia criterios sin programar.
+
+**6. Mejorar con el uso.** Guardar cada decisión, medir aciertos contra las etiquetas del equipo y usar esas etiquetas para afinar los modelos.
+
+## ¿Cómo sabremos si funciona?
+
+Dos medidas resumen la calidad de la plataforma:
+
+- **Recall** (cobertura): de todas las licitaciones que de verdad le sirven al centro, ¿qué porcentaje aparece en la bandeja? Un recall bajo significa oportunidades perdidas.
+- **Precisión**: de todo lo que aparece en la bandeja, ¿qué porcentaje de verdad sirve? Una precisión baja significa tiempo perdido revisando ruido.
+
+Entre ambas hay una tensión: subir una suele bajar la otra. Radar MP prioriza el **recall**, porque perder una oportunidad cuesta más que revisar una licitación de más.
+
+| Indicador | Meta | Estado (octubre 2026) |
 |---|---|---|
-| Días ingeridos completos | 100 % de días hábiles | Catch-up automático de hasta 14 días; brechas mayores con Datos Abiertos |
-| Recall de oportunidades relevantes | ≥ 95 % | 96 % con triaje sí/no + categoría en la referencia `decision-v1` |
-| Precisión de la bandeja | ≥ 50 % | 52 % (triaje) en la referencia; pendiente medir con etiquetas del equipo |
-| Tamaño de la bandeja diaria | ~10 oportunidades alta + media | 10 el 27-oct-2026 |
-| Tiempo de procesamiento diario | < 30 min de ingesta + matching | ~20 min ingesta, ~6 min matching con LLM |
-| Etiquetas del equipo | ≥ 10 por clase para calibrar | [pendiente]{.pendiente}: hoy 0 |
+| Días ingeridos completos | 100 % de los días | Recuperación automática de hasta 14 días atrasados |
+| Recall | ≥ 95 % | 96 % en el dataset de referencia `decision-v1` |
+| Precisión | ≥ 50 % | 52 % en el dataset de referencia; falta medir con etiquetas del equipo |
+| Tamaño de la bandeja diaria | ~5 a 10 oportunidades | 5 el 27 de octubre de 2026 |
+| Tiempo de procesamiento diario | < 30 minutos | ~20 min de ingesta y ~6 min de análisis |
+| Etiquetas del equipo | ≥ 10 por clase | [pendiente]{.pendiente}: aún no hay etiquetas |
 
 : Indicadores y estado actual {#tbl-indicadores}
 
-## Alcance
+## Alcance de esta versión
 
-**Incluye**: licitaciones públicas de Mercado Público (API y Datos Abiertos), perfil de búsqueda del CIT, web local, alertas por correo y evaluación.
+**Incluye** las licitaciones públicas de Mercado Público, el perfil de búsqueda del CIT, la web, el correo diario y las herramientas de evaluación.
 
-**No incluye aún**: Compra Ágil, Convenio Marco, órdenes de compra, lectura de bases en PDF, múltiples organizaciones con usuarios y roles, ni preparación o envío de ofertas. Estos puntos se discuten en [Trabajos futuros](futuro/index.qmd).
+**No incluye aún** otras modalidades de compra (Compra Ágil, Convenio Marco, órdenes de compra), la lectura de las bases en PDF, perfiles de otros centros o facultades, usuarios con inicio de sesión y roles, ni la preparación de postulaciones. Todo eso se discute en [Trabajos futuros](futuro/index.qmd).
+
+::: {.callout-tip}
+## En resumen
+
+- La meta es una bandeja corta, explicada y con casi todas las oportunidades reales.
+- Recall y precisión miden si se cumple; la plataforma prefiere no perder oportunidades.
+- El capítulo siguiente muestra la arquitectura que hace posible estos objetivos.
+:::

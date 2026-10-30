@@ -19,7 +19,7 @@ Para una licitación marcada para postular:
 - **Lectura de bases** (PDF técnicas y administrativas): requisitos, garantías, experiencia exigida, criterios de evaluación y plazos, en una ficha resumida.
 - **Checklist de admisibilidad**: documentos y requisitos formales con responsables y fechas.
 - **Equipo y experiencia**: propone integrantes y proyectos previos del centro que cumplen la experiencia exigida.
-- **Referencias de mercado**: montos adjudicados típicos y competidores probables ([Digest de organismos](../digest/organismos.qmd)).
+- **Referencias de mercado**: montos adjudicados típicos y competidores probables ([Organismos compradores](../ingest/organismos.qmd)).
 - **Borradores**: estructura de la propuesta técnica a partir de propuestas anteriores del centro.
 
 ## Asistente de consulta

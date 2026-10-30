@@ -1,17 +1,14 @@
 # Digest {.unnumbered}
 
-El *digest* es la etapa de salida: transforma lo que el matching decidió en información útil para dos destinatarios.
+Las partes anteriores explicaron cómo se obtienen las licitaciones y cómo se decide cuáles sirven. Digest es la etapa de **entrega**: hacer llegar ese resultado a quien lo necesita, en el momento oportuno y sin abrumar.
 
-| Destinatario | Qué recibe | Capítulo |
-|---|---|---|
-| **Organismos** (como objeto de análisis) | Inteligencia de mercado: quién gana, montos típicos, cómo compra cada comprador | [Organismos](organismos.qmd) |
-| **Usuarios** del centro | Alertas por correo con las oportunidades nuevas y la bandeja priorizada | [Usuarios](usuarios.qmd) |
+Hay dos destinatarios, en dos niveles:
 
-: Salidas de la plataforma {#tbl-salidas}
+- **Las unidades de la universidad** —centros y facultades—, cada una con sus propios intereses. Una oportunidad para el CIT puede no servirle a la Escuela de Negocios, y viceversa. Lo explica el capítulo [Centros y facultades](unidades.qmd).
+- **Las personas** que trabajan en cada unidad, que reciben un correo, revisan la bandeja y devuelven su criterio en forma de etiquetas. Lo explica el capítulo [Usuarios](usuarios.qmd).
 
-```{=html}
-<iframe class="diagrama" src="../diagramas/07-operacion.html?theme=light&embed=1" loading="lazy"></iframe>
-<a class="diagrama-link" href="../diagramas/07-operacion.html" target="_blank">abrir diagrama interactivo ↗</a>
-```
+## Cuándo ocurre
 
-El worker ejecuta todos los días, a las 06:00 (hora de Chile), la secuencia **ingesta → matching → digest**. Cada paso queda registrado en `ingest_run`; si Ollama no está disponible, el matching se registra como error pero la ingesta queda guardada y el digest no avisa nada nuevo.
+Todos los días a las 06:00 (hora de Chile) el worker ejecuta la secuencia completa: **ingesta → matching → digest**. Cuando el equipo llega en la mañana, la bandeja y el correo ya tienen las oportunidades del día anterior.
+
+Cada paso queda registrado. Si algo falla —por ejemplo, si los modelos de IA no están disponibles—, el error se registra, la ingesta queda guardada y el correo no avisa nada nuevo hasta que el día se reprocese. Esto se explica en detalle en [Uso](../plataforma/uso.qmd).

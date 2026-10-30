@@ -1,45 +1,40 @@
 # Productos {#sec-productos}
 
-Cada licitación pide uno o más **productos o servicios**, que Mercado Público llama ítems. Cada ítem tiene un código de producto del {{< var unspsc.name >}} ({{< var unspsc.sigla >}}), una descripción libre y una cantidad. Los ítems son la forma más estructurada de saber *qué* se compra.
+Cada licitación pide uno o más **productos** (Mercado Público los llama ítems). Mientras el título y la descripción los escribe libremente el comprador, cada producto lleva un **código estándar** que dice qué se compra con mucha menos ambigüedad. Por eso los productos son una señal muy útil para descartar compras que no son servicios.
 
-## Tabla `tender_item`
+## Qué se guarda
 
-| Campo | Descripción |
-|---|---|
-| `tender_codigo`, `correlativo` | Licitación y número de ítem (únicos juntos) |
-| `codigo_producto` | Código de producto (UNSPSC de 8 dígitos en la mayoría de los casos) |
-| `codigo_categoria`, `categoria` | Clase UNSPSC y su nombre (ver [Categorías](categorias.qmd)) |
-| `nombre_producto` | Nombre del producto en el catálogo de ChileCompra |
-| `descripcion` | Descripción libre escrita por el comprador |
-| `unidad_medida`, `cantidad` | Cantidad pedida |
+La tabla `tender_item` tiene una fila por producto de cada licitación, con:
 
-: Tabla `tender_item` {#tbl-item}
+- el **código de producto** (estándar UNSPSC de 8 dígitos, explicado en el capítulo siguiente);
+- el **nombre** del producto en el catálogo de ChileCompra, por ejemplo «Servicios de asesoramiento sobre planificación estratégica»;
+- una **descripción** libre del comprador;
+- la cantidad y unidad de medida.
 
-Hay ~**1,49 millones** de ítems cargados.
+Hay unos **1,49 millones** de productos cargados.
+
+## Quién ganó cada producto
+
+Cuando una licitación se adjudica, Datos Abiertos informa qué proveedor ganó cada producto, cuánto y por qué monto. Eso se guarda en la tabla `tender_award` (unos **1,06 millones** de líneas). Es la base de la [vista de mercado](organismos.qmd) y de la identificación de lo que ha ganado la UAI.
+
+## Cómo se usan los productos
+
+- **Para descartar.** Si *todos* los productos de una licitación pertenecen a rubros que la unidad nunca provee (vehículos, equipos médicos, combustibles…), se excluye de inmediato. Basta que un producto sea un servicio para que la licitación siga en carrera.
+- **Para entender.** Los nombres de los productos se agregan al texto que leen la búsqueda por significado y los modelos de IA.
+- **Para comparar.** Las categorías de los productos definen qué licitaciones históricas son comparables en la vista de mercado.
 
 ::: {.callout-warning}
-## Particularidades de los datos
+## Dos particularidades de los datos
 
-- **Correlativos repetidos.** La API a veces repite el correlativo de un ítem dentro de una licitación (detectado el 28-oct-2026); la ingesta lo tolera para no perder el detalle.
-- **Códigos que no son UNSPSC.** El MOP usa códigos internos de 9 dígitos (`102101001` = consultoría, `101…` = obras). Antes se comparaban como UNSPSC y la regla de exclusión `10` (plantas y animales vivos) excluía *todas* las consultorías del MOP: 111 licitaciones en los días evaluados, incluida una evaluación de impacto de $358 millones. Desde la corrección, las reglas por rubro **solo se aplican a códigos de 8 dígitos**.
+**Códigos que no son estándar.** El Ministerio de Obras Públicas usa códigos propios de 9 dígitos (por ejemplo, `102101001` para consultorías). Al principio se leían como códigos estándar y una regla de exclusión pensada para «plantas y animales vivos» descartaba *todas* las consultorías del MOP: 111 licitaciones, entre ellas una evaluación de impacto de $358 millones. Hoy las reglas por rubro solo se aplican a códigos estándar de 8 dígitos.
+
+**Números de ítem repetidos.** La API a veces repite el número de un producto dentro de la misma licitación; la ingesta lo tolera para no perder la ficha.
 :::
 
-## Adjudicaciones: `tender_award`
+::: {.callout-tip}
+## En resumen
 
-Desde Datos Abiertos se carga, por ítem, la oferta seleccionada:
-
-| Campo | Descripción |
-|---|---|
-| `tender_codigo`, `correlativo` | Licitación e ítem adjudicado |
-| `rut_proveedor`, `nombre_proveedor` | Quién ganó |
-| `cantidad_adjudicada`, `monto_linea`, `moneda` | Cuánto y por cuánto |
-
-: Tabla `tender_award` {#tbl-award}
-
-Son ~**1,06 millones** de líneas adjudicadas. Alimentan la vista de mercado (competencia y montos de referencia) y permiten reconocer lo que ha ganado la UAI.
-
-## Uso en la plataforma
-
-- **Reglas de exclusión por rubro**: una licitación se excluye solo si *todos* sus ítems caen en rubros excluidos ([Modelos de decisión](../matching/decision.qmd)).
-- **Texto para embeddings y modelos**: los nombres de los ítems se agregan al título y la descripción.
-- **Mercado**: licitaciones con ítems en las mismas categorías permiten estimar competidores y montos típicos ([Digest de organismos](../digest/organismos.qmd)).
+- Los productos dicen *qué* se compra con un código estándar.
+- Sirven para descartar compras de bienes y para comparar con el histórico.
+- El capítulo siguiente explica cómo se organizan esos códigos en categorías.
+:::
