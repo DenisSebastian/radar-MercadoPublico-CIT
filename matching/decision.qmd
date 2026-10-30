@@ -18,7 +18,7 @@ La mayoría de las licitaciones se pueden descartar sin inteligencia artificial.
 
 Hay dos tipos de reglas:
 
-- **Reglas por título.** Buscan expresiones inequívocas en el título (sin tildes y en minúsculas): guardias, aseo, medicamentos, alimentación, combustibles, vestuario, arriendo de vehículos y pasajes aéreos. El perfil del CIT tiene 8.
+- **Reglas por título.** Buscan expresiones inequívocas en el título (sin tildes y en minúsculas): guardias, aseo, medicamentos, alimentación, combustibles, vestuario, arriendo de vehículos, pasajes aéreos e inspección técnica de obras (AIF, AIT, ITO). El perfil del CIT tiene 9.
 - **Reglas por rubro.** Excluyen la licitación si *todos* sus productos pertenecen a rubros que la unidad nunca provee, como vehículos o equipos médicos ([Categorías](../ingest/categorias.qmd)). El perfil del CIT tiene 43.
 
 Las reglas son deliberadamente conservadoras: solo excluyen lo inequívoco. Lo dudoso se deja pasar para que lo resuelvan las capas siguientes. Cada exclusión guarda su motivo y se puede revisar en la vista «Excluidas» de la bandeja. Antes de crear una regla nueva, el botón **«Probar»** muestra qué habría excluido en los últimos 30 días y advierte si habría botado alguna oportunidad buena.
@@ -53,7 +53,7 @@ El triaje hace **dos preguntas** a cada licitación:
 | Capacitación especializada | Cursos a funcionarios sobre SIG, datos, planificación, riesgo | **sí** |
 | Capacitación genérica | Liderazgo, bienestar, docentes, oficios, talleres comunitarios | no |
 | Una persona | Contratar a un profesional o analista individual | no |
-| Obra | Construcción, reparación o diseño de una obra específica | no |
+| Obra | Construcción, reparación, inspección técnica (AIF, ITO) o diseño de una obra específica | no |
 | Otra disciplina | Auditoría, legal, comunicaciones, informática, agronomía | no |
 | Operación | Bienes, licencias, eventos, transporte, alimentación | no |
 
@@ -132,11 +132,11 @@ Para medir los modelos hace falta una respuesta correcta con la que compararlos,
 | Versión anterior (juez sobre las 25 más parecidas) | 67 % | 41 % | 15 % |
 | Juez solo | 95 % | 35 % | 49 % |
 | Triaje: solo pregunta sí/no | 100 % | 20 % | 45 % |
-| **Triaje: sí/no + categoría** | **96 %** | **52 %** | **17 %** |
+| **Triaje: sí/no + categoría** | **96 %** | **54 %** | **16 %** |
 
-: Resultados sobre la referencia decision-v1 {#tbl-referencia}
+: Resultados sobre la referencia decision-v1. La fila del triaje incluye la regla que excluye inspección técnica de obras (AIF, AIT, ITO); sin ella, la precisión era 52 % {#tbl-referencia}
 
-La lectura es directa: el triaje con dos preguntas **encuentra casi todas las oportunidades** (96 %) y **la mitad de lo que deja pasar sirve** (52 %), mejor que el juez solo. La mayoría de los errores del juez eran capacitaciones genéricas, contrataciones de una persona, obras y consultorías de otras disciplinas: justo lo que la pregunta de categoría filtra.
+La lectura es directa: el triaje con dos preguntas **encuentra casi todas las oportunidades** (96 %) y **más de la mitad de lo que deja pasar sirve** (54 %), mejor que el juez solo. La mayoría de los errores del juez eran capacitaciones genéricas, contrataciones de una persona, obras y consultorías de otras disciplinas: justo lo que la pregunta de categoría filtra.
 
 ::: {.callout-warning}
 ## Validación pendiente

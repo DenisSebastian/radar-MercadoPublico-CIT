@@ -33,7 +33,7 @@ Entre ambas hay una tensión: subir una suele bajar la otra. Radar MP prioriza e
 |---|---|---|
 | Días ingeridos completos | 100 % de los días | Recuperación automática de hasta 14 días atrasados |
 | Recall | ≥ 95 % | 96 % en el dataset de referencia `decision-v1` |
-| Precisión | ≥ 50 % | 52 % en el dataset de referencia; falta medir con etiquetas del equipo |
+| Precisión | ≥ 50 % | 54 % en el dataset de referencia; falta medir con etiquetas del equipo |
 | Tamaño de la bandeja diaria | ~5 a 10 oportunidades | 5 el 27 de octubre de 2026 |
 | Tiempo de procesamiento diario | < 30 minutos | ~20 min de ingesta y ~6 min de análisis |
 | Etiquetas del equipo | ≥ 10 por clase | [pendiente]{.pendiente}: aún no hay etiquetas |
