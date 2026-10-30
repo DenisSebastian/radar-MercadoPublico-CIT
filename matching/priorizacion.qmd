@@ -64,11 +64,11 @@ Los umbrales de 75 y 55 y los pesos son un punto de partida razonable, no una ve
 </div>
 ```
 
-**Etiquetas.** En la bandeja, cada persona marca una licitación como relevante, no relevante, dudosa o «postular». Cada etiqueta guarda quién la puso y cuándo.
+**Etiquetas.** En la bandeja, cada persona marca una licitación como relevante, no relevante, dudosa o «postular». Qué pasa con cada marca se explica en detalle en [Usuarios](../digest/usuarios.qmd#el-ciclo-de-retroalimentación).
 
 **Calibración.** Con al menos diez etiquetas de cada clase, la pantalla de Configuración → Aprendizaje calcula precisión y recall para cada posible umbral y sugiere dos: el umbral de **media** que mejor equilibra ambas medidas, y el de **alta** que asegura al menos 80 % de precisión. También muestra en qué paso se perdieron las licitaciones relevantes: reglas, triaje, juez o puntaje.
 
-**Casos de ejemplo para el juez.** Al juzgar una licitación, el juez recibe hasta cuatro licitaciones **parecidas** que el equipo ya etiquetó, mitad relevantes y mitad no, con sus comentarios. Así el criterio del equipo entra en la decisión sin reentrenar ningún modelo. En el detalle se ve qué casos consultó.
+**Casos de ejemplo para el juez.** Al juzgar una licitación, el juez recibe hasta cuatro licitaciones **parecidas** que el equipo ya etiquetó, mitad relevantes y mitad no, con sus comentarios si los tienen. Así el criterio del equipo entra en la decisión sin reentrenar ningún modelo. En el detalle se ve qué casos consultó.
 
 **Medición sin sesgo.** Etiquetar solo lo que aparece en la bandeja no dice cuánto se perdió fuera de ella. Por eso `radar eval sample` arma muestras que incluyen también licitaciones excluidas, descartadas y sin evaluar, y les da un peso según cuántas representan. Así las métricas estiman todo el período.
 

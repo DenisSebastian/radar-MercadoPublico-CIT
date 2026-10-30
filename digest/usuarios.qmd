@@ -37,24 +37,65 @@ En Configuración → Alertas, por cada perfil: si las alertas están activas, q
 
 ## El ciclo de retroalimentación
 
-Lo que una persona hace con una oportunidad es la información más valiosa para mejorar la plataforma. Por eso la bandeja permite **etiquetar** cada licitación con una tecla:
+En el detalle de cada licitación hay cuatro botones, que también se activan con una tecla:
 
-| Tecla | Etiqueta | Significa |
-|---|---|---|
-| `1` | Relevante | Sirve a la unidad |
-| `2` | No relevante | No sirve; idealmente con un comentario de por qué |
-| `3` | Dudoso | No está claro; requiere conversar |
-| `p` | Postular | La unidad decidió preparar una oferta |
+| Botón | Tecla | Qué se guarda | Significa |
+|---|---|---|---|
+| 👍 Relevante | `1` | `relevante` | Sirve a la unidad |
+| 👎 No relevante | `2` | `no_relevante` | No sirve |
+| ? Dudoso | `3` | `dudoso` | No está claro; requiere conversar |
+| ✈ Postular | `p` | `relevante` + `postulado` | Sirve y la unidad decidió preparar una oferta |
 
-: Etiquetas del equipo {#tbl-etiquetas}
+: Botones de retroalimentación {#tbl-etiquetas}
 
-Cada etiqueta guarda quién la puso y cuándo. Con ellas la plataforma mide su precisión y recall, calibra los umbrales y muestra al juez casos parecidos ya decididos ([Modelos de priorización](../matching/priorizacion.qmd)). Una persona que etiqueta diez licitaciones a la semana mejora la bandeja de todo su equipo.
+Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en un historial con la persona y la hora.
+
+### ¿Qué pasa cuando alguien hace clic en 👍?
+
+Lo primero que hay que saber es lo que **no** pasa: el clic **no cambia el puntaje** de esa licitación, **no la vuelve a juzgar** y **no reentrena** ningún modelo. La licitación sigue en el mismo lugar de la bandeja. Lo único inmediato es que la etiqueta queda guardada y se puede filtrar («Etiqueta: Relevantes»).
+
+La etiqueta sirve **después**, de tres formas:
+
+**1. Como caso de referencia para el juez (desde el día siguiente).** Cuando el juez evalúa una licitación nueva, la plataforma busca entre las ya etiquetadas las que más se le parecen —coseno entre licitaciones de al menos 0,55, con los mismos *embeddings* de la [búsqueda por significado](../matching/embeddings.qmd)— y le muestra hasta cuatro, mitad relevantes y mitad no. Por ejemplo, si el equipo marca 👍 en *Actualización plan regulador comuna de Hijuelas* (`3775-35-LP26`), una licitación como *Actualización PLADECO comuna de Natales*, que se le parece con coseno 0,57, llegaría al juez con esta línea extra en sus instrucciones:
+
+```text
+Casos parecidos ya evaluados (referencia del criterio del equipo;
+juzga esta licitación por su propio contenido):
+- "ACTUALIZACIÓN PLAN REGULADOR COMUNA DE HIJUELAS" → RELEVANTE
+```
+
+Un 👎 funciona igual, pero como ejemplo de lo que **no** sirve. Así el criterio del equipo entra en las decisiones sin reentrenar nada, y en el detalle de la licitación nueva se ven los casos que consultó el juez. Solo afecta a lo que se juzgue de ahí en adelante; para aplicarlo a días pasados hay que reprocesarlos con `--rejudge`.
+
+**2. Para calibrar los umbrales (cuando hay suficientes).** Con al menos diez licitaciones marcadas 👍 y diez 👎, Configuración → Aprendizaje compara las etiquetas con el puntaje final y sugiere los umbrales de prioridad: el de **media** que mejor equilibra precisión y recall, y el de **alta** que asegura al menos 80 % de precisión. También muestra en qué paso quedaron las licitaciones que el equipo marcó relevantes y el sistema no priorizó (reglas, triaje, juez). La sugerencia no se aplica sola: alguien tiene que presionar *Usar sugerencia* ([Modelos de priorización](../matching/priorizacion.qmd)).
+
+**3. Para medir si la plataforma acierta.** Las etiquetas son la respuesta correcta contra la que se calculan la precisión y el recall del sistema, y en Administración se ve cuántas etiquetas puso cada persona.
+
+| Etiqueta | Caso para el juez | Calibración | Métricas |
+|---|---|---|---|
+| 👍 Relevante | positivo | positivo | positivo |
+| ✈ Postular | positivo | positivo | positivo (además queda marcada como postulada) |
+| 👎 No relevante | negativo | negativo | negativo |
+| ? Dudoso | no se usa | no se usa | no se usa |
+
+: Para qué sirve cada etiqueta {#tbl-etiquetas-uso}
+
+«Dudoso» sirve para organizar el trabajo del equipo, pero no enseña nada a la plataforma; conviene resolverlo después a 👍 o 👎.
+
+### Qué etiquetar para que sirva
+
+- **Etiquetar también lo que no sirve.** Un 👎 en una licitación con prioridad alta es la señal más útil: muestra un error del sistema. Si solo se marcan las buenas, la calibración no tiene con qué comparar.
+- **Revisar de vez en cuando las otras vistas.** Las etiquetas de la bandeja se concentran en puntajes altos. Una oportunidad marcada 👍 en «Descartadas por el juez» o «Excluidas por filtro» muestra qué se está perdiendo.
+- **Usar «Postular» cuando corresponda.** Hoy cuenta igual que 👍, pero deja registrado qué se decidió postular, la base para [aprender de las postulaciones](../futuro/aprendizaje-postulaciones.qmd).
+- **Comentar el porqué cuando sea posible.** El juez también ve el comentario de cada caso («no: es venta de equipos»). Hoy la bandeja no tiene un campo para escribirlo; los comentarios entran por la planilla de etiquetado (`radar eval`).
+
+Una persona que etiqueta diez licitaciones a la semana mejora la bandeja de todo su equipo.
 
 ::: {.callout-warning}
 ## Pendiente para el uso real
 
 - Configurar el servidor de correo y la lista de destinatarios del CIT. [pendiente]{.pendiente}
-- Comenzar a etiquetar: hoy no hay etiquetas del equipo. [pendiente]{.pendiente}
+- Comenzar a etiquetar: hoy no hay etiquetas del equipo, así que el juez todavía no recibe casos de referencia y la calibración no tiene datos. [pendiente]{.pendiente}
+- Agregar un campo de comentario en la bandeja. [pendiente]{.pendiente}
 - Hoy las personas no tienen cuenta y la etiqueta guarda un nombre escrito a mano. Inicio de sesión, preferencias personales (servicios, regiones, frecuencia) y resúmenes semanales son parte de [Trabajos futuros](../futuro/index.qmd).
 :::
 
@@ -62,6 +103,6 @@ Cada etiqueta guarda quién la puso y cuándo. Con ellas la plataforma mide su p
 ## En resumen
 
 - Las personas reciben un correo diario sin repeticiones y revisan la bandeja cuando quieren.
-- Sus etiquetas son la señal con que la plataforma aprende.
+- Un 👍 o 👎 no cambia nada al instante: enseña al juez desde el día siguiente, calibra los umbrales y mide los aciertos.
 - La parte siguiente, **Plataforma**, muestra la web en detalle.
 :::
