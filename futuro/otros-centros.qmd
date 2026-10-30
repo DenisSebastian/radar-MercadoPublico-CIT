@@ -1,0 +1,45 @@
+# Integración de otros centros {#sec-otros-centros}
+
+El modelo de datos de Radar MP ya está organizado por **perfil**: cada uno tiene su catálogo de servicios, reglas, pesos, triaje y alertas. Integrar otros centros y escuelas de la UAI —y luego instituciones externas— consiste en agregar perfiles y, sobre todo, **personas y organizaciones con privilegios**.
+
+## Qué ya existe
+
+- Varios perfiles conviven en la misma base; el matching corre por perfil.
+- Las ingestas son compartidas: una licitación se descarga una vez y se evalúa contra todos los perfiles.
+- El juez y el triaje se parametrizan con la descripción del perfil (`triaje.centro`, catálogo).
+
+## Qué falta
+
+### Personas, organizaciones y roles
+
+- **Inicio de sesión** con SSO (Google Workspace UAI, ClaveÚnica) en lugar de un nombre libre.
+- **Multi-organización**: cada institución con sus perfiles, catálogos, reglas, etiquetas y alertas (`org_id` en las tablas de perfil y equipo).
+- **Roles**: superadmin, admin de organización, analista y lector ([Administración](../plataforma/administracion.qmd)).
+- **Auditoría**: quién cambió qué umbral, regla o servicio y cuándo.
+
+### Plantillas por tipo de unidad
+
+Catálogos de partida que cada unidad adapta: escuelas de negocios, ingeniería, derecho, salud, centros de investigación, educación continua. Para educación continua, la capacitación genérica que hoy es ruido para el CIT es justamente la oportunidad.
+
+### Colaboración entre centros
+
+- Una misma licitación puede ser relevante para varios perfiles: detectar **oportunidades conjuntas** y proponer consorcios entre unidades.
+- Comentarios, asignación de responsables y visibilidad cruzada según privilegios.
+
+## Consideraciones técnicas
+
+| Tema | Impacto |
+|---|---|
+| Costo del juez | Cada perfil agrega juicios; el triaje (~1 s) es lo que hace viable evaluar varias decenas de perfiles por día |
+| Embeddings | Se calculan una vez por licitación; solo los servicios son por perfil |
+| Hardware | Con muchos perfiles conviene un servidor con GPU (vLLM) en lugar de un Mac |
+| Configuración | El asistente de perfiles reduce el trabajo de dar de alta una unidad ([Asistentes](asistentes.qmd)) |
+
+: Consideraciones para varios perfiles {#tbl-multiperfil}
+
+::: {.callout-tip}
+## Por completar
+
+- Levantar con la universidad la lista de unidades interesadas y sus servicios. [pendiente]{.pendiente}
+- Piloto con un segundo perfil (por ejemplo, educación ejecutiva). [pendiente]{.pendiente}
+:::

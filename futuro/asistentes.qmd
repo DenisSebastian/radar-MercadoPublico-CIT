@@ -1,0 +1,39 @@
+# Asistentes de IA {#sec-asistentes}
+
+Los asistentes son agentes conversacionales que ayudan a las personas en las tareas que hoy requieren más criterio experto: **definir qué buscar** y **preparar una postulación**.
+
+## Asistente de perfiles
+
+Una institución describe sus capacidades en lenguaje natural («hacemos estudios de movilidad y modelos de transporte para municipios») y el asistente:
+
+1. propone servicios con descripción, ejemplos y palabras clave;
+2. busca en el histórico licitaciones parecidas y las muestra para confirmar o descartar;
+3. sugiere reglas de exclusión a partir de lo que el usuario rechaza;
+4. muestra en vivo qué licitaciones traería y cuáles excluiría (reutilizando «Probar»);
+5. vigila la **salud del perfil**: avisa cuando un servicio no trae nada en semanas, cuando una regla bota oportunidades o cuando sube el ruido de un servicio.
+
+## Asistente de postulación
+
+Para una licitación marcada para postular:
+
+- **Lectura de bases** (PDF técnicas y administrativas): requisitos, garantías, experiencia exigida, criterios de evaluación y plazos, en una ficha resumida.
+- **Checklist de admisibilidad**: documentos y requisitos formales con responsables y fechas.
+- **Equipo y experiencia**: propone integrantes y proyectos previos del centro que cumplen la experiencia exigida.
+- **Referencias de mercado**: montos adjudicados típicos y competidores probables ([Digest de organismos](../digest/organismos.qmd)).
+- **Borradores**: estructura de la propuesta técnica a partir de propuestas anteriores del centro.
+
+## Asistente de consulta
+
+Preguntas en lenguaje natural sobre el mercado: «¿qué gobiernos regionales licitaron estudios de riesgo en 2025?», «¿quién gana las consultorías de PLADECO en la Región de Los Lagos?». Se responde con consultas sobre la base y se citan las licitaciones.
+
+## Principios
+
+- **Local primero**: los documentos del centro y sus propuestas no salen de la máquina.
+- **Humano en el bucle**: el asistente propone, la persona decide.
+- **Trazable**: cada sugerencia cita la licitación, el documento o el dato de origen.
+
+::: {.callout-tip}
+## Por completar
+
+Definir el alcance del primer asistente a construir (perfiles o postulación) y sus fuentes de documentos internos. [pendiente]{.pendiente}
+:::

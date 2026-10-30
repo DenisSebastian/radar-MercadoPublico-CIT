@@ -1,0 +1,95 @@
+# Diseño general {#sec-diseno}
+
+## Vista de sistema
+
+Radar MP es un conjunto de procesos locales alrededor de una base PostgreSQL. La ingesta trae datos de Mercado Público, el matching los cruza con el catálogo de servicios del centro usando modelos de IA locales, y la web y el digest entregan el resultado al equipo.
+
+```{=html}
+<iframe class="diagrama alto" src="diagramas/01-arquitectura.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="diagramas/01-arquitectura.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+## Componentes y tecnologías
+
+| Componente | Tecnología | Rol | Dirección |
+|---|---|---|---|
+| Base de datos | PostgreSQL 16 + `pgvector`, `unaccent`, `pg_trgm` (Docker) | Licitaciones, vectores, decisiones, etiquetas, corridas | `:5432` |
+| Backend | Python 3.13 · FastAPI · SQLAlchemy 2 · Alembic · Pydantic · httpx (uv) | Lógica y API REST con OpenAPI | `:8000` |
+| Worker | APScheduler (`radar worker`) | Ingesta 06:00, matching y digest; Datos Abiertos el día 3 | — |
+| IA local | Ollama: `embeddinggemma` (768d), `nimble` (decisión) y `qwen3.5` (9,7B, juez) | Embeddings, triaje y juicio con salida estructurada | `:11434` |
+| Analítica | DuckDB | Lectura rápida de los CSV mensuales de Datos Abiertos | — |
+| Web | React + Vite + TypeScript · TanStack Query · Tailwind | Bandeja, detalle, catálogo, configuración, operación | `:5173` / `:8080` |
+| CLI | Typer (`radar …`) | Ingesta, matching, evaluación, digest, referencia | — |
+
+: Componentes de Radar MP {#tbl-componentes}
+
+Los tipos del frontend se generan desde el esquema OpenAPI de la API (`npm run gen:api`): un cambio de contrato rompe la compilación, no la pantalla.
+
+## Decisiones de arquitectura
+
+| Decisión | Elegido | Alternativa | Razón |
+|---|---|---|---|
+| Lenguaje | Python | Seguir en R / Shiny | Ecosistema de LLM, embeddings y web mucho más maduro |
+| Base de datos | Postgres + pgvector | SQLite / base vectorial aparte | Un solo motor para datos, vectores (HNSW coseno) y texto en español |
+| Tareas | APScheduler en un proceso | Airflow / Celery | Un trabajo diario y reprocesos no justifican más infraestructura |
+| LLM | Ollama nativo + JSON Schema | "Responde en JSON" / Docker | Validación estricta con Pydantic; en Mac, Ollama nativo usa la GPU (Metal) |
+| Datos históricos | Datos Abiertos (ZIP mensual) | Pedir todo a la API | La API limita a ~1 req / 2 s; un mes por ZIP tarda ~10 s |
+| Frontend | React + TS | Streamlit | Uso diario de un equipo: tablas rápidas, filtros en URL, atajos de teclado |
+
+: Decisiones principales {#tbl-decisiones}
+
+## Flujo en cinco etapas
+
+```{=html}
+<iframe class="diagrama bajo" src="diagramas/00-etapas.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="diagramas/00-etapas.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+1. **Ingest**: API diaria y Datos Abiertos → `tender`, `tender_item`, `buyer`, `tender_award`, `product_category`.
+2. **Matching**: reglas → retrieval híbrido → triaje → juez LLM → puntaje y prioridad → `match`.
+3. **Digest**: inteligencia de mercado por organismo y alertas por correo a los usuarios.
+4. **Plataforma**: bandeja, detalle, catálogo, configuración y operación.
+5. **Evaluación y mejora**: etiquetas → métricas → calibración → few-shot.
+
+## Modelo de datos
+
+```{=html}
+<iframe class="diagrama alto" src="diagramas/06-datos.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="diagramas/06-datos.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+| Grupo | Tablas | Contenido |
+|---|---|---|
+| Fuentes | `tender`, `tender_item`, `buyer`, `tender_award`, `product_category` | Licitaciones, ítems UNSPSC, organismos, adjudicaciones y jerarquía de rubros |
+| Vectores | `tender_embedding`, `service_vector` | Embeddings de licitaciones y de servicios (768 dimensiones, índice HNSW coseno) |
+| Perfil | `profile`, `service`, `profile_rule` | Catálogo de servicios, configuración (pesos, umbrales, triaje, alertas) y reglas de exclusión |
+| Decisiones | `match` | Una fila por licitación × perfil: etapa, puntajes, triaje, juicio LLM, prioridad |
+| Equipo | `feedback`, `alert` | Etiquetas del equipo y licitaciones ya avisadas |
+| Evaluación | `eval_sample`, `eval_sample_item` | Muestras estratificadas para medir sin sesgo |
+| Operación | `ingest_run` | Registro de cada corrida (ingesta, Datos Abiertos, matching, digest) |
+
+: Tablas por grupo {#tbl-tablas}
+
+## Perfiles
+
+Toda la lógica de matching está parametrizada por un **perfil** (`profile`): un catálogo de servicios con descripción, ejemplos y palabras clave, un conjunto de reglas de exclusión y una configuración de pesos, umbrales, triaje y alertas. Hoy existe un perfil, `cit`, definido en `backend/catalogs/cit.yaml`. El modelo de datos ya admite varios perfiles, lo que abre la puerta a otros centros de la universidad ([Integración de otros centros](futuro/otros-centros.qmd)).
+
+## Estructura del repositorio
+
+```
+backend/src/radar/
+  mp_client/   cliente de api.mercadopublico.cl
+  ingest/      ingesta diaria y catch-up
+  opendata/    carga de Datos Abiertos ChileCompra
+  llm/         cliente Ollama (embeddings, decisión y chat JSON)
+  matching/    catálogo, reglas, retrieval, triaje, juez, few-shot, puntaje
+  evals/       muestreo, etiquetas, métricas, calibración, referencia
+  alerts/      digest de alertas (email / .eml)
+  market.py    competencia, montos de referencia y comprador
+  jobs.py      corridas registradas, worker y reprocesos
+  api/         FastAPI
+  cli.py       comando `radar`
+backend/catalogs/   catálogos de servicios por perfil (cit.yaml)
+backend/reference/  datasets de referencia (decision-v1)
+frontend/src/pages/ Bandeja, Detalle, Catálogo, Configuración, Operación
+```

@@ -1,0 +1,43 @@
+# Aprendizaje de postulaciones con IA {#sec-aprendizaje-postulaciones}
+
+Hoy Radar MP aprende de **etiquetas explícitas** (relevante, no relevante, dudoso, postulado) a través de la calibración y los ejemplos *few-shot*. El siguiente paso es aprender del **resultado** de cada postulación y de la **interacción** del equipo con la bandeja.
+
+## Fuentes de aprendizaje
+
+| Señal | Origen | Qué enseña |
+|---|---|---|
+| Etiquetas | Bandeja (ya existe) | Qué le sirve al equipo |
+| Postulaciones | Etiqueta `postulado` (ya existe) + embudo de postulación | A qué se decide postular |
+| Resultados | Adjudicaciones de Datos Abiertos (RUT UAI) | Qué se gana y qué se pierde, contra quién y por cuánto |
+| Interacción | CRM: clics, aperturas, tiempo de lectura | Interés implícito por persona y tema |
+| Histórico | ~339 mil licitaciones y ~1 M adjudicaciones | Competencia, precios y estacionalidad |
+
+: Señales de aprendizaje {#tbl-senales}
+
+## Propuestas
+
+### Embudo de postulación
+
+Registrar el recorrido de cada oportunidad: evaluar → preparar → postular → resultado (ganada / perdida / desierta), con responsables, plazos y documentos. Cruzarlo automáticamente con las adjudicaciones de Datos Abiertos para cerrar el ciclo sin trabajo manual.
+
+### Modelo pequeño en cascada
+
+El juez grande limita la cantidad de juicios por día. El triaje con `nimble` ya mostró que un modelo pequeño puede filtrar con recall ≥ 96 %. El siguiente paso es **ajustar un modelo pequeño local** (~4B) con las etiquetas y resultados del equipo:
+
+- decide en milisegundos los casos claros;
+- envía al LLM grande solo lo dudoso o complejo (bases técnicas largas, PDF);
+- se evalúa contra el dataset de referencia y la muestra estratificada antes de reemplazar nada.
+
+### Probabilidad de adjudicación
+
+Con el histórico de adjudicaciones, estimar la probabilidad de ganar según categoría, comprador, competidores habituales, monto y región, y usarla como un **quinto componente** del puntaje final.
+
+### Ranking personalizado
+
+Un perfil de intereses por persona a partir de su interacción, para ordenar la bandeja de cada usuario dentro de las oportunidades de su organización.
+
+## Riesgos
+
+- **Sesgo hacia lo ya ganado**: las adjudicaciones UAI son casi todas docencia; usarlas sin cuidado empuja al sistema hacia capacitación (por eso hoy están desactivadas como ejemplos positivos).
+- **Pocos datos**: el centro postula a pocas licitaciones al año; los modelos de resultado deben combinarse con el histórico nacional.
+- **Medición**: cada cambio se valida con la muestra estratificada y la referencia, y se versiona en `match`.

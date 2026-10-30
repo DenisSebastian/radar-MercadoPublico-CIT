@@ -1,0 +1,96 @@
+# Administración {#sec-administracion}
+
+La administración define **qué busca** la plataforma (perfil, servicios, reglas) y **cómo decide** (pesos, umbrales, triaje, alertas). Todo se edita desde la web o la CLI, sin tocar código. Este capítulo resume, por objeto, cómo crear, modificar y eliminar.
+
+| Objeto | Crear | Modificar | Eliminar |
+|---|---|---|---|
+| Perfil | CLI: `radar catalog load <yaml>` | YAML + `catalog load`; configuración desde la web | [pendiente]{.pendiente} (sin endpoint) |
+| Servicio | Web: Catálogo → nuevo · `PUT /services/{slug}` | Web: Catálogo · mismo endpoint | Desactivar (`activo = false`) |
+| Regla de exclusión | Web: Configuración → Reglas | Web: Configuración → Reglas | Web: quitar la regla y guardar |
+| Configuración | Viene con el perfil | Web: Configuración · `PUT /config` | — |
+| Etiqueta | Bandeja (teclado) · `PUT /feedback` | Bandeja (otra tecla) | Repetir la tecla · `DELETE /feedback/{codigo}` |
+
+: Operaciones de administración por objeto {#tbl-admin}
+
+## Crear
+
+### Perfil
+
+Un perfil se crea desde un archivo YAML con su descripción, configuración, servicios y reglas:
+
+```bash
+uv run radar catalog load catalogs/cit.yaml
+```
+
+Estructura mínima:
+
+```yaml
+id: cit
+nombre: Centro de Inteligencia Territorial (UAI)
+descripcion: >
+  Qué hace el centro y qué NO hace (bienes, obras, operación…).
+config:
+  llm_top_k: 25
+  weights: {llm: 0.60, retrieval: 0.15, economico: 0.15, plazo: 0.10}
+  prioridad: {alta: 75, media: 55}
+  triaje: {activo: true, modelo: nimble:latest, max_juicios: 25}
+services:
+  - slug: analisis-territorial-sig
+    nombre: Análisis territorial y SIG
+    descripcion: ...
+    ejemplos: [...]
+    keywords: [...]
+rules:
+  exclude_title: [...]
+  exclude_unspsc: [...]
+```
+
+### Servicio
+
+En **Catálogo**, «Nuevo servicio»: slug, nombre, descripción, ejemplos y palabras clave. Antes de guardar, **«Probar»** muestra qué licitaciones de los últimos 30 días traería. Al guardar se calculan sus vectores (`PUT /profiles/{id}/services/{slug}` crea si el slug no existe).
+
+Buenas prácticas:
+
+- La **descripción** dice qué entrega el centro, no solo el tema.
+- Los **ejemplos** son títulos o descripciones reales de licitaciones que sí calzan; cada uno se vuelve un vector, así que la variedad importa más que la cantidad.
+- Las **palabras clave** son prefijos sin tildes (`geoespacial`, `catastr`).
+
+### Regla de exclusión
+
+En **Configuración → Reglas**: tipo (título o UNSPSC), valor (expresión regular o prefijo) y nota. «Probar» (`POST /rules/test`) muestra qué excluiría en los últimos días y **avisa si bota oportunidades alta o media**. Excluir solo lo inequívoco: lo dudoso lo resuelven el triaje y el juez.
+
+## Modificar
+
+- **Servicios**: editar en Catálogo y guardar recalcula sus vectores. El cambio afecta a los días que se procesen desde ahora; para re-evaluar días pasados: `radar match --date … --rejudge`.
+- **Pesos y umbrales**: en Configuración → Puntaje. Tras guardar, **«Recalcular 14 días sin LLM»** reaplica los puntajes en segundos.
+- **Triaje**: activar/desactivar, cambiar de modelo (`nimble`, `tev1`), garantía top y máximo de juicios. Cambiar de modelo requiere `--retriage` para días pasados.
+- **Alertas**: prioridades, solo abiertas y destinatarios (se valida el formato de cada correo).
+- **Reglas**: `PUT /profiles/{id}/rules` reemplaza el conjunto completo.
+
+::: {.callout-warning}
+## El YAML no se actualiza solo
+
+Las ediciones de la web viven en la base de datos. Para versionarlas, descargar el catálogo desde la web (`GET /profiles/{id}/catalog.yaml`) y guardarlo en el repositorio. **Ojo**: `radar catalog load` sobrescribe las ediciones hechas en la web (salvo la configuración de alertas).
+:::
+
+## Eliminar
+
+- **Servicio**: se **desactiva** (`activo = false`) en lugar de borrarse, para conservar la trazabilidad de los `match` históricos que lo referencian. Un servicio inactivo no participa del matching (en el Catálogo aparece tachado). Al recargar un YAML, los servicios que ya no están en el archivo también quedan inactivos.
+- **Regla**: quitarla de la lista en Configuración → Reglas y guardar. Las licitaciones ya excluidas por ella vuelven al flujo al reprocesar los días.
+- **Etiqueta**: repetir la tecla en la bandeja o `DELETE /profiles/{id}/feedback/{codigo}`.
+- **Perfil**: hoy no hay endpoint ni comando para eliminarlo. [pendiente]{.pendiente}
+
+## Brechas de administración
+
+La administración actual supone un solo equipo de confianza: no hay inicio de sesión ni roles, y cualquier persona con acceso a la web puede cambiar criterios. La propuesta para pasar a varias organizaciones con privilegios está en [Integración de otros centros](../futuro/otros-centros.qmd):
+
+| Rol propuesto | Puede |
+|---|---|
+| Superadmin | Crear organizaciones, modelos y fuentes; ver uso global |
+| Admin de organización | Personas y roles, catálogo, reglas, pesos, alertas |
+| Analista | Etiquetar, postular, búsquedas propias, comentarios |
+| Lector | Ver bandeja y detalle de su organización |
+
+: Roles propuestos {#tbl-roles}
+
+Además: auditoría de quién cambió qué umbral, regla o servicio y cuándo. [pendiente]{.pendiente}

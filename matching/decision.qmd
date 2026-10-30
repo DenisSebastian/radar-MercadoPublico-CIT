@@ -1,0 +1,145 @@
+# Modelos de decisión {#sec-decision}
+
+Los modelos de decisión responden una pregunta binaria: **¿esta licitación le sirve al centro?** Radar MP la responde en capas, de la más barata a la más cara, y cada capa guarda su motivo.
+
+| Capa | Modelo | Pregunta | Salida en `match` |
+|---|---|---|---|
+| Filtros duros | Reglas (regex y prefijos UNSPSC) | ¿Es inequívocamente algo que el centro no hace? | `stage = excluded`, `exclusion_reason` |
+| Triaje | Modelo de decisión local (`nimble`) | ¿Vale la pena juzgarla? ¿Qué entregable pide? | columnas `triage_*` |
+| Juez | LLM local (`qwen3.5`) | ¿Es relevante, para qué servicio, con qué evidencia? | columnas `llm_*` |
+
+: Capas de decisión {#tbl-capas}
+
+## Filtros duros
+
+Son reglas instantáneas que eliminan ~**73 %** del día antes de gastar embeddings o modelos.
+
+**Reglas por título** (`rules.exclude_title`): 8 expresiones regulares sobre el título normalizado (minúsculas, sin tildes) que excluyen solo lo inequívoco: guardias, aseo, medicamentos e insumos, alimentación, combustibles y repuestos, vestuario, arriendo de vehículos y pasajes aéreos.
+
+```yaml
+exclude_title:
+  - value: '\b(guardias?|vigilancia privada|seguridad privada)\b'
+    nota: servicios de guardias
+  - value: '\b(alimentacion|alimentos|colaciones|catering|raciones)\b'
+    nota: alimentación
+```
+
+**Reglas por rubro** (`rules.exclude_unspsc`): 43 prefijos UNSPSC; excluye la licitación solo si **todos** sus ítems de 8 dígitos caen en rubros excluidos ([Categorías](../ingest/categorias.qmd)).
+
+Cada exclusión guarda su motivo (`exclusion_reason`) y se revisa en la vista «Excluidas por filtro». En Configuración, «Probar» una regla muestra qué excluiría en los últimos 30 días y avisa si bota oportunidades alta o media.
+
+## Triaje con modelo de decisión
+
+El juez LLM tarda ~13 s por licitación; con ~140 recuperadas por día no alcanza a verlas todas. La versión anterior juzgaba solo el **top-25** por retrieval, y lo que quedaba fuera nunca se evaluaba: en la referencia, ese corte perdía un tercio de las relevantes (recall 67 %).
+
+El triaje resuelve ese cuello de botella con un **modelo de decisión** local (`nimble:latest`, alternativamente `tev1:4b`): un modelo pequeño ajustado para responder **solo la letra de una opción**, en ~1 s. Se llama por `/api/generate` de Ollama en modo *raw* con la plantilla de chat de Qwen (`backend/src/radar/matching/triage.py`).
+
+### Dos preguntas
+
+**Pregunta 1 — sí/no** (altísimo recall): *«Should {centro} bid on this public tender?»*
+
+- **Sí**: el entregable principal es un estudio, consultoría, plan, plataforma de datos/SIG o capacitación especializada que el centro podría entregar.
+- **No**: bienes, obras, licencias, mantención u operación, contratación de personal o servicios genéricos fuera de su especialidad.
+
+**Pregunta 2 — categoría del entregable** (solo para las que pasan): *«What is the main deliverable this public tender asks the supplier to provide?»*
+
+| Categoría | Entregable principal | ¿Pasa al juez? |
+|---|---|---|
+| `estudio` | Estudio, diagnóstico, plan, evaluación, línea base, encuesta, cartografía o consultoría sobre territorio, ciudad, ambiente, movilidad, energía, seguridad, sociedad o política pública | **sí** |
+| `plataforma` | Desarrollo a medida de plataforma de datos, dashboard, observatorio, visor SIG, sistema de indicadores o modelo predictivo/IA | **sí** |
+| `cap_esp` | Capacitación a funcionarios en SIG, datos, IA, planificación, política pública, riesgo o clima | **sí** |
+| `cap_gen` | Otra capacitación: habilidades blandas, liderazgo, bienestar, docentes, salud, oficios, talleres comunitarios | no |
+| `persona` | Contratación de un profesional, analista o apoyo administrativo individual | no |
+| `obra` | Obras, reparación o mantención, o diseño de ingeniería/arquitectura de una obra específica | no |
+| `otra_disc` | Consultoría de otra disciplina: auditoría, contabilidad, legal, comunicaciones, RR.HH., sistemas TI, agronomía | no |
+| `operacion` | Bienes, licencias, servicios TI/telecom, eventos, recintos, alimentación, transporte, guardias | no |
+
+: Categorías del triaje {#tbl-categorias-triaje}
+
+La categoría se pregunta **dos veces**, con las opciones en orden normal e invertido: si cualquiera de las dos respuestas cae en una categoría relevante, la licitación pasa. Un modelo que duda no descarta. Si el modelo falla o no responde una opción válida, tampoco se descarta.
+
+Las preguntas van en **inglés** porque así se ajustaron estos modelos (con la pregunta en español, `tev1` responde siempre la primera opción); la licitación va en su idioma original.
+
+### Efecto en el pipeline
+
+- Se triagan **todas** las recuperadas del día, no solo el top-k.
+- Pasan al juez las de categoría relevante, hasta `max_juicios` (25) por día; `garantia_top` permite juzgar las N de mejor retrieval aunque el triaje las descarte (hoy 0).
+- Lo que el triaje descarta queda `descartada`, aunque un juicio anterior dijera otra cosa (*veto del triaje*).
+
+```yaml
+triaje:
+  activo: true
+  modelo: nimble:latest
+  garantia_top: 0
+  max_juicios: 25
+```
+
+## Juez LLM
+
+```{=html}
+<iframe class="diagrama" src="../diagramas/04-juez.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/04-juez.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+El juez es `qwen3.5` (9,7B) en Ollama, con salida forzada por **JSON Schema** y validada con Pydantic (`temperature 0 · seed 42 · think=false · num_ctx 8192`).
+
+- **System prompt**: catálogo de servicios y criterios del centro: bienes, licencias y operación **no** son relevantes; la mantención secundaria dentro de un estudio es un **riesgo**, no un rechazo; **no considerar fechas** (el plazo se puntúa aparte); rúbrica de puntaje y ejemplos.
+- **User prompt**: licitación, comprador y sector, ítems, pista del retrieval y hasta 4 **casos parecidos ya etiquetados** por el equipo (*few-shot*, ver [Priorización](priorizacion.qmd)).
+
+```json
+{
+  "analisis":   "razonamiento breve (≤ 3 frases)",
+  "relevante":  true,
+  "score":      92,
+  "servicio":   "politicas-publicas-evaluacion",
+  "evidencia":  ["cita literal de la licitación", "..."],
+  "riesgos":    ["requiere experiencia previa en ..."],
+  "integra_uai":"si | posible | no",
+  "resumen":    "por qué sirve y cómo postular"
+}
+```
+
+`servicio` es un *enum* generado desde el catálogo más `ninguno`: el modelo no puede inventar servicios.
+
+### Salvaguardas en código
+
+- Las citas de **evidencia** que no aparecen literalmente en el título o la descripción se **descartan**.
+- `relevante = score ≥ 60 y servicio ≠ ninguno`: el número manda sobre el booleano.
+- Riesgos y evidencia se acotan a 3.
+- Si el juez falla, la licitación queda `sin_evaluar` y se registra: no bloquea el día.
+
+### Lecciones del backtest
+
+- La regla de «mantención» rechazaba una **plataforma de analítica de $650 millones** → se aclaró que la mantención secundaria es un riesgo (pasó a 65, media).
+- Un estudio socioeconómico **«ya cerrado»** bajaba de 95 a 10 → se quitó el estado del plazo del prompt y se ordenó ignorar fechas.
+
+## Evaluación: dataset de referencia `decision-v1`
+
+Para medir los modelos contra algo distinto del propio juez se construyó `backend/reference/decision-v1/`: **297 licitaciones reales** (dic-2025 y oct-2026, muestra estratificada, 27 relevantes) etiquetadas a ciegas con una rúbrica escrita (`RUBRICA.md`). Las etiquetas iniciales son de Claude Opus; el equipo las reemplaza al resolver la planilla de casos en disputa.
+
+| Sistema | Recall | Precisión | Pasan |
+|---|---:|---:|---:|
+| Pipeline top-k anterior (alta/media) | 67 % | 41 % | 15 % |
+| Juez qwen (solo juzgadas) | 95 % | 35 % | 49 % |
+| nimble sí/no | 100 % | 20 % | 45 % |
+| **nimble sí/no + categoría** | **96 %** | **52 %** | **17 %** |
+| tev1 sí/no + categoría | 70 % | 63 % | 10 % |
+
+: Resultados sobre la referencia decision-v1 (conteo en la muestra) {#tbl-referencia}
+
+Latencia de nimble: media 1,2 s, p95 2,0 s. Al invertir las opciones cambia la respuesta en 3 % de los casos, ninguno relevante.
+
+La mayoría de los falsos positivos del juez son **capacitación genérica** (oficios, liderazgo, bienestar laboral, docentes), contratación de una persona, obras y consultorías de otra disciplina: exactamente lo que la pregunta de categoría filtra.
+
+```bash
+uv run radar reference predict --model nimble:latest --model tev1:4b   # ~20 min
+uv run radar reference report --out reference/decision-v1/REPORTE.md
+uv run radar reference review-export      # planilla con los casos en disputa
+uv run radar triage-bench --since 2026-10-27 --until 2026-10-28 --model tev1:4b
+```
+
+::: {.callout-warning}
+## Validación pendiente
+
+La pregunta de categoría se diseñó mirando los errores de esta misma muestra: hay que validarla en días nuevos y con etiquetas del equipo. La muestra de evaluación incluye el estrato `triaje_no` para medir con etiquetas humanas cuánto relevante descarta el triaje. [pendiente]{.pendiente}
+:::

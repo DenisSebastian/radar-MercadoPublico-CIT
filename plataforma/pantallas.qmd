@@ -1,0 +1,87 @@
+# Pantallas {#sec-pantallas}
+
+La web tiene cinco pantallas (`frontend/src/pages/`).
+
+| Pantalla | Archivo | Para qué |
+|---|---|---|
+| Bandeja | `Inbox.tsx` | Revisar y etiquetar oportunidades |
+| Detalle | `Detail.tsx` | Entender por qué una licitación se priorizó así |
+| Catálogo | `Catalog.tsx` | Editar y probar los servicios del perfil |
+| Configuración | `Config.tsx` | Pesos, umbrales, triaje, alertas, reglas y aprendizaje |
+| Operación | `Operations.tsx` | Estado del sistema, cobertura, corridas y reprocesos |
+
+: Pantallas de la web {#tbl-pantallas}
+
+## Bandeja
+
+::: {.captura}
+![Bandeja de oportunidades con panel de detalle](../images/v2/bandeja-panel.png){width="100%"}
+:::
+
+- **Vistas**: oportunidades (alta + media), baja, evaluadas, descartadas, excluidas por filtro.
+- **Filtros**: servicio, región, etiqueta, fechas, texto y «solo abiertas». Se guardan en la URL, así que una vista filtrada se puede compartir.
+- **Panel de detalle** sin salir de la lista; insignias del triaje (categoría del entregable).
+- **Teclado**: `j`/`k` mover · `1` relevante · `2` no relevante · `3` dudoso · `p` postular (repetir la tecla quita la etiqueta) · `Enter` abrir · `/` buscar · `Esc` cerrar.
+
+Endpoint: `GET /profiles/{id}/matches?prioridad=&servicio=&region=&q=&open_only=&feedback=&sort=`.
+
+## Detalle
+
+::: {.captura}
+![Detalle con la evaluación del juez](../images/v2/detalle-juez.png){width="70%"}
+:::
+
+- Prioridad, servicio y días al cierre.
+- **Evaluación del juez**: resumen, evidencia citada, riesgos y si permite involucrar estudiantes o investigación (`integra_uai`).
+- **Triaje**: respuesta sí/no y categoría del entregable.
+- **Puntajes**: final y sus cuatro componentes, más la cercanía con cada servicio.
+- Casos *few-shot* que vio el juez, modelo, fecha del juicio y versión del matcher.
+- La evidencia se **resalta** en la descripción y los ítems.
+- **Mercado**: competencia, montos de referencia y comportamiento del comprador ([Digest de organismos](../digest/organismos.qmd)).
+
+## Catálogo
+
+::: {.captura}
+![Catálogo de servicios con «Probar»](../images/v2/catalogo.png){width="100%"}
+:::
+
+Edición de la descripción, ejemplos y palabras clave de cada servicio. **«Probar»** muestra qué licitaciones recientes traería el borrador **antes de guardar** (`POST /profiles/{id}/services/preview`). Al guardar se recalculan los vectores del servicio.
+
+## Configuración
+
+::: {.columns}
+::: {.column width="49%"}
+::: {.captura}
+![Pesos y umbrales](../images/v2/config-puntaje.png){width="100%"}
+:::
+:::
+::: {.column width="2%"}
+:::
+::: {.column width="49%"}
+::: {.captura}
+![Reglas de exclusión](../images/v2/config-reglas.png){width="100%"}
+:::
+:::
+:::
+
+- **Puntaje**: pesos (validados: deben sumar 1), umbrales alta/media, montos mínimo y máximo.
+- **Selección para el juez**: top-k, retrieval mínimo y panel de **triaje** (activo, modelo, garantía top, máximo de juicios).
+- **Alertas**: activas, prioridades, solo abiertas, destinatarios y vista previa del digest.
+- **Reglas**: 51 reglas de exclusión (título y UNSPSC) editables, con «Probar».
+- **Aprendizaje**: calibración de umbrales con las etiquetas.
+
+::: {.captura}
+![Calibración con etiquetas](../images/v2/config-aprendizaje.png){width="80%"}
+:::
+
+## Operación
+
+::: {.captura}
+![Vista de operación](../images/v2/operacion-top.png){width="100%"}
+:::
+
+- Estado de la base, ticket de Mercado Público, Ollama (modelos presentes) y correo.
+- Próximas ejecuciones del worker.
+- **Cobertura de 14 días**: licitaciones, con detalle, procesadas, juzgadas y oportunidades por día, con botones para **ingerir o procesar** días incompletos.
+- Reprocesos por rango: ingesta, matching (con o sin LLM, re-juzgar) y digest.
+- Corridas recientes con duración y error; los errores ya resueltos no se muestran como pendientes.

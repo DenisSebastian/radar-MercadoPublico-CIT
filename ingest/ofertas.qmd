@@ -1,0 +1,76 @@
+# Ofertas {#sec-ofertas}
+
+En este libro llamamos **ofertas** a las oportunidades de negocio que publica el Estado: las licitaciones de Mercado Público. Cada una se identifica por su código externo (por ejemplo `1351461-5-LR25`) y se guarda en la tabla `tender`.
+
+## Fuente diaria: API de Mercado Público
+
+El cliente `MPClient` (`backend/src/radar/mp_client/`) usa dos llamadas:
+
+- **Listado**: `licitaciones.json?fecha=DDMMAAAA&estado=publicada` → códigos, nombre, estado y fecha de cierre de las licitaciones publicadas ese día.
+- **Detalle**: `licitaciones.json?codigo=…` → descripción, comprador, unidad de compra, montos, fechas, tipo y los ítems con su código UNSPSC.
+
+La API responde **429 / código 10500** («peticiones simultáneas») si se le pide rápido: con 1 s entre requests falla ~50 % de las veces; con 2 s, ~13 %. Por eso el cliente serializa las llamadas con un **mínimo de 2 s** entre requests (`MP_MIN_INTERVAL_S`) y reintenta con *backoff* exponencial hasta 6 veces. Un día típico (~500 licitaciones con detalle) tarda unos **20 minutos**. El ticket de acceso nunca aparece en errores ni registros.
+
+```bash
+uv run radar ingest --date 2026-10-27      # un día (por defecto, ayer en hora de Chile)
+uv run radar ingest --catch-up             # días pendientes desde la última corrida completa
+```
+
+Opciones útiles: `--until` (rango), `--no-details` (solo listado), `--limit` (máximo de detalles), `--refresh` (volver a pedir detalles).
+
+### Escritura
+
+- `upsert_listing` → `tender` (código, nombre, estado, cierre, `first_seen_date`).
+- `upsert_detail` → `tender` + `tender_item` + `buyer`; `raw` guarda el JSON original y `detail_fetched_at` la fecha del detalle.
+
+`first_seen_date` es la fecha del listado en que la licitación apareció por primera vez: es el «día» con que el matching agrupa las licitaciones.
+
+### Catch-up y completitud
+
+Un día se considera **completo** solo si su corrida terminó `ok`, con detalles, sin límite y con **0 detalles fallidos**. Cada mañana el worker ingiere desde el día siguiente al último completo hasta ayer, con un máximo de 14 días; las brechas mayores se cubren con Datos Abiertos.
+
+## Fuente histórica: Datos Abiertos
+
+ChileCompra publica un ZIP mensual (`lic-da/AAAA-M.zip`, 15–35 MB) con un CSV que tiene una fila por licitación × ítem × oferta.
+
+```bash
+uv run radar opendata 2024-01 2025-09              # ZIPs ya descargados
+uv run radar opendata 2025-10 2026-09 --download   # descarga los que falten
+```
+
+- El archivo viene en **cp1252** con separador `;`: se transcodifica a UTF-8 y se lee con **DuckDB por nombre de columna** (105 columnas hasta 2025, 110 desde 2026).
+- Defectos tolerados y contados: decimales con coma (`5,2e+08`), montos absurdos (≥ 10¹⁵ → nulo), filas sin `CodigoExterno` (`omitidas`) y líneas con comillas o separadores corruptos (`malformadas`, p. ej. 849 de 160 mil en 2026-03, recuperadas con el módulo `csv` de Python).
+- Un mes tarda ~10 s. El worker carga el mes anterior el día 3 de cada mes.
+
+### Regla de fusión entre fuentes
+
+| Si la licitación… | Entonces |
+|---|---|
+| ya tiene detalle de la API | el archivo **solo rellena campos vacíos** |
+| cambió de estado | el **estado** siempre se actualiza (adjudicada, desierta, revocada…) |
+| no tiene detalle de la API | los ítems se reemplazan con los del archivo |
+| tiene adjudicaciones | siempre se reemplazan: vienen solo de esta fuente |
+
+: Fusión API ↔ Datos Abiertos {#tbl-fusion}
+
+`opendata_month` registra el último archivo mensual que trajo cada licitación.
+
+## Campos principales de `tender`
+
+| Campo | Descripción |
+|---|---|
+| `codigo` | Código externo (clave primaria) |
+| `nombre`, `descripcion` | Título y descripción completa |
+| `codigo_estado`, `estado` | Estado en Mercado Público (publicada, cerrada, adjudicada, desierta, revocada…) |
+| `tipo` | Tipo de licitación (L1, LE, LP, LR…) según monto |
+| `monto_estimado`, `moneda` | Presupuesto informado (cuando lo publica el comprador) |
+| `fecha_publicacion`, `fecha_cierre` | Fechas clave; el cierre alimenta el puntaje de plazo |
+| `codigo_organismo`, `unidad_*`, `comuna`, `region` | Comprador y localización (ver [Organismos](organismos.qmd)) |
+| `first_seen_date` | Día en que se vio por primera vez |
+| `raw` | JSON original de la API |
+
+: Campos de la tabla `tender` {#tbl-tender}
+
+## Texto para los modelos
+
+Para el embedding y los modelos de decisión, cada licitación se representa como título + descripción + nombres de sus ítems, normalizado (`radar.text.normalize`: minúsculas y sin tildes para reglas y palabras clave). El embedding se recalcula solo si cambia el hash del texto ([Modelos de decisión](../matching/decision.qmd)).

@@ -1,0 +1,15 @@
+# Plataforma {.unnumbered}
+
+La plataforma web es donde el equipo usa Radar MP día a día: revisa la bandeja priorizada, entiende el porqué de cada decisión, etiqueta, y —si tiene el rol— ajusta el catálogo, los criterios y la operación.
+
+| Capítulo | Contenido |
+|---|---|
+| [Pantallas](pantallas.qmd) | Bandeja, detalle, catálogo, configuración y operación |
+| [Uso](uso.qmd) | Levantamiento, rutina diaria, etiquetado y reprocesos |
+| [Administración](administracion.qmd) | Crear, modificar y eliminar perfiles, servicios, reglas, etiquetas y configuración |
+
+: Capítulos de la parte Plataforma {#tbl-plataforma}
+
+**Tecnología**: React + Vite + TypeScript + TanStack Query + Tailwind. En desarrollo corre en `http://localhost:5173` (Vite reenvía `/api/*` a la API en `:8000`); en Docker, en `http://localhost:8080` (nginx). Los tipos del cliente se generan desde OpenAPI (`npm run gen:api`).
+
+La API REST está documentada de forma interactiva en `http://localhost:8000/docs`.

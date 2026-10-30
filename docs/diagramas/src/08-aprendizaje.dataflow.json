@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Etapa 5 — Evaluación y mejora continua",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1070,
+      520
+    ],
+    "legend": {
+      "entries": {
+        "default": {
+          "label": "Flujo"
+        },
+        "emphasis": {
+          "label": "Camino principal"
+        },
+        "security": {
+          "label": "Control / exclusión"
+        },
+        "dashed": {
+          "label": "Secundario / asíncrono"
+        },
+        "database": {
+          "label": "Datos"
+        }
+      }
+    }
+  },
+  "stages": [
+    {
+      "label": "Señales"
+    },
+    {
+      "label": "Registro"
+    },
+    {
+      "label": "Análisis"
+    },
+    {
+      "label": "Ajuste"
+    },
+    {
+      "label": "Efecto"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "keys",
+      "type": "frontend",
+      "label": "Bandeja",
+      "sublabel": "teclas 1 · 2 · 3 · p",
+      "stage": 0,
+      "row": 0,
+      "height": 64
+    },
+    {
+      "id": "sheet",
+      "type": "external",
+      "label": "Planilla",
+      "sublabel": "muestra estratificada",
+      "stage": 0,
+      "row": 1,
+      "height": 64
+    },
+    {
+      "id": "awards",
+      "type": "external",
+      "label": "Adjudicaciones",
+      "sublabel": "Datos Abiertos",
+      "stage": 0,
+      "row": 2,
+      "height": 64
+    },
+    {
+      "id": "fb",
+      "type": "database",
+      "label": "feedback",
+      "sublabel": "etiqueta + nota",
+      "stage": 1,
+      "row": 0,
+      "height": 64
+    },
+    {
+      "id": "evs",
+      "type": "database",
+      "label": "eval_sample",
+      "sublabel": "estrato · peso",
+      "stage": 1,
+      "row": 1,
+      "height": 64
+    },
+    {
+      "id": "calib",
+      "type": "backend",
+      "label": "Calibración",
+      "sublabel": "P/R/F1 por umbral",
+      "stage": 2,
+      "row": 0,
+      "height": 64
+    },
+    {
+      "id": "metrics",
+      "type": "backend",
+      "label": "Métricas",
+      "sublabel": "v2 vs v1 ponderado",
+      "stage": 2,
+      "row": 1,
+      "height": 64
+    },
+    {
+      "id": "market",
+      "type": "backend",
+      "label": "Mercado",
+      "sublabel": "competencia · montos",
+      "stage": 2,
+      "row": 2,
+      "height": 64
+    },
+    {
+      "id": "thr",
+      "type": "security",
+      "label": "Umbrales",
+      "sublabel": "alta · media",
+      "stage": 3,
+      "row": 0,
+      "height": 64
+    },
+    {
+      "id": "few",
+      "type": "backend",
+      "label": "Few-shot",
+      "sublabel": "casos al juez",
+      "stage": 3,
+      "row": 1,
+      "height": 64
+    },
+    {
+      "id": "inbox",
+      "type": "frontend",
+      "label": "Mejor bandeja",
+      "sublabel": "menos ruido",
+      "stage": 4,
+      "row": 1,
+      "height": 64
+    }
+  ],
+  "flows": [
+    {
+      "id": "g-keys",
+      "from": "keys",
+      "to": "fb",
+      "label": "PUT feedback",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-sheet",
+      "from": "sheet",
+      "to": "evs",
+      "label": "eval import"
+    },
+    {
+      "id": "g-fb-cal",
+      "from": "fb",
+      "to": "calib",
+      "label": "etiquetas",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-evs",
+      "from": "evs",
+      "to": "metrics",
+      "label": "pesos"
+    },
+    {
+      "id": "g-awards",
+      "from": "awards",
+      "to": "market",
+      "label": "24 meses",
+      "variant": "dashed"
+    },
+    {
+      "id": "g-cal-thr",
+      "from": "calib",
+      "to": "thr",
+      "label": "sugerencia",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-few",
+      "from": "few",
+      "to": "inbox",
+      "label": "mejor juicio",
+      "variant": "emphasis"
+    },
+    {
+      "id": "g-fb-few",
+      "from": "fb",
+      "to": "few",
+      "label": "casos parecidos",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          315,
+          224
+        ],
+        [
+          637,
+          224
+        ],
+        [
+          637,
+          274
+        ]
+      ],
+      "labelAt": [
+        480,
+        224
+      ]
+    },
+    {
+      "id": "g-met-inbox",
+      "from": "metrics",
+      "to": "inbox",
+      "label": "reporte",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [
+        [
+          530,
+          338
+        ],
+        [
+          960,
+          338
+        ]
+      ],
+      "labelAt": [
+        745,
+        338
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Señales",
+      "items": [
+        "Etiquetas rápidas en la bandeja",
+        "Muestra estratificada sin sesgo para medir recall"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Análisis",
+      "items": [
+        "Precisión, recall y F1 ponderados por estrato",
+        "Pérdidas por etapa: regla, top-k, juez, puntaje"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Ajuste sin reentrenar",
+      "items": [
+        "Umbrales sugeridos desde las etiquetas",
+        "Casos parecidos en el prompt del juez (few-shot)"
+      ]
+    }
+  ]
+}

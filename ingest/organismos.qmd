@@ -1,0 +1,42 @@
+# Organismos {#sec-organismos}
+
+Los **organismos** son las instituciones públicas que compran: municipios, gobiernos regionales, ministerios, servicios y empresas del Estado. Son el cliente potencial del centro y una de las variables más informativas para decidir si una licitación vale la pena.
+
+## Tabla `buyer`
+
+| Campo | Descripción |
+|---|---|
+| `codigo_organismo` | Código del organismo en Mercado Público (`Comprador.CodigoOrganismo`) |
+| `nombre` | Nombre del organismo |
+| `sector` | Sector según ChileCompra (municipalidades, gobierno central, salud, FF.AA., etc.) |
+| `updated_at` | Última actualización |
+
+: Tabla `buyer` {#tbl-buyer}
+
+Hoy hay **1.152 organismos** cargados. El sector viene de Datos Abiertos; la API diaria aporta el código y el nombre.
+
+## Unidad de compra y localización
+
+Un organismo grande compra a través de varias **unidades de compra** (por ejemplo, distintas direcciones de un ministerio o servicios regionales). Esos datos se guardan en cada licitación:
+
+| Campo en `tender` | Descripción |
+|---|---|
+| `unidad_codigo`, `unidad_nombre`, `unidad_rut` | Unidad que publica la licitación |
+| `comuna`, `region` | Localización de la unidad de compra |
+
+: Unidad de compra en `tender` {#tbl-unidad}
+
+La región es uno de los filtros de la bandeja (`GET /regions` lista las regiones presentes en los datos).
+
+## Uso en la plataforma
+
+- **Contexto para el juez**: el prompt del juez LLM y el estado del modelo de decisión incluyen el nombre del comprador y su sector.
+- **Historial del comprador**: en el detalle de cada licitación se muestra cómo compra el organismo (porcentaje de licitaciones adjudicadas, desiertas y revocadas) y cuántas veces ha ganado cada proveedor con ese comprador ([Digest de organismos](../digest/organismos.qmd)).
+- **Adjudicaciones propias**: el RUT de la UAI (`71.543.200-5`, en `config.proveedores_propios`) permite identificar con qué organismos ya ha trabajado la universidad.
+
+::: {.callout-tip}
+## Por completar
+
+- Normalizar tipos de organismo (municipio, GORE, ministerio, servicio) para usarlos como señal en la priorización. [pendiente]{.pendiente}
+- Ficha por organismo con su historial de compras afines al centro. [pendiente]{.pendiente}
+:::

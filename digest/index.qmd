@@ -1,0 +1,17 @@
+# Digest {.unnumbered}
+
+El *digest* es la etapa de salida: transforma lo que el matching decidió en información útil para dos destinatarios.
+
+| Destinatario | Qué recibe | Capítulo |
+|---|---|---|
+| **Organismos** (como objeto de análisis) | Inteligencia de mercado: quién gana, montos típicos, cómo compra cada comprador | [Organismos](organismos.qmd) |
+| **Usuarios** del centro | Alertas por correo con las oportunidades nuevas y la bandeja priorizada | [Usuarios](usuarios.qmd) |
+
+: Salidas de la plataforma {#tbl-salidas}
+
+```{=html}
+<iframe class="diagrama" src="../diagramas/07-operacion.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/07-operacion.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+El worker ejecuta todos los días, a las 06:00 (hora de Chile), la secuencia **ingesta → matching → digest**. Cada paso queda registrado en `ingest_run`; si Ollama no está disponible, el matching se registra como error pero la ingesta queda guardada y el digest no avisa nada nuevo.

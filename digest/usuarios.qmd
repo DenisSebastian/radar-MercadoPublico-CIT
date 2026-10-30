@@ -1,0 +1,58 @@
+# Usuarios {#sec-digest-usuarios}
+
+Los usuarios del centro reciben las oportunidades por dos vías: la **bandeja web**, que consultan cuando quieren ([Pantallas](../plataforma/pantallas.qmd)), y el **digest diario por correo**, que les llega sin que lo pidan.
+
+## Digest diario
+
+::: {.columns}
+::: {.column width="45%"}
+::: {.captura}
+![Correo de digest](../images/v2/digest.png){width="100%"}
+:::
+:::
+::: {.column width="5%"}
+:::
+::: {.column width="50%"}
+- Después del matching diario, un correo con las oportunidades **nuevas** de las prioridades elegidas (por defecto alta + media, solo abiertas).
+- Cada licitación se avisa **una sola vez**: la tabla `alert` registra qué se avisó y cuándo.
+- Para cada oportunidad: prioridad, servicio, puntaje, comprador, monto, cierre y el resumen del juez.
+- Enlaces directos a la bandeja y a la ficha en Mercado Público.
+:::
+:::
+
+## Envío
+
+| Situación | Comportamiento |
+|---|---|
+| Con `SMTP_*` en `.env` | Se envía por correo a los destinatarios configurados |
+| Sin SMTP | Se guarda como `.eml` en `data/outbox/` para revisarlo antes de activar el envío |
+| Alertas desactivadas en el perfil | No se envía (salvo `--force`) |
+
+: Envío del digest {#tbl-envio}
+
+```bash
+uv run radar digest --preview digest.html   # ver el próximo digest sin enviar
+uv run radar digest --force                 # enviar aunque estén desactivadas
+```
+
+La vista previa también está en Configuración → Alertas (`GET /profiles/{id}/digest/preview`), y no marca nada como enviado.
+
+## Configuración de alertas
+
+En Configuración → Alertas se define, por perfil:
+
+- si las alertas están activas;
+- qué prioridades se avisan (alta, media, baja);
+- si solo se avisan licitaciones abiertas;
+- los destinatarios.
+
+## Retroalimentación de los usuarios
+
+Las alertas son el inicio del ciclo: lo que el usuario hace con cada oportunidad vuelve al sistema como **etiqueta** (`feedback`): relevante, no relevante, dudoso o postulado, con nombre, fecha y comentario. Esas etiquetas alimentan las métricas, la calibración y los ejemplos *few-shot* del juez ([Modelos de priorización](../matching/priorizacion.qmd)).
+
+::: {.callout-warning}
+## Pendiente para el uso real
+
+- Configurar **SMTP** y la lista de destinatarios del CIT. [pendiente]{.pendiente}
+- Hoy los usuarios no tienen cuenta: la etiqueta guarda un nombre libre. Usuarios con inicio de sesión, preferencias por persona (servicios, regiones, frecuencia) y resúmenes semanales personales son parte de [Trabajos futuros](../futuro/index.qmd).
+:::

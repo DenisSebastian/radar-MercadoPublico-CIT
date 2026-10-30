@@ -1,0 +1,88 @@
+# Modelos de priorización {#sec-priorizacion}
+
+Una vez decidido que una licitación sirve, hay que decidir **cuánto importa**: qué tan cerca está de los servicios del centro, cuánta plata hay en juego y cuánto plazo queda. La priorización combina esas señales en un puntaje final de 0 a 100 y una prioridad.
+
+## Retrieval híbrido
+
+Antes de cualquier modelo de lenguaje, cada licitación no excluida se puntúa contra **todos** los servicios del catálogo.
+
+**Embeddings.** `embeddinggemma` (768 dimensiones) con prefijos de tarea:
+
+- licitación → `title: … | text: descripción + ítems`
+- servicio → `task: search result | query: …`
+
+Los vectores de licitaciones se guardan en `tender_embedding` (índice HNSW coseno) y se recalculan solo si cambia el hash del texto. Cada servicio tiene un vector por su descripción y uno por cada ejemplo (`service_vector`); la similitud con el servicio es el **máximo** entre todos ellos.
+
+**Normalización.** El coseno de `embeddinggemma` vive en un rango estrecho (calibrado en dic-2025 sobre 3.089 licitaciones: p50 0,26 · p90 0,33 · p99 0,41 · máx 0,66), así que se lleva a 0–1 con un piso y un techo:
+
+$$
+\text{sim\_norm} = \operatorname{clip}\left(\frac{\cos - 0{,}30}{0{,}60 - 0{,}30},\ 0,\ 1\right)
+$$
+
+**Puntaje léxico.** Cada palabra clave del servicio encontrada en el texto normalizado suma con rendimientos decrecientes:
+
+$$
+\text{léxico} = 1 - 0{,}6^{\,\text{aciertos}}
+$$
+
+**Retrieval.**
+
+$$
+\text{retrieval} = \alpha \cdot \text{sim\_norm} + (1-\alpha)\cdot\text{léxico}, \qquad \alpha = 0{,}75
+$$
+
+Gana el servicio con mayor `retrieval`, pero se guardan los puntajes de todos. Sin triaje, el top-k del día (`llm_top_k`, 25) pasa al juez; con triaje, el retrieval define el orden y el universo de recuperadas.
+
+## Puntaje final
+
+$$
+\text{final} = 0{,}60\cdot\text{LLM} + 0{,}15\cdot\text{retrieval}\cdot 100 + 0{,}15\cdot\text{económico} + 0{,}10\cdot\text{plazo}
+$$
+
+| Componente | Cálculo |
+|---|---|
+| LLM | Puntaje 0–100 del juez (sin juicio: retrieval × 100) |
+| Económico | Sin monto: 40 · ≤ $10 M: 20 · ≥ $300 M: 100 · lineal entre medio |
+| Plazo | Cerrada: 0 · < 3 días: 20 · < 7 días: 60 · ≥ 7 días: 100 |
+
+: Componentes del puntaje final {#tbl-componentes-puntaje}
+
+Los pesos deben sumar 1 y se editan en Configuración; los montos (`economico.monto_min`, `monto_max`) también.
+
+## Prioridad
+
+| Prioridad | Condición |
+|---|---|
+| **Alta** | juzgada relevante y final ≥ 75 |
+| **Media** | juzgada relevante y final ≥ 55 |
+| **Baja** | juzgada relevante y final < 55 |
+| **Descartada** | el juez (o el triaje) dijo no relevante; el puntaje se topa en 30 |
+| **Sin evaluar** | recuperada pero sin juicio (fuera del tope o falla del modelo) |
+| **Excluida** | eliminada por un filtro duro |
+
+: Reglas de prioridad {#tbl-prioridad}
+
+La bandeja muestra por defecto alta + media. Tras cambiar pesos o umbrales, «Recalcular 14 días sin LLM» reaplica los puntajes en segundos.
+
+## Calibración con etiquetas
+
+Las etiquetas del equipo (relevante, no relevante, dudoso, postulado) permiten ajustar los umbrales con datos:
+
+- **Calibración** (Configuración → Aprendizaje, `GET /profiles/{id}/calibration`): precisión, recall y F1 por umbral; sugiere el umbral **media** (mejor F1) y **alta** (precisión ≥ 80 %) cuando hay ≥ 10 etiquetas de cada clase. También muestra cuántas relevantes quedaron fuera por top-k, reglas, triaje o juez.
+- **Muestra estratificada** (`radar eval sample → import → report`): cada licitación pertenece a un estrato (juzgada, top no juzgada, resto, excluida similar, excluida al azar, triaje no…) con un peso igual a población / etiquetadas, de modo que precisión y recall estiman todo el período, no solo lo etiquetado.
+
+```{=html}
+<iframe class="diagrama" src="../diagramas/08-aprendizaje.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/08-aprendizaje.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+## Aprendizaje *few-shot*
+
+Al juzgar, el modelo ve hasta **4 licitaciones parecidas** (coseno ≥ 0,55) ya etiquetadas por el equipo, balanceando relevantes y no relevantes, con sus comentarios. Qué casos vio cada juicio queda en `match.llm_context` y se muestra en el detalle. Así el criterio del equipo entra por el prompt, sin reentrenar.
+
+Las adjudicaciones de la UAI **no** se usan como ejemplos positivos por defecto: de 27 licitaciones ganadas ($14 mil millones), casi todas son cursos y diplomados, y sesgarían al juez hacia capacitación.
+
+## Hallazgos
+
+- En el backtest de dic-2025, v2 propone 23 oportunidades alta + media frente a 10 candidatas de v1, con hallazgos nuevos como PLADECOs, planes de reducción de riesgo y catastros de vivienda.
+- El 27-oct-2026, 5 de las 10 oportunidades fueron capacitación genérica: el servicio de capacitación es demasiado amplio. El triaje por categoría (`cap_gen` vs `cap_esp`) apunta a ese ruido; falta acotar también la descripción y los ejemplos del servicio. [pendiente]{.pendiente}

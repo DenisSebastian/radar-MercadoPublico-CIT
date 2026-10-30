@@ -1,0 +1,34 @@
+# Prefacio {.unnumbered}
+
+Este libro documenta **Radar MP**, la plataforma del {{< var cit.name >}} ({{< var cit.sigla >}}) de la {{< var uai.name >}} para detectar, priorizar y alertar las licitaciones de {{< var mp.name >}} que calzan con los servicios de investigación aplicada y consultoría del centro.
+
+Radar MP nació como un prototipo en R (versión 1, 2025) que filtraba licitaciones por palabras clave del título y le pedía a un modelo de lenguaje una evaluación de las candidatas. La versión 2 (2026), que describe este libro, es una reconstrucción completa en Python: ingesta diaria desde la API de Mercado Público, histórico desde los Datos Abiertos de ChileCompra, búsqueda semántica con embeddings, modelos de decisión y un juez LLM que corren **localmente**, una web para el uso diario del equipo y un ciclo de evaluación y mejora basado en etiquetas.
+
+## Cómo leer este libro
+
+El libro sigue el recorrido de una licitación por la plataforma:
+
+| Parte | Pregunta que responde |
+|---|---|
+| [Introducción](intro.qmd), [Objetivos](objetivos.qmd) y [Diseño general](diseno.qmd) | ¿Qué problema se resuelve, con qué metas y con qué arquitectura? |
+| [Ingest](ingest/index.qmd) | ¿Qué datos se traen de Mercado Público y cómo se guardan? |
+| [Matching](matching/index.qmd) | ¿Cómo se decide si una licitación sirve y cuánto importa? |
+| [Digest](digest/index.qmd) | ¿Qué información se entrega sobre los organismos y a los usuarios? |
+| [Plataforma](plataforma/index.qmd) | ¿Cómo se usa y se administra la web? |
+| [Trabajos futuros](futuro/index.qmd) | ¿Hacia dónde crece la plataforma? |
+
+Cada capítulo combina una explicación conceptual con referencias al código del repositorio (`backend/src/radar/…`), a la configuración (`backend/catalogs/cit.yaml`) y a las pantallas de la web.
+
+::: {.callout-note}
+## Estado del documento
+
+Esta es la **primera versión** del libro (30 de octubre de 2026). Refleja el estado de la rama `feat/triaje-decision`, que incorpora el triaje con modelos de decisión. Las secciones marcadas como [pendiente]{.pendiente} se completarán a medida que avance el uso real de la plataforma (etiquetas del equipo, envío de correos, nuevos perfiles).
+:::
+
+## Material complementario
+
+- Presentación técnica *Radar MP v2* (`keynotes-mp/radar-mp-v2.qmd`): resumen visual de la arquitectura y las etapas.
+- Presentación de avance de la versión 1 (`keynotes-mp/avance-general.qmd`).
+- `README.md` del repositorio: levantamiento, comandos y endpoints.
+- `docs/PLAN_MIGRACION.md`: plan de migración de la v1 a la v2.
+- `backend/reference/decision-v1/`: dataset de referencia para evaluar los modelos de decisión.

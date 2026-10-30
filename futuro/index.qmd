@@ -1,0 +1,35 @@
+# Trabajos futuros {.unnumbered}
+
+Radar MP v2 resuelve el problema del CIT con un perfil, un equipo y licitaciones públicas. Las líneas de trabajo futuro apuntan a convertirla en una herramienta para toda la universidad y, eventualmente, en un producto de alcance nacional.
+
+```{=html}
+<iframe class="diagrama alto" src="../diagramas/09-futuro.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/09-futuro.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+| Línea | Pregunta | Capítulo |
+|---|---|---|
+| Integración de otros centros | ¿Cómo la usan otros centros y escuelas, cada uno con sus criterios y personas? | [Otros centros](otros-centros.qmd) |
+| Aprendizaje de postulaciones con IA | ¿Cómo aprende de lo que se postuló, ganó y perdió? | [Aprendizaje](aprendizaje-postulaciones.qmd) |
+| Asistentes | ¿Cómo ayuda a crear perfiles y a preparar postulaciones? | [Asistentes](asistentes.qmd) |
+| Postulación automática | ¿Hasta dónde se puede automatizar la preparación de una oferta? | [Postulación automática](postulacion-automatica.qmd) |
+
+: Líneas de trabajo futuro {#tbl-futuro}
+
+## Antes de crecer: brechas actuales
+
+- **Etiquetas del equipo** (hoy 0): sin ellas no hay métricas reales ni calibración.
+- Configurar **SMTP** y destinatarios.
+- Validar el triaje por categoría en días nuevos.
+- Acotar el servicio de **capacitación**.
+- Construir y probar la imagen Docker de la web.
+
+## Hoja de ruta propuesta
+
+| Plazo | Hitos |
+|---|---|
+| Corto (1–2 meses) | Etiquetado del equipo y primer reporte real · SMTP y uso diario · validación del triaje · ajuste de capacitación |
+| Mediano (3–6 meses) | Usuarios con SSO y roles · CRM de interacción · órdenes de compra y bases en PDF · asistente de perfiles |
+| Largo (6–12 meses) | Multi-institución UAI y externas · aprendizaje de postulaciones · inteligencia de mercado y probabilidad de adjudicación · servidor con GPU |
+
+: Hoja de ruta {#tbl-hoja-ruta}

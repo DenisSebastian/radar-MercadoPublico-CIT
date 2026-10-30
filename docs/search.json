@@ -1,0 +1,1062 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Radar MP",
+    "section": "",
+    "text": "Prefacio\nEste libro documenta Radar MP, la plataforma del Centro de Inteligencia Territorial (CIT) de la Universidad Adolfo Ibáñez para detectar, priorizar y alertar las licitaciones de Mercado Público que calzan con los servicios de investigación aplicada y consultoría del centro.\nRadar MP nació como un prototipo en R (versión 1, 2025) que filtraba licitaciones por palabras clave del título y le pedía a un modelo de lenguaje una evaluación de las candidatas. La versión 2 (2026), que describe este libro, es una reconstrucción completa en Python: ingesta diaria desde la API de Mercado Público, histórico desde los Datos Abiertos de ChileCompra, búsqueda semántica con embeddings, modelos de decisión y un juez LLM que corren localmente, una web para el uso diario del equipo y un ciclo de evaluación y mejora basado en etiquetas.",
+    "crumbs": [
+      "Prefacio"
+    ]
+  },
+  {
+    "objectID": "index.html#cómo-leer-este-libro",
+    "href": "index.html#cómo-leer-este-libro",
+    "title": "Radar MP",
+    "section": "Cómo leer este libro",
+    "text": "Cómo leer este libro\nEl libro sigue el recorrido de una licitación por la plataforma:\n\n\n\nParte\nPregunta que responde\n\n\n\n\nIntroducción, Objetivos y Diseño general\n¿Qué problema se resuelve, con qué metas y con qué arquitectura?\n\n\nIngest\n¿Qué datos se traen de Mercado Público y cómo se guardan?\n\n\nMatching\n¿Cómo se decide si una licitación sirve y cuánto importa?\n\n\nDigest\n¿Qué información se entrega sobre los organismos y a los usuarios?\n\n\nPlataforma\n¿Cómo se usa y se administra la web?\n\n\nTrabajos futuros\n¿Hacia dónde crece la plataforma?\n\n\n\nCada capítulo combina una explicación conceptual con referencias al código del repositorio (backend/src/radar/…), a la configuración (backend/catalogs/cit.yaml) y a las pantallas de la web.\n\n\n\n\n\n\nEstado del documento\n\n\n\nEsta es la primera versión del libro (30 de octubre de 2026). Refleja el estado de la rama feat/triaje-decision, que incorpora el triaje con modelos de decisión. Las secciones marcadas como pendiente se completarán a medida que avance el uso real de la plataforma (etiquetas del equipo, envío de correos, nuevos perfiles).",
+    "crumbs": [
+      "Prefacio"
+    ]
+  },
+  {
+    "objectID": "index.html#material-complementario",
+    "href": "index.html#material-complementario",
+    "title": "Radar MP",
+    "section": "Material complementario",
+    "text": "Material complementario\n\nPresentación técnica Radar MP v2 (keynotes-mp/radar-mp-v2.qmd): resumen visual de la arquitectura y las etapas.\nPresentación de avance de la versión 1 (keynotes-mp/avance-general.qmd).\nREADME.md del repositorio: levantamiento, comandos y endpoints.\ndocs/PLAN_MIGRACION.md: plan de migración de la v1 a la v2.\nbackend/reference/decision-v1/: dataset de referencia para evaluar los modelos de decisión.",
+    "crumbs": [
+      "Prefacio"
+    ]
+  },
+  {
+    "objectID": "intro.html",
+    "href": "intro.html",
+    "title": "1  Introducción",
+    "section": "",
+    "text": "1.1 El problema\nMercado Público es la plataforma donde el Estado de Chile publica sus compras. Cada día aparecen alrededor de 500 licitaciones —unas 15.000 al mes— de municipios, gobiernos regionales, ministerios y servicios públicos. La gran mayoría compra bienes, obras o servicios operativos: aseo, guardias, alimentación, combustible, insumos médicos, mantención.\nAl CIT le sirven muy pocas: estudios territoriales, sistemas de información geográfica (SIG), plataformas de datos, evaluación de políticas públicas, medioambiente y riesgo, seguridad, movilidad, energía y capacitación especializada. Encontrarlas a mano significa leer cientos de títulos y descripciones cada semana, y aun así se pierden oportunidades que no usan las palabras esperadas: un «Diagnóstico para la actualización del PLADECO» o un «Catastro de campamentos» no dicen «SIG» ni «territorial», pero son exactamente el tipo de trabajo que hace el centro.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#de-la-versión-1-a-la-versión-2",
+    "href": "intro.html#de-la-versión-1-a-la-versión-2",
+    "title": "1  Introducción",
+    "section": "1.2 De la versión 1 a la versión 2",
+    "text": "1.2 De la versión 1 a la versión 2\nLa primera versión (2025, en R con targets) probó la idea con un flujo de tres puertas: un filtro léxico sobre el título, una clasificación con LLM de las candidatas y un umbral de selección. Funcionó como demostración, pero tenía límites claros:\n\nsolo veía lo que pasaba el filtro de palabras del título;\nla decisión del LLM no se validaba ni se guardaba de forma trazable;\nno había histórico, ni forma de medir aciertos, ni una herramienta de uso diario.\n\nLa versión 2 reconstruye la plataforma con otros principios:\n\n\n\nTabla 1.1: Comparación entre versiones\n\n\n\n\n\n\n\n\n\n\nAspecto\nv1 (R, 2025)\nv2 (2026)\n\n\n\n\nFuente\nRDS con títulos\nAPI diaria con detalle + Datos Abiertos con ítems y adjudicaciones\n\n\nFiltro\nPalabras clave en el título\nReglas + búsqueda semántica (embeddings) + palabras clave\n\n\nDecisión\nLLM sobre lo que pasaba el filtro léxico\nTriaje con modelo de decisión + juez LLM local con salida JSON validada y evidencia verificada\n\n\nAlmacenamiento\nArchivos RDS\nPostgreSQL + pgvector, historial completo desde 2024\n\n\nUso\nScript y CSV\nWeb: bandeja, detalle, catálogo, configuración, operación\n\n\nOperación\nManual\nWorker diario, reprocesos desde la web, alertas por email\n\n\nCalidad\nSin medición\nEvaluación ponderada, calibración, dataset de referencia y aprendizaje desde etiquetas\n\n\n\n\n\n\nEl código R quedó en legacy/ como referencia; la lógica útil (normalización de texto, criterios del centro) se portó a Python.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#principios-de-diseño",
+    "href": "intro.html#principios-de-diseño",
+    "title": "1  Introducción",
+    "section": "1.3 Principios de diseño",
+    "text": "1.3 Principios de diseño\nCuatro ideas guían todas las decisiones técnicas que se describen en el libro:\n\nLocal primero. La base de datos, la API, la web y los modelos de IA corren en un computador del centro. Internet se usa solo para traer datos de Mercado Público y enviar correos. Los criterios del centro y las etiquetas del equipo no salen de la máquina.\nBarato antes que caro. Reglas → similitud semántica → modelo de decisión → juez LLM: cada etapa reduce el volumen que llega a la siguiente. El LLM grande es el recurso escaso.\nTrazable. Por cada licitación y perfil se guarda una fila match con todos los puntajes, la decisión del triaje, el juicio del LLM, la evidencia citada y los casos de ejemplo que vio el juez.\nConfigurable sin código. Catálogo de servicios, pesos, umbrales, reglas y alertas se editan desde la web; el YAML del repositorio es el punto de partida.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "intro.html#resultado-típico",
+    "href": "intro.html#resultado-típico",
+    "title": "1  Introducción",
+    "section": "1.4 Resultado típico",
+    "text": "1.4 Resultado típico\nEl 27 de octubre de 2026 se publicaron 518 licitaciones. Las reglas excluyeron 377, la búsqueda semántica recuperó 141, el juez evaluó 25 y la bandeja mostró 10 oportunidades de prioridad alta o media: entre ellas una consultoría de modelo de gobernanza para la Subdere, una caracterización ambiental y paisajística para el sitio Chinchorro y antecedentes expropiatorios para una avenida en Magallanes. Ese es el objetivo de la plataforma: transformar ~500 licitaciones diarias en una bandeja corta, explicada y medible.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Introducción</span>"
+    ]
+  },
+  {
+    "objectID": "objetivos.html",
+    "href": "objetivos.html",
+    "title": "2  Objetivos",
+    "section": "",
+    "text": "2.1 Objetivo general\nQue el equipo del CIT vea cada mañana las pocas licitaciones de Mercado Público que calzan con sus servicios, ordenadas por prioridad y con una explicación de por qué sirven, usando modelos de IA que corren dentro del propio centro.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Objetivos</span>"
+    ]
+  },
+  {
+    "objectID": "objetivos.html#objetivos-específicos",
+    "href": "objetivos.html#objetivos-específicos",
+    "title": "2  Objetivos",
+    "section": "2.2 Objetivos específicos",
+    "text": "2.2 Objetivos específicos\n\nCobertura completa. Ingerir todas las licitaciones publicadas cada día, con su descripción, comprador e ítems, y mantener un histórico desde 2024 con estados finales y adjudicaciones (Ingest).\nDetección con alto recall. No perder oportunidades relevantes por diferencias de vocabulario: combinar reglas, búsqueda semántica y modelos de decisión para revisar todas las licitaciones recuperadas del día, no solo un subconjunto (Modelos de decisión).\nPriorización explicable. Ordenar las oportunidades con un puntaje que combine el juicio del LLM, la cercanía con los servicios, el monto y el plazo, y mostrar evidencia literal de la licitación (Modelos de priorización).\nInteligencia sobre los organismos. Mostrar quién gana en cada categoría, montos típicos y cómo compra cada organismo, a partir de más de un millón de adjudicaciones (Digest de organismos).\nAlertas oportunas. Avisar por correo, una sola vez, las oportunidades nuevas de las prioridades elegidas (Digest de usuarios).\nUso diario y administración sin código. Una web con bandeja, detalle, catálogo, configuración y operación, donde el equipo etiqueta con el teclado y los administradores ajustan criterios (Plataforma).\nMedición y mejora continua. Guardar cada decisión, medir precisión y recall contra etiquetas del equipo y un dataset de referencia, calibrar umbrales y alimentar al juez con casos ya etiquetados.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Objetivos</span>"
+    ]
+  },
+  {
+    "objectID": "objetivos.html#indicadores-de-éxito",
+    "href": "objetivos.html#indicadores-de-éxito",
+    "title": "2  Objetivos",
+    "section": "2.3 Indicadores de éxito",
+    "text": "2.3 Indicadores de éxito\n\n\n\nTabla 2.1: Indicadores y estado actual\n\n\n\n\n\n\n\n\n\n\nIndicador\nMeta\nEstado (oct-2026)\n\n\n\n\nDías ingeridos completos\n100 % de días hábiles\nCatch-up automático de hasta 14 días; brechas mayores con Datos Abiertos\n\n\nRecall de oportunidades relevantes\n≥ 95 %\n96 % con triaje sí/no + categoría en la referencia decision-v1\n\n\nPrecisión de la bandeja\n≥ 50 %\n52 % (triaje) en la referencia; pendiente medir con etiquetas del equipo\n\n\nTamaño de la bandeja diaria\n~10 oportunidades alta + media\n10 el 27-oct-2026\n\n\nTiempo de procesamiento diario\n&lt; 30 min de ingesta + matching\n~20 min ingesta, ~6 min matching con LLM\n\n\nEtiquetas del equipo\n≥ 10 por clase para calibrar\npendiente: hoy 0",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Objetivos</span>"
+    ]
+  },
+  {
+    "objectID": "objetivos.html#alcance",
+    "href": "objetivos.html#alcance",
+    "title": "2  Objetivos",
+    "section": "2.4 Alcance",
+    "text": "2.4 Alcance\nIncluye: licitaciones públicas de Mercado Público (API y Datos Abiertos), perfil de búsqueda del CIT, web local, alertas por correo y evaluación.\nNo incluye aún: Compra Ágil, Convenio Marco, órdenes de compra, lectura de bases en PDF, múltiples organizaciones con usuarios y roles, ni preparación o envío de ofertas. Estos puntos se discuten en Trabajos futuros.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Objetivos</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html",
+    "href": "diseno.html",
+    "title": "3  Diseño general",
+    "section": "",
+    "text": "3.1 Vista de sistema\nRadar MP es un conjunto de procesos locales alrededor de una base PostgreSQL. La ingesta trae datos de Mercado Público, el matching los cruza con el catálogo de servicios del centro usando modelos de IA locales, y la web y el digest entregan el resultado al equipo.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#vista-de-sistema",
+    "href": "diseno.html#vista-de-sistema",
+    "title": "3  Diseño general",
+    "section": "",
+    "text": "abrir diagrama interactivo ↗",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#componentes-y-tecnologías",
+    "href": "diseno.html#componentes-y-tecnologías",
+    "title": "3  Diseño general",
+    "section": "3.2 Componentes y tecnologías",
+    "text": "3.2 Componentes y tecnologías\n\n\n\nTabla 3.1: Componentes de Radar MP\n\n\n\n\n\n\n\n\n\n\n\nComponente\nTecnología\nRol\nDirección\n\n\n\n\nBase de datos\nPostgreSQL 16 + pgvector, unaccent, pg_trgm (Docker)\nLicitaciones, vectores, decisiones, etiquetas, corridas\n:5432\n\n\nBackend\nPython 3.13 · FastAPI · SQLAlchemy 2 · Alembic · Pydantic · httpx (uv)\nLógica y API REST con OpenAPI\n:8000\n\n\nWorker\nAPScheduler (radar worker)\nIngesta 06:00, matching y digest; Datos Abiertos el día 3\n—\n\n\nIA local\nOllama: embeddinggemma (768d), nimble (decisión) y qwen3.5 (9,7B, juez)\nEmbeddings, triaje y juicio con salida estructurada\n:11434\n\n\nAnalítica\nDuckDB\nLectura rápida de los CSV mensuales de Datos Abiertos\n—\n\n\nWeb\nReact + Vite + TypeScript · TanStack Query · Tailwind\nBandeja, detalle, catálogo, configuración, operación\n:5173 / :8080\n\n\nCLI\nTyper (radar …)\nIngesta, matching, evaluación, digest, referencia\n—\n\n\n\n\n\n\nLos tipos del frontend se generan desde el esquema OpenAPI de la API (npm run gen:api): un cambio de contrato rompe la compilación, no la pantalla.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#decisiones-de-arquitectura",
+    "href": "diseno.html#decisiones-de-arquitectura",
+    "title": "3  Diseño general",
+    "section": "3.3 Decisiones de arquitectura",
+    "text": "3.3 Decisiones de arquitectura\n\n\n\nTabla 3.2: Decisiones principales\n\n\n\n\n\n\n\n\n\n\n\nDecisión\nElegido\nAlternativa\nRazón\n\n\n\n\nLenguaje\nPython\nSeguir en R / Shiny\nEcosistema de LLM, embeddings y web mucho más maduro\n\n\nBase de datos\nPostgres + pgvector\nSQLite / base vectorial aparte\nUn solo motor para datos, vectores (HNSW coseno) y texto en español\n\n\nTareas\nAPScheduler en un proceso\nAirflow / Celery\nUn trabajo diario y reprocesos no justifican más infraestructura\n\n\nLLM\nOllama nativo + JSON Schema\n“Responde en JSON” / Docker\nValidación estricta con Pydantic; en Mac, Ollama nativo usa la GPU (Metal)\n\n\nDatos históricos\nDatos Abiertos (ZIP mensual)\nPedir todo a la API\nLa API limita a ~1 req / 2 s; un mes por ZIP tarda ~10 s\n\n\nFrontend\nReact + TS\nStreamlit\nUso diario de un equipo: tablas rápidas, filtros en URL, atajos de teclado",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#flujo-en-cinco-etapas",
+    "href": "diseno.html#flujo-en-cinco-etapas",
+    "title": "3  Diseño general",
+    "section": "3.4 Flujo en cinco etapas",
+    "text": "3.4 Flujo en cinco etapas\n\nabrir diagrama interactivo ↗\n\nIngest: API diaria y Datos Abiertos → tender, tender_item, buyer, tender_award, product_category.\nMatching: reglas → retrieval híbrido → triaje → juez LLM → puntaje y prioridad → match.\nDigest: inteligencia de mercado por organismo y alertas por correo a los usuarios.\nPlataforma: bandeja, detalle, catálogo, configuración y operación.\nEvaluación y mejora: etiquetas → métricas → calibración → few-shot.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#modelo-de-datos",
+    "href": "diseno.html#modelo-de-datos",
+    "title": "3  Diseño general",
+    "section": "3.5 Modelo de datos",
+    "text": "3.5 Modelo de datos\n\nabrir diagrama interactivo ↗\n\n\n\nTabla 3.3: Tablas por grupo\n\n\n\n\n\n\n\n\n\n\nGrupo\nTablas\nContenido\n\n\n\n\nFuentes\ntender, tender_item, buyer, tender_award, product_category\nLicitaciones, ítems UNSPSC, organismos, adjudicaciones y jerarquía de rubros\n\n\nVectores\ntender_embedding, service_vector\nEmbeddings de licitaciones y de servicios (768 dimensiones, índice HNSW coseno)\n\n\nPerfil\nprofile, service, profile_rule\nCatálogo de servicios, configuración (pesos, umbrales, triaje, alertas) y reglas de exclusión\n\n\nDecisiones\nmatch\nUna fila por licitación × perfil: etapa, puntajes, triaje, juicio LLM, prioridad\n\n\nEquipo\nfeedback, alert\nEtiquetas del equipo y licitaciones ya avisadas\n\n\nEvaluación\neval_sample, eval_sample_item\nMuestras estratificadas para medir sin sesgo\n\n\nOperación\ningest_run\nRegistro de cada corrida (ingesta, Datos Abiertos, matching, digest)",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#perfiles",
+    "href": "diseno.html#perfiles",
+    "title": "3  Diseño general",
+    "section": "3.6 Perfiles",
+    "text": "3.6 Perfiles\nToda la lógica de matching está parametrizada por un perfil (profile): un catálogo de servicios con descripción, ejemplos y palabras clave, un conjunto de reglas de exclusión y una configuración de pesos, umbrales, triaje y alertas. Hoy existe un perfil, cit, definido en backend/catalogs/cit.yaml. El modelo de datos ya admite varios perfiles, lo que abre la puerta a otros centros de la universidad (Integración de otros centros).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "diseno.html#estructura-del-repositorio",
+    "href": "diseno.html#estructura-del-repositorio",
+    "title": "3  Diseño general",
+    "section": "3.7 Estructura del repositorio",
+    "text": "3.7 Estructura del repositorio\nbackend/src/radar/\n  mp_client/   cliente de api.mercadopublico.cl\n  ingest/      ingesta diaria y catch-up\n  opendata/    carga de Datos Abiertos ChileCompra\n  llm/         cliente Ollama (embeddings, decisión y chat JSON)\n  matching/    catálogo, reglas, retrieval, triaje, juez, few-shot, puntaje\n  evals/       muestreo, etiquetas, métricas, calibración, referencia\n  alerts/      digest de alertas (email / .eml)\n  market.py    competencia, montos de referencia y comprador\n  jobs.py      corridas registradas, worker y reprocesos\n  api/         FastAPI\n  cli.py       comando `radar`\nbackend/catalogs/   catálogos de servicios por perfil (cit.yaml)\nbackend/reference/  datasets de referencia (decision-v1)\nfrontend/src/pages/ Bandeja, Detalle, Catálogo, Configuración, Operación",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Diseño general</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/index.html",
+    "href": "ingest/index.html",
+    "title": "Ingest",
+    "section": "",
+    "text": "Volumen cargado\nLa etapa de ingesta lleva los datos de Mercado Público a PostgreSQL. Usa dos fuentes complementarias:\nCada corrida —diaria, de catch-up, de Datos Abiertos— queda registrada en ingest_run con sus parámetros, estado, estadísticas y error, y se ve en la pantalla de Operación.",
+    "crumbs": [
+      "Ingest"
+    ]
+  },
+  {
+    "objectID": "ingest/index.html#volumen-cargado",
+    "href": "ingest/index.html#volumen-cargado",
+    "title": "Ingest",
+    "section": "",
+    "text": "Tabla 2: Volumen histórico\n\n\n\n\n\nMétrica\nValor\n\n\n\n\nLicitaciones (2024-01 → 2026-10)\n~339 mil\n\n\nÍtems con código UNSPSC\n~1,49 millones\n\n\nLíneas adjudicadas con proveedor y monto\n~1,06 millones\n\n\nOrganismos compradores\n1.152\n\n\nTamaño en Postgres\n~1 GB",
+    "crumbs": [
+      "Ingest"
+    ]
+  },
+  {
+    "objectID": "ingest/ofertas.html",
+    "href": "ingest/ofertas.html",
+    "title": "4  Ofertas",
+    "section": "",
+    "text": "4.1 Fuente diaria: API de Mercado Público\nEn este libro llamamos ofertas a las oportunidades de negocio que publica el Estado: las licitaciones de Mercado Público. Cada una se identifica por su código externo (por ejemplo 1351461-5-LR25) y se guarda en la tabla tender.\nEl cliente MPClient (backend/src/radar/mp_client/) usa dos llamadas:\nLa API responde 429 / código 10500 («peticiones simultáneas») si se le pide rápido: con 1 s entre requests falla ~50 % de las veces; con 2 s, ~13 %. Por eso el cliente serializa las llamadas con un mínimo de 2 s entre requests (MP_MIN_INTERVAL_S) y reintenta con backoff exponencial hasta 6 veces. Un día típico (~500 licitaciones con detalle) tarda unos 20 minutos. El ticket de acceso nunca aparece en errores ni registros.\nOpciones útiles: --until (rango), --no-details (solo listado), --limit (máximo de detalles), --refresh (volver a pedir detalles).",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Ofertas</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/ofertas.html#fuente-diaria-api-de-mercado-público",
+    "href": "ingest/ofertas.html#fuente-diaria-api-de-mercado-público",
+    "title": "4  Ofertas",
+    "section": "",
+    "text": "Listado: licitaciones.json?fecha=DDMMAAAA&estado=publicada → códigos, nombre, estado y fecha de cierre de las licitaciones publicadas ese día.\nDetalle: licitaciones.json?codigo=… → descripción, comprador, unidad de compra, montos, fechas, tipo y los ítems con su código UNSPSC.\n\n\nuv run radar ingest --date 2026-10-27      # un día (por defecto, ayer en hora de Chile)\nuv run radar ingest --catch-up             # días pendientes desde la última corrida completa\n\n\n4.1.1 Escritura\n\nupsert_listing → tender (código, nombre, estado, cierre, first_seen_date).\nupsert_detail → tender + tender_item + buyer; raw guarda el JSON original y detail_fetched_at la fecha del detalle.\n\nfirst_seen_date es la fecha del listado en que la licitación apareció por primera vez: es el «día» con que el matching agrupa las licitaciones.\n\n\n4.1.2 Catch-up y completitud\nUn día se considera completo solo si su corrida terminó ok, con detalles, sin límite y con 0 detalles fallidos. Cada mañana el worker ingiere desde el día siguiente al último completo hasta ayer, con un máximo de 14 días; las brechas mayores se cubren con Datos Abiertos.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Ofertas</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/ofertas.html#fuente-histórica-datos-abiertos",
+    "href": "ingest/ofertas.html#fuente-histórica-datos-abiertos",
+    "title": "4  Ofertas",
+    "section": "4.2 Fuente histórica: Datos Abiertos",
+    "text": "4.2 Fuente histórica: Datos Abiertos\nChileCompra publica un ZIP mensual (lic-da/AAAA-M.zip, 15–35 MB) con un CSV que tiene una fila por licitación × ítem × oferta.\nuv run radar opendata 2024-01 2025-09              # ZIPs ya descargados\nuv run radar opendata 2025-10 2026-09 --download   # descarga los que falten\n\nEl archivo viene en cp1252 con separador ;: se transcodifica a UTF-8 y se lee con DuckDB por nombre de columna (105 columnas hasta 2025, 110 desde 2026).\nDefectos tolerados y contados: decimales con coma (5,2e+08), montos absurdos (≥ 10¹⁵ → nulo), filas sin CodigoExterno (omitidas) y líneas con comillas o separadores corruptos (malformadas, p. ej. 849 de 160 mil en 2026-03, recuperadas con el módulo csv de Python).\nUn mes tarda ~10 s. El worker carga el mes anterior el día 3 de cada mes.\n\n\n4.2.1 Regla de fusión entre fuentes\n\n\n\nTabla 4.1: Fusión API ↔︎ Datos Abiertos\n\n\n\n\n\n\n\n\n\nSi la licitación…\nEntonces\n\n\n\n\nya tiene detalle de la API\nel archivo solo rellena campos vacíos\n\n\ncambió de estado\nel estado siempre se actualiza (adjudicada, desierta, revocada…)\n\n\nno tiene detalle de la API\nlos ítems se reemplazan con los del archivo\n\n\ntiene adjudicaciones\nsiempre se reemplazan: vienen solo de esta fuente\n\n\n\n\n\n\nopendata_month registra el último archivo mensual que trajo cada licitación.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Ofertas</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/ofertas.html#campos-principales-de-tender",
+    "href": "ingest/ofertas.html#campos-principales-de-tender",
+    "title": "4  Ofertas",
+    "section": "4.3 Campos principales de tender",
+    "text": "4.3 Campos principales de tender\n\n\n\nTabla 4.2: Campos de la tabla tender\n\n\n\n\n\nCampo\nDescripción\n\n\n\n\ncodigo\nCódigo externo (clave primaria)\n\n\nnombre, descripcion\nTítulo y descripción completa\n\n\ncodigo_estado, estado\nEstado en Mercado Público (publicada, cerrada, adjudicada, desierta, revocada…)\n\n\ntipo\nTipo de licitación (L1, LE, LP, LR…) según monto\n\n\nmonto_estimado, moneda\nPresupuesto informado (cuando lo publica el comprador)\n\n\nfecha_publicacion, fecha_cierre\nFechas clave; el cierre alimenta el puntaje de plazo\n\n\ncodigo_organismo, unidad_*, comuna, region\nComprador y localización (ver Organismos)\n\n\nfirst_seen_date\nDía en que se vio por primera vez\n\n\nraw\nJSON original de la API",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Ofertas</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/ofertas.html#texto-para-los-modelos",
+    "href": "ingest/ofertas.html#texto-para-los-modelos",
+    "title": "4  Ofertas",
+    "section": "4.4 Texto para los modelos",
+    "text": "4.4 Texto para los modelos\nPara el embedding y los modelos de decisión, cada licitación se representa como título + descripción + nombres de sus ítems, normalizado (radar.text.normalize: minúsculas y sin tildes para reglas y palabras clave). El embedding se recalcula solo si cambia el hash del texto (Modelos de decisión).",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Ofertas</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/organismos.html",
+    "href": "ingest/organismos.html",
+    "title": "5  Organismos",
+    "section": "",
+    "text": "5.1 Tabla buyer\nLos organismos son las instituciones públicas que compran: municipios, gobiernos regionales, ministerios, servicios y empresas del Estado. Son el cliente potencial del centro y una de las variables más informativas para decidir si una licitación vale la pena.\nHoy hay 1.152 organismos cargados. El sector viene de Datos Abiertos; la API diaria aporta el código y el nombre.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/organismos.html#tabla-buyer",
+    "href": "ingest/organismos.html#tabla-buyer",
+    "title": "5  Organismos",
+    "section": "",
+    "text": "Tabla 5.1: Tabla buyer\n\n\n\n\n\n\n\n\n\nCampo\nDescripción\n\n\n\n\ncodigo_organismo\nCódigo del organismo en Mercado Público (Comprador.CodigoOrganismo)\n\n\nnombre\nNombre del organismo\n\n\nsector\nSector según ChileCompra (municipalidades, gobierno central, salud, FF.AA., etc.)\n\n\nupdated_at\nÚltima actualización",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/organismos.html#unidad-de-compra-y-localización",
+    "href": "ingest/organismos.html#unidad-de-compra-y-localización",
+    "title": "5  Organismos",
+    "section": "5.2 Unidad de compra y localización",
+    "text": "5.2 Unidad de compra y localización\nUn organismo grande compra a través de varias unidades de compra (por ejemplo, distintas direcciones de un ministerio o servicios regionales). Esos datos se guardan en cada licitación:\n\n\n\nTabla 5.2: Unidad de compra en tender\n\n\n\n\n\n\n\n\n\nCampo en tender\nDescripción\n\n\n\n\nunidad_codigo, unidad_nombre, unidad_rut\nUnidad que publica la licitación\n\n\ncomuna, region\nLocalización de la unidad de compra\n\n\n\n\n\n\nLa región es uno de los filtros de la bandeja (GET /regions lista las regiones presentes en los datos).",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/organismos.html#uso-en-la-plataforma",
+    "href": "ingest/organismos.html#uso-en-la-plataforma",
+    "title": "5  Organismos",
+    "section": "5.3 Uso en la plataforma",
+    "text": "5.3 Uso en la plataforma\n\nContexto para el juez: el prompt del juez LLM y el estado del modelo de decisión incluyen el nombre del comprador y su sector.\nHistorial del comprador: en el detalle de cada licitación se muestra cómo compra el organismo (porcentaje de licitaciones adjudicadas, desiertas y revocadas) y cuántas veces ha ganado cada proveedor con ese comprador (Digest de organismos).\nAdjudicaciones propias: el RUT de la UAI (71.543.200-5, en config.proveedores_propios) permite identificar con qué organismos ya ha trabajado la universidad.\n\n\n\n\n\n\n\nPor completar\n\n\n\n\nNormalizar tipos de organismo (municipio, GORE, ministerio, servicio) para usarlos como señal en la priorización. pendiente\nFicha por organismo con su historial de compras afines al centro. pendiente",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/productos.html",
+    "href": "ingest/productos.html",
+    "title": "6  Productos",
+    "section": "",
+    "text": "6.1 Tabla tender_item\nCada licitación pide uno o más productos o servicios, que Mercado Público llama ítems. Cada ítem tiene un código de producto del Código Estándar de Productos y Servicios de Naciones Unidas (UNSPSC), una descripción libre y una cantidad. Los ítems son la forma más estructurada de saber qué se compra.\nHay ~1,49 millones de ítems cargados.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Productos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/productos.html#tabla-tender_item",
+    "href": "ingest/productos.html#tabla-tender_item",
+    "title": "6  Productos",
+    "section": "",
+    "text": "Tabla 6.1: Tabla tender_item\n\n\n\n\n\nCampo\nDescripción\n\n\n\n\ntender_codigo, correlativo\nLicitación y número de ítem (únicos juntos)\n\n\ncodigo_producto\nCódigo de producto (UNSPSC de 8 dígitos en la mayoría de los casos)\n\n\ncodigo_categoria, categoria\nClase UNSPSC y su nombre (ver Categorías)\n\n\nnombre_producto\nNombre del producto en el catálogo de ChileCompra\n\n\ndescripcion\nDescripción libre escrita por el comprador\n\n\nunidad_medida, cantidad\nCantidad pedida\n\n\n\n\n\n\n\n\n\n\n\n\n\nParticularidades de los datos\n\n\n\n\nCorrelativos repetidos. La API a veces repite el correlativo de un ítem dentro de una licitación (detectado el 28-oct-2026); la ingesta lo tolera para no perder el detalle.\nCódigos que no son UNSPSC. El MOP usa códigos internos de 9 dígitos (102101001 = consultoría, 101… = obras). Antes se comparaban como UNSPSC y la regla de exclusión 10 (plantas y animales vivos) excluía todas las consultorías del MOP: 111 licitaciones en los días evaluados, incluida una evaluación de impacto de $358 millones. Desde la corrección, las reglas por rubro solo se aplican a códigos de 8 dígitos.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Productos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/productos.html#adjudicaciones-tender_award",
+    "href": "ingest/productos.html#adjudicaciones-tender_award",
+    "title": "6  Productos",
+    "section": "6.2 Adjudicaciones: tender_award",
+    "text": "6.2 Adjudicaciones: tender_award\nDesde Datos Abiertos se carga, por ítem, la oferta seleccionada:\n\n\n\nTabla 6.2: Tabla tender_award\n\n\n\n\n\nCampo\nDescripción\n\n\n\n\ntender_codigo, correlativo\nLicitación e ítem adjudicado\n\n\nrut_proveedor, nombre_proveedor\nQuién ganó\n\n\ncantidad_adjudicada, monto_linea, moneda\nCuánto y por cuánto\n\n\n\n\n\n\nSon ~1,06 millones de líneas adjudicadas. Alimentan la vista de mercado (competencia y montos de referencia) y permiten reconocer lo que ha ganado la UAI.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Productos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/productos.html#uso-en-la-plataforma",
+    "href": "ingest/productos.html#uso-en-la-plataforma",
+    "title": "6  Productos",
+    "section": "6.3 Uso en la plataforma",
+    "text": "6.3 Uso en la plataforma\n\nReglas de exclusión por rubro: una licitación se excluye solo si todos sus ítems caen en rubros excluidos (Modelos de decisión).\nTexto para embeddings y modelos: los nombres de los ítems se agregan al título y la descripción.\nMercado: licitaciones con ítems en las mismas categorías permiten estimar competidores y montos típicos (Digest de organismos).",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Productos</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/categorias.html",
+    "href": "ingest/categorias.html",
+    "title": "7  Categorías",
+    "section": "",
+    "text": "7.1 Tabla product_category\nLos productos de Mercado Público se clasifican con el estándar UNSPSC, una jerarquía de cuatro niveles codificada en 8 dígitos:\nChileCompra agrega su propia jerarquía de rubros (tres niveles) sobre las clases UNSPSC.\nSe carga desde Datos Abiertos al importar cada mes. Cada ítem (tender_item.codigo_categoria) apunta a su clase.",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Categorías</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/categorias.html#tabla-product_category",
+    "href": "ingest/categorias.html#tabla-product_category",
+    "title": "7  Categorías",
+    "section": "",
+    "text": "Tabla 7.2: Tabla product_category\n\n\n\n\n\nCampo\nDescripción\n\n\n\n\ncodigo_categoria\nClase UNSPSC (8 dígitos, termina en 00)\n\n\nrubro1, rubro2, rubro3\nJerarquía de rubros de ChileCompra",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Categorías</span>"
+    ]
+  },
+  {
+    "objectID": "ingest/categorias.html#uso-de-las-categorías",
+    "href": "ingest/categorias.html#uso-de-las-categorías",
+    "title": "7  Categorías",
+    "section": "7.2 Uso de las categorías",
+    "text": "7.2 Uso de las categorías\n\n7.2.1 Exclusión por segmento\nEl perfil define prefijos UNSPSC de rubros que el centro nunca provee (rules.exclude_unspsc en cit.yaml). Hoy son 43 prefijos de segmento, por ejemplo:\n\n\n\nTabla 7.3: Ejemplos de prefijos excluidos\n\n\n\n\n\nPrefijo\nRubro\n\n\n\n\n10\nPlantas y animales vivos\n\n\n15\nCombustibles y lubricantes\n\n\n22\nMaquinaria de construcción\n\n\n25\nVehículos\n\n\n42\nEquipos médicos\n\n\n44\nEquipos y suministros de oficina\n\n\n\n\n\n\nLa regla es conservadora: una licitación se excluye solo si todos sus ítems caen en prefijos excluidos y solo se comparan códigos UNSPSC de 8 dígitos.\n\n\n7.2.2 Mercado por categoría\nPara estimar competencia y montos, la vista de mercado busca licitaciones de los últimos 24 meses con ítems en las mismas clases UNSPSC que la licitación en revisión. Es más grueso que la similitud semántica, pero cubre todo el histórico sin calcular embeddings (Digest de organismos).\n\n\n7.2.3 Categorías de servicios del centro\nSe espera que las oportunidades del CIT se concentren en segmentos de servicios como 80 (gestión y administración), 81 (ingeniería e investigación), 86 (educación y formación) y 77 (servicios medioambientales). Esta hipótesis aún no se ha medido sobre las etiquetas.\n\n\n\n\n\n\nPor completar\n\n\n\n\nTabla de clases UNSPSC más frecuentes entre las licitaciones etiquetadas como relevantes, para usarla como señal positiva. pendiente\nValidar la lista de segmentos de servicios contra las etiquetas del equipo. pendiente",
+    "crumbs": [
+      "Ingest",
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Categorías</span>"
+    ]
+  },
+  {
+    "objectID": "matching/index.html",
+    "href": "matching/index.html",
+    "title": "Matching",
+    "section": "",
+    "text": "Catálogo de servicios\nEl matching cruza cada licitación del día con el catálogo de servicios de un perfil y decide si sirve (modelos de decisión) y cuánto importa (modelos de priorización). Va de ~500 licitaciones a unas 10 oportunidades.\nRe-ejecutar recalcula retrieval y puntajes sin volver a llamar al LLM (salvo --rejudge); el triaje se reutiliza si ya se hizo con el mismo modelo (salvo --retriage). El worker corre el matching después de cada ingesta diaria.\nEl matching parte del catálogo del perfil. El perfil cit tiene 10 servicios:\nCada servicio tiene una descripción (qué hace el centro), ejemplos de licitaciones que sí calzan y palabras clave. La descripción y cada ejemplo se convierten en vectores.",
+    "crumbs": [
+      "Matching"
+    ]
+  },
+  {
+    "objectID": "matching/index.html#catálogo-de-servicios",
+    "href": "matching/index.html#catálogo-de-servicios",
+    "title": "Matching",
+    "section": "",
+    "text": "Tabla 2: Servicios del perfil CIT\n\n\n\n\n\n\n\n\n\nSlug\nServicio\n\n\n\n\nanalisis-territorial-sig\nAnálisis territorial y SIG\n\n\nplanificacion-urbana-vivienda\nPlanificación urbana y vivienda\n\n\nmovilidad-accesibilidad\nMovilidad y accesibilidad\n\n\nmedioambiente-clima-riesgo\nMedioambiente, cambio climático y riesgo\n\n\nenergia-territorio\nEnergía y territorio\n\n\nseguridad-analisis-delictual\nSeguridad pública y análisis delictual\n\n\ndatos-plataformas-ia\nCiencia de datos, plataformas e IA\n\n\nestudios-socioeconomicos\nEstudios socioeconómicos, demográficos y encuestas\n\n\npoliticas-publicas-evaluacion\nPolíticas públicas, evaluación y planificación estratégica\n\n\ncapacitacion\nCapacitación y formación",
+    "crumbs": [
+      "Matching"
+    ]
+  },
+  {
+    "objectID": "matching/index.html#ciclo-de-vida-de-una-licitación",
+    "href": "matching/index.html#ciclo-de-vida-de-una-licitación",
+    "title": "Matching",
+    "section": "Ciclo de vida de una licitación",
+    "text": "Ciclo de vida de una licitación\n\nabrir diagrama interactivo ↗\n\nmatch.stage: excluded → retrieved → judged.\nmatch.prioridad: alta · media · baja · descartada · sin_evaluar · excluida.\nSin evaluar no es definitivo: reprocesar o subir el tope de juicios la lleva al juez.\nNada se pierde en silencio: excluidas, descartadas y sin evaluar tienen su propia vista en la bandeja.",
+    "crumbs": [
+      "Matching"
+    ]
+  },
+  {
+    "objectID": "matching/decision.html",
+    "href": "matching/decision.html",
+    "title": "8  Modelos de decisión",
+    "section": "",
+    "text": "8.1 Filtros duros\nLos modelos de decisión responden una pregunta binaria: ¿esta licitación le sirve al centro? Radar MP la responde en capas, de la más barata a la más cara, y cada capa guarda su motivo.\nSon reglas instantáneas que eliminan ~73 % del día antes de gastar embeddings o modelos.\nReglas por título (rules.exclude_title): 8 expresiones regulares sobre el título normalizado (minúsculas, sin tildes) que excluyen solo lo inequívoco: guardias, aseo, medicamentos e insumos, alimentación, combustibles y repuestos, vestuario, arriendo de vehículos y pasajes aéreos.\nReglas por rubro (rules.exclude_unspsc): 43 prefijos UNSPSC; excluye la licitación solo si todos sus ítems de 8 dígitos caen en rubros excluidos (Categorías).\nCada exclusión guarda su motivo (exclusion_reason) y se revisa en la vista «Excluidas por filtro». En Configuración, «Probar» una regla muestra qué excluiría en los últimos 30 días y avisa si bota oportunidades alta o media.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Modelos de decisión</span>"
+    ]
+  },
+  {
+    "objectID": "matching/decision.html#filtros-duros",
+    "href": "matching/decision.html#filtros-duros",
+    "title": "8  Modelos de decisión",
+    "section": "",
+    "text": "exclude_title:\n  - value: '\\b(guardias?|vigilancia privada|seguridad privada)\\b'\n    nota: servicios de guardias\n  - value: '\\b(alimentacion|alimentos|colaciones|catering|raciones)\\b'\n    nota: alimentación",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Modelos de decisión</span>"
+    ]
+  },
+  {
+    "objectID": "matching/decision.html#triaje-con-modelo-de-decisión",
+    "href": "matching/decision.html#triaje-con-modelo-de-decisión",
+    "title": "8  Modelos de decisión",
+    "section": "8.2 Triaje con modelo de decisión",
+    "text": "8.2 Triaje con modelo de decisión\nEl juez LLM tarda ~13 s por licitación; con ~140 recuperadas por día no alcanza a verlas todas. La versión anterior juzgaba solo el top-25 por retrieval, y lo que quedaba fuera nunca se evaluaba: en la referencia, ese corte perdía un tercio de las relevantes (recall 67 %).\nEl triaje resuelve ese cuello de botella con un modelo de decisión local (nimble:latest, alternativamente tev1:4b): un modelo pequeño ajustado para responder solo la letra de una opción, en ~1 s. Se llama por /api/generate de Ollama en modo raw con la plantilla de chat de Qwen (backend/src/radar/matching/triage.py).\n\n8.2.1 Dos preguntas\nPregunta 1 — sí/no (altísimo recall): «Should {centro} bid on this public tender?»\n\nSí: el entregable principal es un estudio, consultoría, plan, plataforma de datos/SIG o capacitación especializada que el centro podría entregar.\nNo: bienes, obras, licencias, mantención u operación, contratación de personal o servicios genéricos fuera de su especialidad.\n\nPregunta 2 — categoría del entregable (solo para las que pasan): «What is the main deliverable this public tender asks the supplier to provide?»\n\n\n\nTabla 8.2: Categorías del triaje\n\n\n\n\n\n\n\n\n\n\nCategoría\nEntregable principal\n¿Pasa al juez?\n\n\n\n\nestudio\nEstudio, diagnóstico, plan, evaluación, línea base, encuesta, cartografía o consultoría sobre territorio, ciudad, ambiente, movilidad, energía, seguridad, sociedad o política pública\nsí\n\n\nplataforma\nDesarrollo a medida de plataforma de datos, dashboard, observatorio, visor SIG, sistema de indicadores o modelo predictivo/IA\nsí\n\n\ncap_esp\nCapacitación a funcionarios en SIG, datos, IA, planificación, política pública, riesgo o clima\nsí\n\n\ncap_gen\nOtra capacitación: habilidades blandas, liderazgo, bienestar, docentes, salud, oficios, talleres comunitarios\nno\n\n\npersona\nContratación de un profesional, analista o apoyo administrativo individual\nno\n\n\nobra\nObras, reparación o mantención, o diseño de ingeniería/arquitectura de una obra específica\nno\n\n\notra_disc\nConsultoría de otra disciplina: auditoría, contabilidad, legal, comunicaciones, RR.HH., sistemas TI, agronomía\nno\n\n\noperacion\nBienes, licencias, servicios TI/telecom, eventos, recintos, alimentación, transporte, guardias\nno\n\n\n\n\n\n\nLa categoría se pregunta dos veces, con las opciones en orden normal e invertido: si cualquiera de las dos respuestas cae en una categoría relevante, la licitación pasa. Un modelo que duda no descarta. Si el modelo falla o no responde una opción válida, tampoco se descarta.\nLas preguntas van en inglés porque así se ajustaron estos modelos (con la pregunta en español, tev1 responde siempre la primera opción); la licitación va en su idioma original.\n\n\n8.2.2 Efecto en el pipeline\n\nSe triagan todas las recuperadas del día, no solo el top-k.\nPasan al juez las de categoría relevante, hasta max_juicios (25) por día; garantia_top permite juzgar las N de mejor retrieval aunque el triaje las descarte (hoy 0).\nLo que el triaje descarta queda descartada, aunque un juicio anterior dijera otra cosa (veto del triaje).\n\ntriaje:\n  activo: true\n  modelo: nimble:latest\n  garantia_top: 0\n  max_juicios: 25",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Modelos de decisión</span>"
+    ]
+  },
+  {
+    "objectID": "matching/decision.html#juez-llm",
+    "href": "matching/decision.html#juez-llm",
+    "title": "8  Modelos de decisión",
+    "section": "8.3 Juez LLM",
+    "text": "8.3 Juez LLM\n\nabrir diagrama interactivo ↗\nEl juez es qwen3.5 (9,7B) en Ollama, con salida forzada por JSON Schema y validada con Pydantic (temperature 0 · seed 42 · think=false · num_ctx 8192).\n\nSystem prompt: catálogo de servicios y criterios del centro: bienes, licencias y operación no son relevantes; la mantención secundaria dentro de un estudio es un riesgo, no un rechazo; no considerar fechas (el plazo se puntúa aparte); rúbrica de puntaje y ejemplos.\nUser prompt: licitación, comprador y sector, ítems, pista del retrieval y hasta 4 casos parecidos ya etiquetados por el equipo (few-shot, ver Priorización).\n\n{\n  \"analisis\":   \"razonamiento breve (≤ 3 frases)\",\n  \"relevante\":  true,\n  \"score\":      92,\n  \"servicio\":   \"politicas-publicas-evaluacion\",\n  \"evidencia\":  [\"cita literal de la licitación\", \"...\"],\n  \"riesgos\":    [\"requiere experiencia previa en ...\"],\n  \"integra_uai\":\"si | posible | no\",\n  \"resumen\":    \"por qué sirve y cómo postular\"\n}\nservicio es un enum generado desde el catálogo más ninguno: el modelo no puede inventar servicios.\n\n8.3.1 Salvaguardas en código\n\nLas citas de evidencia que no aparecen literalmente en el título o la descripción se descartan.\nrelevante = score ≥ 60 y servicio ≠ ninguno: el número manda sobre el booleano.\nRiesgos y evidencia se acotan a 3.\nSi el juez falla, la licitación queda sin_evaluar y se registra: no bloquea el día.\n\n\n\n8.3.2 Lecciones del backtest\n\nLa regla de «mantención» rechazaba una plataforma de analítica de $650 millones → se aclaró que la mantención secundaria es un riesgo (pasó a 65, media).\nUn estudio socioeconómico «ya cerrado» bajaba de 95 a 10 → se quitó el estado del plazo del prompt y se ordenó ignorar fechas.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Modelos de decisión</span>"
+    ]
+  },
+  {
+    "objectID": "matching/decision.html#evaluación-dataset-de-referencia-decision-v1",
+    "href": "matching/decision.html#evaluación-dataset-de-referencia-decision-v1",
+    "title": "8  Modelos de decisión",
+    "section": "8.4 Evaluación: dataset de referencia decision-v1",
+    "text": "8.4 Evaluación: dataset de referencia decision-v1\nPara medir los modelos contra algo distinto del propio juez se construyó backend/reference/decision-v1/: 297 licitaciones reales (dic-2025 y oct-2026, muestra estratificada, 27 relevantes) etiquetadas a ciegas con una rúbrica escrita (RUBRICA.md). Las etiquetas iniciales son de Claude Opus; el equipo las reemplaza al resolver la planilla de casos en disputa.\n\n\n\nTabla 8.3: Resultados sobre la referencia decision-v1 (conteo en la muestra)\n\n\n\n\n\nSistema\nRecall\nPrecisión\nPasan\n\n\n\n\nPipeline top-k anterior (alta/media)\n67 %\n41 %\n15 %\n\n\nJuez qwen (solo juzgadas)\n95 %\n35 %\n49 %\n\n\nnimble sí/no\n100 %\n20 %\n45 %\n\n\nnimble sí/no + categoría\n96 %\n52 %\n17 %\n\n\ntev1 sí/no + categoría\n70 %\n63 %\n10 %\n\n\n\n\n\n\nLatencia de nimble: media 1,2 s, p95 2,0 s. Al invertir las opciones cambia la respuesta en 3 % de los casos, ninguno relevante.\nLa mayoría de los falsos positivos del juez son capacitación genérica (oficios, liderazgo, bienestar laboral, docentes), contratación de una persona, obras y consultorías de otra disciplina: exactamente lo que la pregunta de categoría filtra.\nuv run radar reference predict --model nimble:latest --model tev1:4b   # ~20 min\nuv run radar reference report --out reference/decision-v1/REPORTE.md\nuv run radar reference review-export      # planilla con los casos en disputa\nuv run radar triage-bench --since 2026-10-27 --until 2026-10-28 --model tev1:4b\n\n\n\n\n\n\nValidación pendiente\n\n\n\nLa pregunta de categoría se diseñó mirando los errores de esta misma muestra: hay que validarla en días nuevos y con etiquetas del equipo. La muestra de evaluación incluye el estrato triaje_no para medir con etiquetas humanas cuánto relevante descarta el triaje. pendiente",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Modelos de decisión</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html",
+    "href": "matching/priorizacion.html",
+    "title": "9  Modelos de priorización",
+    "section": "",
+    "text": "9.1 Retrieval híbrido\nUna vez decidido que una licitación sirve, hay que decidir cuánto importa: qué tan cerca está de los servicios del centro, cuánta plata hay en juego y cuánto plazo queda. La priorización combina esas señales en un puntaje final de 0 a 100 y una prioridad.\nAntes de cualquier modelo de lenguaje, cada licitación no excluida se puntúa contra todos los servicios del catálogo.\nEmbeddings. embeddinggemma (768 dimensiones) con prefijos de tarea:\nLos vectores de licitaciones se guardan en tender_embedding (índice HNSW coseno) y se recalculan solo si cambia el hash del texto. Cada servicio tiene un vector por su descripción y uno por cada ejemplo (service_vector); la similitud con el servicio es el máximo entre todos ellos.\nNormalización. El coseno de embeddinggemma vive en un rango estrecho (calibrado en dic-2025 sobre 3.089 licitaciones: p50 0,26 · p90 0,33 · p99 0,41 · máx 0,66), así que se lleva a 0–1 con un piso y un techo:\n\\text{sim\\_norm} = \\operatorname{clip}\\left(\\frac{\\cos - 0{,}30}{0{,}60 - 0{,}30},\\ 0,\\ 1\\right)\nPuntaje léxico. Cada palabra clave del servicio encontrada en el texto normalizado suma con rendimientos decrecientes:\n\\text{léxico} = 1 - 0{,}6^{\\,\\text{aciertos}}\nRetrieval.\n\\text{retrieval} = \\alpha \\cdot \\text{sim\\_norm} + (1-\\alpha)\\cdot\\text{léxico}, \\qquad \\alpha = 0{,}75\nGana el servicio con mayor retrieval, pero se guardan los puntajes de todos. Sin triaje, el top-k del día (llm_top_k, 25) pasa al juez; con triaje, el retrieval define el orden y el universo de recuperadas.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#retrieval-híbrido",
+    "href": "matching/priorizacion.html#retrieval-híbrido",
+    "title": "9  Modelos de priorización",
+    "section": "",
+    "text": "licitación → title: … | text: descripción + ítems\nservicio → task: search result | query: …",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#puntaje-final",
+    "href": "matching/priorizacion.html#puntaje-final",
+    "title": "9  Modelos de priorización",
+    "section": "9.2 Puntaje final",
+    "text": "9.2 Puntaje final\n\n\\text{final} = 0{,}60\\cdot\\text{LLM} + 0{,}15\\cdot\\text{retrieval}\\cdot 100 + 0{,}15\\cdot\\text{económico} + 0{,}10\\cdot\\text{plazo}\n\n\n\n\nTabla 9.1: Componentes del puntaje final\n\n\n\n\n\n\n\n\n\nComponente\nCálculo\n\n\n\n\nLLM\nPuntaje 0–100 del juez (sin juicio: retrieval × 100)\n\n\nEconómico\nSin monto: 40 · ≤ $10 M: 20 · ≥ $300 M: 100 · lineal entre medio\n\n\nPlazo\nCerrada: 0 · &lt; 3 días: 20 · &lt; 7 días: 60 · ≥ 7 días: 100\n\n\n\n\n\n\nLos pesos deben sumar 1 y se editan en Configuración; los montos (economico.monto_min, monto_max) también.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#prioridad",
+    "href": "matching/priorizacion.html#prioridad",
+    "title": "9  Modelos de priorización",
+    "section": "9.3 Prioridad",
+    "text": "9.3 Prioridad\n\n\n\nTabla 9.2: Reglas de prioridad\n\n\n\n\n\n\n\n\n\nPrioridad\nCondición\n\n\n\n\nAlta\njuzgada relevante y final ≥ 75\n\n\nMedia\njuzgada relevante y final ≥ 55\n\n\nBaja\njuzgada relevante y final &lt; 55\n\n\nDescartada\nel juez (o el triaje) dijo no relevante; el puntaje se topa en 30\n\n\nSin evaluar\nrecuperada pero sin juicio (fuera del tope o falla del modelo)\n\n\nExcluida\neliminada por un filtro duro\n\n\n\n\n\n\nLa bandeja muestra por defecto alta + media. Tras cambiar pesos o umbrales, «Recalcular 14 días sin LLM» reaplica los puntajes en segundos.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#calibración-con-etiquetas",
+    "href": "matching/priorizacion.html#calibración-con-etiquetas",
+    "title": "9  Modelos de priorización",
+    "section": "9.4 Calibración con etiquetas",
+    "text": "9.4 Calibración con etiquetas\nLas etiquetas del equipo (relevante, no relevante, dudoso, postulado) permiten ajustar los umbrales con datos:\n\nCalibración (Configuración → Aprendizaje, GET /profiles/{id}/calibration): precisión, recall y F1 por umbral; sugiere el umbral media (mejor F1) y alta (precisión ≥ 80 %) cuando hay ≥ 10 etiquetas de cada clase. También muestra cuántas relevantes quedaron fuera por top-k, reglas, triaje o juez.\nMuestra estratificada (radar eval sample → import → report): cada licitación pertenece a un estrato (juzgada, top no juzgada, resto, excluida similar, excluida al azar, triaje no…) con un peso igual a población / etiquetadas, de modo que precisión y recall estiman todo el período, no solo lo etiquetado.\n\n\nabrir diagrama interactivo ↗",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#aprendizaje-few-shot",
+    "href": "matching/priorizacion.html#aprendizaje-few-shot",
+    "title": "9  Modelos de priorización",
+    "section": "9.5 Aprendizaje few-shot",
+    "text": "9.5 Aprendizaje few-shot\nAl juzgar, el modelo ve hasta 4 licitaciones parecidas (coseno ≥ 0,55) ya etiquetadas por el equipo, balanceando relevantes y no relevantes, con sus comentarios. Qué casos vio cada juicio queda en match.llm_context y se muestra en el detalle. Así el criterio del equipo entra por el prompt, sin reentrenar.\nLas adjudicaciones de la UAI no se usan como ejemplos positivos por defecto: de 27 licitaciones ganadas ($14 mil millones), casi todas son cursos y diplomados, y sesgarían al juez hacia capacitación.",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "matching/priorizacion.html#hallazgos",
+    "href": "matching/priorizacion.html#hallazgos",
+    "title": "9  Modelos de priorización",
+    "section": "9.6 Hallazgos",
+    "text": "9.6 Hallazgos\n\nEn el backtest de dic-2025, v2 propone 23 oportunidades alta + media frente a 10 candidatas de v1, con hallazgos nuevos como PLADECOs, planes de reducción de riesgo y catastros de vivienda.\nEl 27-oct-2026, 5 de las 10 oportunidades fueron capacitación genérica: el servicio de capacitación es demasiado amplio. El triaje por categoría (cap_gen vs cap_esp) apunta a ese ruido; falta acotar también la descripción y los ejemplos del servicio. pendiente",
+    "crumbs": [
+      "Matching",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Modelos de priorización</span>"
+    ]
+  },
+  {
+    "objectID": "digest/index.html",
+    "href": "digest/index.html",
+    "title": "Digest",
+    "section": "",
+    "text": "El digest es la etapa de salida: transforma lo que el matching decidió en información útil para dos destinatarios.\n\n\n\nTabla 1: Salidas de la plataforma\n\n\n\n\n\nDestinatario\nQué recibe\nCapítulo\n\n\n\n\nOrganismos (como objeto de análisis)\nInteligencia de mercado: quién gana, montos típicos, cómo compra cada comprador\nOrganismos\n\n\nUsuarios del centro\nAlertas por correo con las oportunidades nuevas y la bandeja priorizada\nUsuarios\n\n\n\n\n\n\n\nabrir diagrama interactivo ↗\nEl worker ejecuta todos los días, a las 06:00 (hora de Chile), la secuencia ingesta → matching → digest. Cada paso queda registrado en ingest_run; si Ollama no está disponible, el matching se registra como error pero la ingesta queda guardada y el digest no avisa nada nuevo.",
+    "crumbs": [
+      "Digest"
+    ]
+  },
+  {
+    "objectID": "digest/organismos.html",
+    "href": "digest/organismos.html",
+    "title": "10  Organismos",
+    "section": "",
+    "text": "10.1 Qué se calcula\nDecidir si postular no depende solo de si la licitación calza: también importa contra quién se compite, cuánto se suele pagar y cómo se comporta el comprador. Radar MP responde esas preguntas con el histórico de Datos Abiertos (~1,06 millones de líneas adjudicadas) en el panel Mercado del detalle de cada licitación.\nEl módulo backend/src/radar/market.py (market_for) toma las clases UNSPSC de los ítems de la licitación y busca, en una ventana de 24 meses (months), licitaciones con ítems en esas mismas clases.\nEjemplo: un estudio que presupuesta $80 millones frente a $16 millones típico en su categoría es una señal de que el alcance es mayor de lo habitual o de que el comprador sobrestima.\nLa consulta responde en menos de 1 segundo y se expone en:",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "digest/organismos.html#qué-se-calcula",
+    "href": "digest/organismos.html#qué-se-calcula",
+    "title": "10  Organismos",
+    "section": "",
+    "text": "Tabla 10.1: Bloques de la vista de mercado\n\n\n\n\n\n\n\n\n\nBloque\nContenido\n\n\n\n\nCompetencia\nProveedores que más ganan en esas categorías, cuántas veces con este comprador y si son universidades o la propia UAI\n\n\nMontos de referencia\nMonto adjudicado típico (mediana) y rango central; comparación con el presupuesto de la licitación\n\n\nComportamiento del comprador\nPorcentaje de licitaciones del organismo adjudicadas, desiertas y revocadas\n\n\nHistorial propio\nAdjudicaciones de la UAI (RUT en proveedores_propios)\n\n\n\n\n\n\n\n\nGET /profiles/{id}/matches/{codigo}/mercado?months=24",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "digest/organismos.html#limitaciones",
+    "href": "digest/organismos.html#limitaciones",
+    "title": "10  Organismos",
+    "section": "10.2 Limitaciones",
+    "text": "10.2 Limitaciones\n\nLa coincidencia por clase UNSPSC es gruesa: dos licitaciones de «servicios de consultoría» pueden ser muy distintas. Es una aproximación barata que cubre todo el histórico sin embeddings.\nLas adjudicaciones vienen solo de Datos Abiertos, con un mes de desfase.\nLas universidades se reconocen por el nombre del proveedor.\n\n\n\n\n\n\n\nPor completar\n\n\n\n\nFicha de organismo: página propia por comprador con sus licitaciones afines al centro, tasa de desiertas, montos y proveedores habituales. pendiente\nDigest de organismos: resumen periódico de los organismos que más compran servicios del catálogo, por región y sector. pendiente\nCompetencia por similitud semántica (licitaciones parecidas, no solo de la misma clase). pendiente\nProbabilidad de adjudicación y calendario estacional de compras por organismo (Trabajos futuros).",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Organismos</span>"
+    ]
+  },
+  {
+    "objectID": "digest/usuarios.html",
+    "href": "digest/usuarios.html",
+    "title": "11  Usuarios",
+    "section": "",
+    "text": "11.1 Digest diario\nLos usuarios del centro reciben las oportunidades por dos vías: la bandeja web, que consultan cuando quieren (Pantallas), y el digest diario por correo, que les llega sin que lo pidan.",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Usuarios</span>"
+    ]
+  },
+  {
+    "objectID": "digest/usuarios.html#digest-diario",
+    "href": "digest/usuarios.html#digest-diario",
+    "title": "11  Usuarios",
+    "section": "",
+    "text": "Correo de digest\n\n\n\n\n\n\n\nDespués del matching diario, un correo con las oportunidades nuevas de las prioridades elegidas (por defecto alta + media, solo abiertas).\nCada licitación se avisa una sola vez: la tabla alert registra qué se avisó y cuándo.\nPara cada oportunidad: prioridad, servicio, puntaje, comprador, monto, cierre y el resumen del juez.\nEnlaces directos a la bandeja y a la ficha en Mercado Público.",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Usuarios</span>"
+    ]
+  },
+  {
+    "objectID": "digest/usuarios.html#envío",
+    "href": "digest/usuarios.html#envío",
+    "title": "11  Usuarios",
+    "section": "11.2 Envío",
+    "text": "11.2 Envío\n\n\n\nTabla 11.1: Envío del digest\n\n\n\n\n\n\n\n\n\nSituación\nComportamiento\n\n\n\n\nCon SMTP_* en .env\nSe envía por correo a los destinatarios configurados\n\n\nSin SMTP\nSe guarda como .eml en data/outbox/ para revisarlo antes de activar el envío\n\n\nAlertas desactivadas en el perfil\nNo se envía (salvo --force)\n\n\n\n\n\n\nuv run radar digest --preview digest.html   # ver el próximo digest sin enviar\nuv run radar digest --force                 # enviar aunque estén desactivadas\nLa vista previa también está en Configuración → Alertas (GET /profiles/{id}/digest/preview), y no marca nada como enviado.",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Usuarios</span>"
+    ]
+  },
+  {
+    "objectID": "digest/usuarios.html#configuración-de-alertas",
+    "href": "digest/usuarios.html#configuración-de-alertas",
+    "title": "11  Usuarios",
+    "section": "11.3 Configuración de alertas",
+    "text": "11.3 Configuración de alertas\nEn Configuración → Alertas se define, por perfil:\n\nsi las alertas están activas;\nqué prioridades se avisan (alta, media, baja);\nsi solo se avisan licitaciones abiertas;\nlos destinatarios.",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Usuarios</span>"
+    ]
+  },
+  {
+    "objectID": "digest/usuarios.html#retroalimentación-de-los-usuarios",
+    "href": "digest/usuarios.html#retroalimentación-de-los-usuarios",
+    "title": "11  Usuarios",
+    "section": "11.4 Retroalimentación de los usuarios",
+    "text": "11.4 Retroalimentación de los usuarios\nLas alertas son el inicio del ciclo: lo que el usuario hace con cada oportunidad vuelve al sistema como etiqueta (feedback): relevante, no relevante, dudoso o postulado, con nombre, fecha y comentario. Esas etiquetas alimentan las métricas, la calibración y los ejemplos few-shot del juez (Modelos de priorización).\n\n\n\n\n\n\nPendiente para el uso real\n\n\n\n\nConfigurar SMTP y la lista de destinatarios del CIT. pendiente\nHoy los usuarios no tienen cuenta: la etiqueta guarda un nombre libre. Usuarios con inicio de sesión, preferencias por persona (servicios, regiones, frecuencia) y resúmenes semanales personales son parte de Trabajos futuros.",
+    "crumbs": [
+      "Digest",
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Usuarios</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/index.html",
+    "href": "plataforma/index.html",
+    "title": "Plataforma",
+    "section": "",
+    "text": "La plataforma web es donde el equipo usa Radar MP día a día: revisa la bandeja priorizada, entiende el porqué de cada decisión, etiqueta, y —si tiene el rol— ajusta el catálogo, los criterios y la operación.\n\n\n\nTabla 1: Capítulos de la parte Plataforma\n\n\n\n\n\nCapítulo\nContenido\n\n\n\n\nPantallas\nBandeja, detalle, catálogo, configuración y operación\n\n\nUso\nLevantamiento, rutina diaria, etiquetado y reprocesos\n\n\nAdministración\nCrear, modificar y eliminar perfiles, servicios, reglas, etiquetas y configuración\n\n\n\n\n\n\nTecnología: React + Vite + TypeScript + TanStack Query + Tailwind. En desarrollo corre en http://localhost:5173 (Vite reenvía /api/* a la API en :8000); en Docker, en http://localhost:8080 (nginx). Los tipos del cliente se generan desde OpenAPI (npm run gen:api).\nLa API REST está documentada de forma interactiva en http://localhost:8000/docs.",
+    "crumbs": [
+      "Plataforma"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html",
+    "href": "plataforma/pantallas.html",
+    "title": "12  Pantallas",
+    "section": "",
+    "text": "12.1 Bandeja\nLa web tiene cinco pantallas (frontend/src/pages/).\nEndpoint: GET /profiles/{id}/matches?prioridad=&servicio=&region=&q=&open_only=&feedback=&sort=.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html#bandeja",
+    "href": "plataforma/pantallas.html#bandeja",
+    "title": "12  Pantallas",
+    "section": "",
+    "text": "Bandeja de oportunidades con panel de detalle\n\n\n\n\nVistas: oportunidades (alta + media), baja, evaluadas, descartadas, excluidas por filtro.\nFiltros: servicio, región, etiqueta, fechas, texto y «solo abiertas». Se guardan en la URL, así que una vista filtrada se puede compartir.\nPanel de detalle sin salir de la lista; insignias del triaje (categoría del entregable).\nTeclado: j/k mover · 1 relevante · 2 no relevante · 3 dudoso · p postular (repetir la tecla quita la etiqueta) · Enter abrir · / buscar · Esc cerrar.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html#detalle",
+    "href": "plataforma/pantallas.html#detalle",
+    "title": "12  Pantallas",
+    "section": "12.2 Detalle",
+    "text": "12.2 Detalle\n\n\n\n\nDetalle con la evaluación del juez\n\n\n\n\nPrioridad, servicio y días al cierre.\nEvaluación del juez: resumen, evidencia citada, riesgos y si permite involucrar estudiantes o investigación (integra_uai).\nTriaje: respuesta sí/no y categoría del entregable.\nPuntajes: final y sus cuatro componentes, más la cercanía con cada servicio.\nCasos few-shot que vio el juez, modelo, fecha del juicio y versión del matcher.\nLa evidencia se resalta en la descripción y los ítems.\nMercado: competencia, montos de referencia y comportamiento del comprador (Digest de organismos).",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html#catálogo",
+    "href": "plataforma/pantallas.html#catálogo",
+    "title": "12  Pantallas",
+    "section": "12.3 Catálogo",
+    "text": "12.3 Catálogo\n\n\n\n\nCatálogo de servicios con «Probar»\n\n\n\nEdición de la descripción, ejemplos y palabras clave de cada servicio. «Probar» muestra qué licitaciones recientes traería el borrador antes de guardar (POST /profiles/{id}/services/preview). Al guardar se recalculan los vectores del servicio.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html#configuración",
+    "href": "plataforma/pantallas.html#configuración",
+    "title": "12  Pantallas",
+    "section": "12.4 Configuración",
+    "text": "12.4 Configuración\n\n\n\n\n\n\nPesos y umbrales\n\n\n\n\n\n\n\n\n\n\nReglas de exclusión\n\n\n\n\n\n\nPuntaje: pesos (validados: deben sumar 1), umbrales alta/media, montos mínimo y máximo.\nSelección para el juez: top-k, retrieval mínimo y panel de triaje (activo, modelo, garantía top, máximo de juicios).\nAlertas: activas, prioridades, solo abiertas, destinatarios y vista previa del digest.\nReglas: 51 reglas de exclusión (título y UNSPSC) editables, con «Probar».\nAprendizaje: calibración de umbrales con las etiquetas.\n\n\n\n\n\nCalibración con etiquetas",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/pantallas.html#operación",
+    "href": "plataforma/pantallas.html#operación",
+    "title": "12  Pantallas",
+    "section": "12.5 Operación",
+    "text": "12.5 Operación\n\n\n\n\nVista de operación\n\n\n\n\nEstado de la base, ticket de Mercado Público, Ollama (modelos presentes) y correo.\nPróximas ejecuciones del worker.\nCobertura de 14 días: licitaciones, con detalle, procesadas, juzgadas y oportunidades por día, con botones para ingerir o procesar días incompletos.\nReprocesos por rango: ingesta, matching (con o sin LLM, re-juzgar) y digest.\nCorridas recientes con duración y error; los errores ya resueltos no se muestran como pendientes.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>Pantallas</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html",
+    "href": "plataforma/uso.html",
+    "title": "13  Uso",
+    "section": "",
+    "text": "13.1 Levantamiento",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html#levantamiento",
+    "href": "plataforma/uso.html#levantamiento",
+    "title": "13  Uso",
+    "section": "",
+    "text": "13.1.1 Requisitos\n\nDocker Desktop (Postgres)\nuv (Python 3.13) y Node 22+\nOllama nativo en macOS (en Docker no usa la GPU) con embeddinggemma, qwen3.5 y nimble:latest\nTicket de api.mercadopublico.cl\n\n\n\n13.1.2 Primera vez\ncp .env.example .env                 # MERCADO_PUBLICO_TICKET (y SMTP_* si habrá emails)\ndocker compose up -d db\ncd backend && uv sync\nuv run alembic upgrade head\nuv run radar catalog load catalogs/cit.yaml\ncd ../frontend && npm install\n\n\n13.1.3 Día a día\nCada proceso en su terminal, desde la raíz del repositorio:\ndocker compose up -d db                          # 1. base\nopen -a Ollama                                   # 2. modelos locales\ncd backend && uv run radar serve                 # 3. API → http://localhost:8000/docs\ncd frontend && npm run dev                       # 4. Web → http://localhost:5173\ncd backend && uv run radar worker                # 5. tareas programadas (opcional)\nscripts/estado.sh muestra qué componentes están arriba. Alternativa: docker compose --profile app up -d --build levanta base, migraciones, API, worker y web (:8080); Ollama sigue nativo en el Mac.\n¿Necesita internet? Solo para la ingesta, el envío de correos y la instalación. Embeddings, triaje, juez, bandeja y análisis funcionan sin red.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html#rutina-diaria-del-equipo",
+    "href": "plataforma/uso.html#rutina-diaria-del-equipo",
+    "title": "13  Uso",
+    "section": "13.2 Rutina diaria del equipo",
+    "text": "13.2 Rutina diaria del equipo\n\n06:00 — el worker ingiere el día anterior, corre el matching y genera el digest.\nMañana — cada persona revisa el correo o abre la bandeja (vista «Oportunidades»).\nRevisión — con j/k recorre la lista; con Enter abre el detalle para ver evidencia, riesgos y mercado.\nEtiquetado — 1 relevante, 2 no relevante, 3 dudoso, p postular. Cada etiqueta queda con nombre y fecha: es la señal de aprendizaje.\nDecisión — las marcadas para postular siguen el proceso interno del centro (fuera de la plataforma, por ahora).\n\n\n\n\n\n\n\nEtiquetar es parte del uso\n\n\n\nSin etiquetas del equipo no hay métricas reales, ni calibración de umbrales, ni ejemplos few-shot. Revisar también las vistas «Descartadas» y «Excluidas» de vez en cuando permite detectar oportunidades que el sistema botó.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html#tareas-periódicas",
+    "href": "plataforma/uso.html#tareas-periódicas",
+    "title": "13  Uso",
+    "section": "13.3 Tareas periódicas",
+    "text": "13.3 Tareas periódicas\n\n\n\nTabla 13.1: Tareas periódicas\n\n\n\n\n\n\n\n\n\n\nTarea\nFrecuencia\nDónde\n\n\n\n\nRevisar la cobertura de días\nsemanal\nOperación\n\n\nRevisar excluidas y descartadas\nsemanal\nBandeja\n\n\nAjustar servicios con ruido\nmensual\nCatálogo\n\n\nRevisar calibración\ncuando haya ≥ 10 etiquetas por clase\nConfiguración → Aprendizaje\n\n\nReporte de evaluación\ntrimestral\nradar eval report",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html#reprocesos",
+    "href": "plataforma/uso.html#reprocesos",
+    "title": "13  Uso",
+    "section": "13.4 Reprocesos",
+    "text": "13.4 Reprocesos\nDesde Operación o por CLI:\nuv run radar ingest --date 2026-10-20 --until 2026-10-24   # días faltantes\nuv run radar match --date 2026-10-28 --rejudge            # re-juzgar tras cambiar criterios\nuv run radar match --date 2026-10-28 --retriage           # re-triagar con otro modelo\nLos reprocesos desde la web corren de a uno en la API; la cola se pierde al reiniciarla, pero el registro queda en ingest_run.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/uso.html#problemas-comunes",
+    "href": "plataforma/uso.html#problemas-comunes",
+    "title": "13  Uso",
+    "section": "13.5 Problemas comunes",
+    "text": "13.5 Problemas comunes\n\n\n\nTabla 13.2: Problemas comunes\n\n\n\n\n\n\n\n\n\nSíntoma\nCausa / solución\n\n\n\n\nconnection refused a localhost:5432\nDocker apagado → docker compose up -d db\n\n\nWeb: «No se pudo cargar la bandeja»\nAPI abajo → uv run radar serve\n\n\n«Modelo de embeddings no disponible»\nOllama abajo o falta un modelo → ollama pull …\n\n\nIngesta con muchos 429\nLímite de la API; subir MP_MIN_INTERVAL_S\n\n\nFalla la API tras git pull\nMigraciones nuevas → uv run alembic upgrade head",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>13</span>  <span class='chapter-title'>Uso</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/administracion.html",
+    "href": "plataforma/administracion.html",
+    "title": "14  Administración",
+    "section": "",
+    "text": "14.1 Crear\nLa administración define qué busca la plataforma (perfil, servicios, reglas) y cómo decide (pesos, umbrales, triaje, alertas). Todo se edita desde la web o la CLI, sin tocar código. Este capítulo resume, por objeto, cómo crear, modificar y eliminar.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Administración</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/administracion.html#crear",
+    "href": "plataforma/administracion.html#crear",
+    "title": "14  Administración",
+    "section": "",
+    "text": "14.1.1 Perfil\nUn perfil se crea desde un archivo YAML con su descripción, configuración, servicios y reglas:\nuv run radar catalog load catalogs/cit.yaml\nEstructura mínima:\nid: cit\nnombre: Centro de Inteligencia Territorial (UAI)\ndescripcion: &gt;\n  Qué hace el centro y qué NO hace (bienes, obras, operación…).\nconfig:\n  llm_top_k: 25\n  weights: {llm: 0.60, retrieval: 0.15, economico: 0.15, plazo: 0.10}\n  prioridad: {alta: 75, media: 55}\n  triaje: {activo: true, modelo: nimble:latest, max_juicios: 25}\nservices:\n  - slug: analisis-territorial-sig\n    nombre: Análisis territorial y SIG\n    descripcion: ...\n    ejemplos: [...]\n    keywords: [...]\nrules:\n  exclude_title: [...]\n  exclude_unspsc: [...]\n\n\n14.1.2 Servicio\nEn Catálogo, «Nuevo servicio»: slug, nombre, descripción, ejemplos y palabras clave. Antes de guardar, «Probar» muestra qué licitaciones de los últimos 30 días traería. Al guardar se calculan sus vectores (PUT /profiles/{id}/services/{slug} crea si el slug no existe).\nBuenas prácticas:\n\nLa descripción dice qué entrega el centro, no solo el tema.\nLos ejemplos son títulos o descripciones reales de licitaciones que sí calzan; cada uno se vuelve un vector, así que la variedad importa más que la cantidad.\nLas palabras clave son prefijos sin tildes (geoespacial, catastr).\n\n\n\n14.1.3 Regla de exclusión\nEn Configuración → Reglas: tipo (título o UNSPSC), valor (expresión regular o prefijo) y nota. «Probar» (POST /rules/test) muestra qué excluiría en los últimos días y avisa si bota oportunidades alta o media. Excluir solo lo inequívoco: lo dudoso lo resuelven el triaje y el juez.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Administración</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/administracion.html#modificar",
+    "href": "plataforma/administracion.html#modificar",
+    "title": "14  Administración",
+    "section": "14.2 Modificar",
+    "text": "14.2 Modificar\n\nServicios: editar en Catálogo y guardar recalcula sus vectores. El cambio afecta a los días que se procesen desde ahora; para re-evaluar días pasados: radar match --date … --rejudge.\nPesos y umbrales: en Configuración → Puntaje. Tras guardar, «Recalcular 14 días sin LLM» reaplica los puntajes en segundos.\nTriaje: activar/desactivar, cambiar de modelo (nimble, tev1), garantía top y máximo de juicios. Cambiar de modelo requiere --retriage para días pasados.\nAlertas: prioridades, solo abiertas y destinatarios (se valida el formato de cada correo).\nReglas: PUT /profiles/{id}/rules reemplaza el conjunto completo.\n\n\n\n\n\n\n\nEl YAML no se actualiza solo\n\n\n\nLas ediciones de la web viven en la base de datos. Para versionarlas, descargar el catálogo desde la web (GET /profiles/{id}/catalog.yaml) y guardarlo en el repositorio. Ojo: radar catalog load sobrescribe las ediciones hechas en la web (salvo la configuración de alertas).",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Administración</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/administracion.html#eliminar",
+    "href": "plataforma/administracion.html#eliminar",
+    "title": "14  Administración",
+    "section": "14.3 Eliminar",
+    "text": "14.3 Eliminar\n\nServicio: se desactiva (activo = false) en lugar de borrarse, para conservar la trazabilidad de los match históricos que lo referencian. Un servicio inactivo no participa del matching (en el Catálogo aparece tachado). Al recargar un YAML, los servicios que ya no están en el archivo también quedan inactivos.\nRegla: quitarla de la lista en Configuración → Reglas y guardar. Las licitaciones ya excluidas por ella vuelven al flujo al reprocesar los días.\nEtiqueta: repetir la tecla en la bandeja o DELETE /profiles/{id}/feedback/{codigo}.\nPerfil: hoy no hay endpoint ni comando para eliminarlo. pendiente",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Administración</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/administracion.html#brechas-de-administración",
+    "href": "plataforma/administracion.html#brechas-de-administración",
+    "title": "14  Administración",
+    "section": "14.4 Brechas de administración",
+    "text": "14.4 Brechas de administración\nLa administración actual supone un solo equipo de confianza: no hay inicio de sesión ni roles, y cualquier persona con acceso a la web puede cambiar criterios. La propuesta para pasar a varias organizaciones con privilegios está en Integración de otros centros:\n\n\n\nTabla 14.2: Roles propuestos\n\n\n\n\n\n\n\n\n\nRol propuesto\nPuede\n\n\n\n\nSuperadmin\nCrear organizaciones, modelos y fuentes; ver uso global\n\n\nAdmin de organización\nPersonas y roles, catálogo, reglas, pesos, alertas\n\n\nAnalista\nEtiquetar, postular, búsquedas propias, comentarios\n\n\nLector\nVer bandeja y detalle de su organización\n\n\n\n\n\n\nAdemás: auditoría de quién cambió qué umbral, regla o servicio y cuándo. pendiente",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>14</span>  <span class='chapter-title'>Administración</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/index.html",
+    "href": "futuro/index.html",
+    "title": "Trabajos futuros",
+    "section": "",
+    "text": "Antes de crecer: brechas actuales\nRadar MP v2 resuelve el problema del CIT con un perfil, un equipo y licitaciones públicas. Las líneas de trabajo futuro apuntan a convertirla en una herramienta para toda la universidad y, eventualmente, en un producto de alcance nacional.",
+    "crumbs": [
+      "Trabajos futuros"
+    ]
+  },
+  {
+    "objectID": "futuro/index.html#antes-de-crecer-brechas-actuales",
+    "href": "futuro/index.html#antes-de-crecer-brechas-actuales",
+    "title": "Trabajos futuros",
+    "section": "",
+    "text": "Etiquetas del equipo (hoy 0): sin ellas no hay métricas reales ni calibración.\nConfigurar SMTP y destinatarios.\nValidar el triaje por categoría en días nuevos.\nAcotar el servicio de capacitación.\nConstruir y probar la imagen Docker de la web.",
+    "crumbs": [
+      "Trabajos futuros"
+    ]
+  },
+  {
+    "objectID": "futuro/index.html#hoja-de-ruta-propuesta",
+    "href": "futuro/index.html#hoja-de-ruta-propuesta",
+    "title": "Trabajos futuros",
+    "section": "Hoja de ruta propuesta",
+    "text": "Hoja de ruta propuesta\n\n\n\nTabla 2: Hoja de ruta\n\n\n\n\n\n\n\n\n\nPlazo\nHitos\n\n\n\n\nCorto (1–2 meses)\nEtiquetado del equipo y primer reporte real · SMTP y uso diario · validación del triaje · ajuste de capacitación\n\n\nMediano (3–6 meses)\nUsuarios con SSO y roles · CRM de interacción · órdenes de compra y bases en PDF · asistente de perfiles\n\n\nLargo (6–12 meses)\nMulti-institución UAI y externas · aprendizaje de postulaciones · inteligencia de mercado y probabilidad de adjudicación · servidor con GPU",
+    "crumbs": [
+      "Trabajos futuros"
+    ]
+  },
+  {
+    "objectID": "futuro/otros-centros.html",
+    "href": "futuro/otros-centros.html",
+    "title": "15  Integración de otros centros",
+    "section": "",
+    "text": "15.1 Qué ya existe\nEl modelo de datos de Radar MP ya está organizado por perfil: cada uno tiene su catálogo de servicios, reglas, pesos, triaje y alertas. Integrar otros centros y escuelas de la UAI —y luego instituciones externas— consiste en agregar perfiles y, sobre todo, personas y organizaciones con privilegios.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Integración de otros centros</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/otros-centros.html#qué-ya-existe",
+    "href": "futuro/otros-centros.html#qué-ya-existe",
+    "title": "15  Integración de otros centros",
+    "section": "",
+    "text": "Varios perfiles conviven en la misma base; el matching corre por perfil.\nLas ingestas son compartidas: una licitación se descarga una vez y se evalúa contra todos los perfiles.\nEl juez y el triaje se parametrizan con la descripción del perfil (triaje.centro, catálogo).",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Integración de otros centros</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/otros-centros.html#qué-falta",
+    "href": "futuro/otros-centros.html#qué-falta",
+    "title": "15  Integración de otros centros",
+    "section": "15.2 Qué falta",
+    "text": "15.2 Qué falta\n\n15.2.1 Personas, organizaciones y roles\n\nInicio de sesión con SSO (Google Workspace UAI, ClaveÚnica) en lugar de un nombre libre.\nMulti-organización: cada institución con sus perfiles, catálogos, reglas, etiquetas y alertas (org_id en las tablas de perfil y equipo).\nRoles: superadmin, admin de organización, analista y lector (Administración).\nAuditoría: quién cambió qué umbral, regla o servicio y cuándo.\n\n\n\n15.2.2 Plantillas por tipo de unidad\nCatálogos de partida que cada unidad adapta: escuelas de negocios, ingeniería, derecho, salud, centros de investigación, educación continua. Para educación continua, la capacitación genérica que hoy es ruido para el CIT es justamente la oportunidad.\n\n\n15.2.3 Colaboración entre centros\n\nUna misma licitación puede ser relevante para varios perfiles: detectar oportunidades conjuntas y proponer consorcios entre unidades.\nComentarios, asignación de responsables y visibilidad cruzada según privilegios.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Integración de otros centros</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/otros-centros.html#consideraciones-técnicas",
+    "href": "futuro/otros-centros.html#consideraciones-técnicas",
+    "title": "15  Integración de otros centros",
+    "section": "15.3 Consideraciones técnicas",
+    "text": "15.3 Consideraciones técnicas\n\n\n\nTabla 15.1: Consideraciones para varios perfiles\n\n\n\n\n\nTema\nImpacto\n\n\n\n\nCosto del juez\nCada perfil agrega juicios; el triaje (~1 s) es lo que hace viable evaluar varias decenas de perfiles por día\n\n\nEmbeddings\nSe calculan una vez por licitación; solo los servicios son por perfil\n\n\nHardware\nCon muchos perfiles conviene un servidor con GPU (vLLM) en lugar de un Mac\n\n\nConfiguración\nEl asistente de perfiles reduce el trabajo de dar de alta una unidad (Asistentes)\n\n\n\n\n\n\n\n\n\n\n\n\nPor completar\n\n\n\n\nLevantar con la universidad la lista de unidades interesadas y sus servicios. pendiente\nPiloto con un segundo perfil (por ejemplo, educación ejecutiva). pendiente",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Integración de otros centros</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/aprendizaje-postulaciones.html",
+    "href": "futuro/aprendizaje-postulaciones.html",
+    "title": "16  Aprendizaje de postulaciones con IA",
+    "section": "",
+    "text": "16.1 Fuentes de aprendizaje\nHoy Radar MP aprende de etiquetas explícitas (relevante, no relevante, dudoso, postulado) a través de la calibración y los ejemplos few-shot. El siguiente paso es aprender del resultado de cada postulación y de la interacción del equipo con la bandeja.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/aprendizaje-postulaciones.html#fuentes-de-aprendizaje",
+    "href": "futuro/aprendizaje-postulaciones.html#fuentes-de-aprendizaje",
+    "title": "16  Aprendizaje de postulaciones con IA",
+    "section": "",
+    "text": "Tabla 16.1: Señales de aprendizaje\n\n\n\n\n\n\n\n\n\n\nSeñal\nOrigen\nQué enseña\n\n\n\n\nEtiquetas\nBandeja (ya existe)\nQué le sirve al equipo\n\n\nPostulaciones\nEtiqueta postulado (ya existe) + embudo de postulación\nA qué se decide postular\n\n\nResultados\nAdjudicaciones de Datos Abiertos (RUT UAI)\nQué se gana y qué se pierde, contra quién y por cuánto\n\n\nInteracción\nCRM: clics, aperturas, tiempo de lectura\nInterés implícito por persona y tema\n\n\nHistórico\n~339 mil licitaciones y ~1 M adjudicaciones\nCompetencia, precios y estacionalidad",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/aprendizaje-postulaciones.html#propuestas",
+    "href": "futuro/aprendizaje-postulaciones.html#propuestas",
+    "title": "16  Aprendizaje de postulaciones con IA",
+    "section": "16.2 Propuestas",
+    "text": "16.2 Propuestas\n\n16.2.1 Embudo de postulación\nRegistrar el recorrido de cada oportunidad: evaluar → preparar → postular → resultado (ganada / perdida / desierta), con responsables, plazos y documentos. Cruzarlo automáticamente con las adjudicaciones de Datos Abiertos para cerrar el ciclo sin trabajo manual.\n\n\n16.2.2 Modelo pequeño en cascada\nEl juez grande limita la cantidad de juicios por día. El triaje con nimble ya mostró que un modelo pequeño puede filtrar con recall ≥ 96 %. El siguiente paso es ajustar un modelo pequeño local (~4B) con las etiquetas y resultados del equipo:\n\ndecide en milisegundos los casos claros;\nenvía al LLM grande solo lo dudoso o complejo (bases técnicas largas, PDF);\nse evalúa contra el dataset de referencia y la muestra estratificada antes de reemplazar nada.\n\n\n\n16.2.3 Probabilidad de adjudicación\nCon el histórico de adjudicaciones, estimar la probabilidad de ganar según categoría, comprador, competidores habituales, monto y región, y usarla como un quinto componente del puntaje final.\n\n\n16.2.4 Ranking personalizado\nUn perfil de intereses por persona a partir de su interacción, para ordenar la bandeja de cada usuario dentro de las oportunidades de su organización.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/aprendizaje-postulaciones.html#riesgos",
+    "href": "futuro/aprendizaje-postulaciones.html#riesgos",
+    "title": "16  Aprendizaje de postulaciones con IA",
+    "section": "16.3 Riesgos",
+    "text": "16.3 Riesgos\n\nSesgo hacia lo ya ganado: las adjudicaciones UAI son casi todas docencia; usarlas sin cuidado empuja al sistema hacia capacitación (por eso hoy están desactivadas como ejemplos positivos).\nPocos datos: el centro postula a pocas licitaciones al año; los modelos de resultado deben combinarse con el histórico nacional.\nMedición: cada cambio se valida con la muestra estratificada y la referencia, y se versiona en match.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/asistentes.html",
+    "href": "futuro/asistentes.html",
+    "title": "17  Asistentes de IA",
+    "section": "",
+    "text": "17.1 Asistente de perfiles\nLos asistentes son agentes conversacionales que ayudan a las personas en las tareas que hoy requieren más criterio experto: definir qué buscar y preparar una postulación.\nUna institución describe sus capacidades en lenguaje natural («hacemos estudios de movilidad y modelos de transporte para municipios») y el asistente:",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Asistentes de IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/asistentes.html#asistente-de-perfiles",
+    "href": "futuro/asistentes.html#asistente-de-perfiles",
+    "title": "17  Asistentes de IA",
+    "section": "",
+    "text": "propone servicios con descripción, ejemplos y palabras clave;\nbusca en el histórico licitaciones parecidas y las muestra para confirmar o descartar;\nsugiere reglas de exclusión a partir de lo que el usuario rechaza;\nmuestra en vivo qué licitaciones traería y cuáles excluiría (reutilizando «Probar»);\nvigila la salud del perfil: avisa cuando un servicio no trae nada en semanas, cuando una regla bota oportunidades o cuando sube el ruido de un servicio.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Asistentes de IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/asistentes.html#asistente-de-postulación",
+    "href": "futuro/asistentes.html#asistente-de-postulación",
+    "title": "17  Asistentes de IA",
+    "section": "17.2 Asistente de postulación",
+    "text": "17.2 Asistente de postulación\nPara una licitación marcada para postular:\n\nLectura de bases (PDF técnicas y administrativas): requisitos, garantías, experiencia exigida, criterios de evaluación y plazos, en una ficha resumida.\nChecklist de admisibilidad: documentos y requisitos formales con responsables y fechas.\nEquipo y experiencia: propone integrantes y proyectos previos del centro que cumplen la experiencia exigida.\nReferencias de mercado: montos adjudicados típicos y competidores probables (Digest de organismos).\nBorradores: estructura de la propuesta técnica a partir de propuestas anteriores del centro.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Asistentes de IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/asistentes.html#asistente-de-consulta",
+    "href": "futuro/asistentes.html#asistente-de-consulta",
+    "title": "17  Asistentes de IA",
+    "section": "17.3 Asistente de consulta",
+    "text": "17.3 Asistente de consulta\nPreguntas en lenguaje natural sobre el mercado: «¿qué gobiernos regionales licitaron estudios de riesgo en 2025?», «¿quién gana las consultorías de PLADECO en la Región de Los Lagos?». Se responde con consultas sobre la base y se citan las licitaciones.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Asistentes de IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/asistentes.html#principios",
+    "href": "futuro/asistentes.html#principios",
+    "title": "17  Asistentes de IA",
+    "section": "17.4 Principios",
+    "text": "17.4 Principios\n\nLocal primero: los documentos del centro y sus propuestas no salen de la máquina.\nHumano en el bucle: el asistente propone, la persona decide.\nTrazable: cada sugerencia cita la licitación, el documento o el dato de origen.\n\n\n\n\n\n\n\nPor completar\n\n\n\nDefinir el alcance del primer asistente a construir (perfiles o postulación) y sus fuentes de documentos internos. pendiente",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Asistentes de IA</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/postulacion-automatica.html",
+    "href": "futuro/postulacion-automatica.html",
+    "title": "18  Postulación automática",
+    "section": "",
+    "text": "18.1 Niveles de automatización\nLa postulación automática es el horizonte más lejano: que la plataforma no solo encuentre y priorice oportunidades, sino que prepare la oferta lista para revisión y, en casos acotados, la presente.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Postulación automática</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/postulacion-automatica.html#niveles-de-automatización",
+    "href": "futuro/postulacion-automatica.html#niveles-de-automatización",
+    "title": "18  Postulación automática",
+    "section": "",
+    "text": "Tabla 18.1: Niveles de automatización\n\n\n\n\n\nNivel\nLa plataforma…\nLa persona…\n\n\n\n\n0 — Hoy\nDetecta, prioriza y avisa\nLee las bases, decide y prepara todo\n\n\n1 — Asistida\nResume bases, arma checklist y borradores (Asistentes)\nDecide, completa y presenta\n\n\n2 — Preparada\nGenera el paquete completo: propuesta técnica, económica y anexos\nRevisa, ajusta, firma y presenta\n\n\n3 — Automática\nPresenta ofertas recurrentes de bajo riesgo según reglas aprobadas\nAprueba las reglas y audita",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Postulación automática</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/postulacion-automatica.html#componentes-necesarios",
+    "href": "futuro/postulacion-automatica.html#componentes-necesarios",
+    "title": "18  Postulación automática",
+    "section": "18.2 Componentes necesarios",
+    "text": "18.2 Componentes necesarios\n\nBiblioteca documental del centro: certificados, CV, experiencia, propuestas anteriores y formatos tipo, versionados y con vigencia.\nLectura de bases con extracción estructurada de requisitos y criterios de evaluación.\nGeneración de propuestas a partir de plantillas y casos previos, citando las fuentes.\nPresupuesto apoyado en montos de referencia del mercado y costos internos.\nIntegración con Mercado Público para la presentación, sujeta a los mecanismos de autenticación y firma que exige la plataforma.",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Postulación automática</span>"
+    ]
+  },
+  {
+    "objectID": "futuro/postulacion-automatica.html#límites-y-resguardos",
+    "href": "futuro/postulacion-automatica.html#límites-y-resguardos",
+    "title": "18  Postulación automática",
+    "section": "18.3 Límites y resguardos",
+    "text": "18.3 Límites y resguardos\n\nLa presentación de una oferta compromete legal y económicamente a la universidad: siempre requiere aprobación humana explícita y firma de quien tenga la facultad.\nLas credenciales de Mercado Público y la firma no deben quedar en manos de un proceso automático sin control.\nCada oferta generada debe ser auditable: qué documentos usó, qué decidió el modelo y quién aprobó.\n\n\n\n\n\n\n\nEstado\n\n\n\nLínea exploratoria. Depende de los asistentes de postulación y del embudo de postulaciones (Aprendizaje de postulaciones). pendiente",
+    "crumbs": [
+      "Trabajos futuros",
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Postulación automática</span>"
+    ]
+  }
+]

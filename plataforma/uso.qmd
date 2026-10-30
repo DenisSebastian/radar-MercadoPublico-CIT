@@ -1,0 +1,87 @@
+# Uso {#sec-uso}
+
+## Levantamiento
+
+### Requisitos
+
+- Docker Desktop (Postgres)
+- [uv](https://docs.astral.sh/uv/) (Python 3.13) y Node 22+
+- [Ollama](https://ollama.com) nativo en macOS (en Docker no usa la GPU) con `embeddinggemma`, `qwen3.5` y `nimble:latest`
+- Ticket de `api.mercadopublico.cl`
+
+### Primera vez
+
+```bash
+cp .env.example .env                 # MERCADO_PUBLICO_TICKET (y SMTP_* si habrá emails)
+docker compose up -d db
+cd backend && uv sync
+uv run alembic upgrade head
+uv run radar catalog load catalogs/cit.yaml
+cd ../frontend && npm install
+```
+
+### Día a día
+
+Cada proceso en su terminal, desde la raíz del repositorio:
+
+```bash
+docker compose up -d db                          # 1. base
+open -a Ollama                                   # 2. modelos locales
+cd backend && uv run radar serve                 # 3. API → http://localhost:8000/docs
+cd frontend && npm run dev                       # 4. Web → http://localhost:5173
+cd backend && uv run radar worker                # 5. tareas programadas (opcional)
+```
+
+`scripts/estado.sh` muestra qué componentes están arriba. Alternativa: `docker compose --profile app up -d --build` levanta base, migraciones, API, worker y web (`:8080`); Ollama sigue nativo en el Mac.
+
+**¿Necesita internet?** Solo para la ingesta, el envío de correos y la instalación. Embeddings, triaje, juez, bandeja y análisis funcionan sin red.
+
+## Rutina diaria del equipo
+
+1. **06:00** — el worker ingiere el día anterior, corre el matching y genera el digest.
+2. **Mañana** — cada persona revisa el correo o abre la bandeja (vista «Oportunidades»).
+3. **Revisión** — con `j`/`k` recorre la lista; con `Enter` abre el detalle para ver evidencia, riesgos y mercado.
+4. **Etiquetado** — `1` relevante, `2` no relevante, `3` dudoso, `p` postular. Cada etiqueta queda con nombre y fecha: es la señal de aprendizaje.
+5. **Decisión** — las marcadas para postular siguen el proceso interno del centro (fuera de la plataforma, por ahora).
+
+::: {.callout-important}
+## Etiquetar es parte del uso
+
+Sin etiquetas del equipo no hay métricas reales, ni calibración de umbrales, ni ejemplos *few-shot*. Revisar también las vistas «Descartadas» y «Excluidas» de vez en cuando permite detectar oportunidades que el sistema botó.
+:::
+
+## Tareas periódicas
+
+| Tarea | Frecuencia | Dónde |
+|---|---|---|
+| Revisar la cobertura de días | semanal | Operación |
+| Revisar excluidas y descartadas | semanal | Bandeja |
+| Ajustar servicios con ruido | mensual | Catálogo |
+| Revisar calibración | cuando haya ≥ 10 etiquetas por clase | Configuración → Aprendizaje |
+| Reporte de evaluación | trimestral | `radar eval report` |
+
+: Tareas periódicas {#tbl-tareas}
+
+## Reprocesos
+
+Desde Operación o por CLI:
+
+```bash
+uv run radar ingest --date 2026-10-20 --until 2026-10-24   # días faltantes
+uv run radar match --date 2026-10-28 --rejudge            # re-juzgar tras cambiar criterios
+uv run radar match --date 2026-10-28 --retriage           # re-triagar con otro modelo
+```
+
+Los reprocesos desde la web corren de a uno en la API; la cola se pierde al reiniciarla, pero el registro queda en `ingest_run`.
+
+## Problemas comunes
+
+| Síntoma | Causa / solución |
+|---|---|
+| `connection refused` a `localhost:5432` | Docker apagado → `docker compose up -d db` |
+| Web: «No se pudo cargar la bandeja» | API abajo → `uv run radar serve` |
+| «Modelo de embeddings no disponible» | Ollama abajo o falta un modelo → `ollama pull …` |
+| Ingesta con muchos 429 | Límite de la API; subir `MP_MIN_INTERVAL_S` |
+| Falla la API tras `git pull` | Migraciones nuevas → `uv run alembic upgrade head` |
+
+: Problemas comunes {#tbl-problemas}

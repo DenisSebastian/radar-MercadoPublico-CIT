@@ -1,0 +1,45 @@
+# Productos {#sec-productos}
+
+Cada licitación pide uno o más **productos o servicios**, que Mercado Público llama ítems. Cada ítem tiene un código de producto del {{< var unspsc.name >}} ({{< var unspsc.sigla >}}), una descripción libre y una cantidad. Los ítems son la forma más estructurada de saber *qué* se compra.
+
+## Tabla `tender_item`
+
+| Campo | Descripción |
+|---|---|
+| `tender_codigo`, `correlativo` | Licitación y número de ítem (únicos juntos) |
+| `codigo_producto` | Código de producto (UNSPSC de 8 dígitos en la mayoría de los casos) |
+| `codigo_categoria`, `categoria` | Clase UNSPSC y su nombre (ver [Categorías](categorias.qmd)) |
+| `nombre_producto` | Nombre del producto en el catálogo de ChileCompra |
+| `descripcion` | Descripción libre escrita por el comprador |
+| `unidad_medida`, `cantidad` | Cantidad pedida |
+
+: Tabla `tender_item` {#tbl-item}
+
+Hay ~**1,49 millones** de ítems cargados.
+
+::: {.callout-warning}
+## Particularidades de los datos
+
+- **Correlativos repetidos.** La API a veces repite el correlativo de un ítem dentro de una licitación (detectado el 28-oct-2026); la ingesta lo tolera para no perder el detalle.
+- **Códigos que no son UNSPSC.** El MOP usa códigos internos de 9 dígitos (`102101001` = consultoría, `101…` = obras). Antes se comparaban como UNSPSC y la regla de exclusión `10` (plantas y animales vivos) excluía *todas* las consultorías del MOP: 111 licitaciones en los días evaluados, incluida una evaluación de impacto de $358 millones. Desde la corrección, las reglas por rubro **solo se aplican a códigos de 8 dígitos**.
+:::
+
+## Adjudicaciones: `tender_award`
+
+Desde Datos Abiertos se carga, por ítem, la oferta seleccionada:
+
+| Campo | Descripción |
+|---|---|
+| `tender_codigo`, `correlativo` | Licitación e ítem adjudicado |
+| `rut_proveedor`, `nombre_proveedor` | Quién ganó |
+| `cantidad_adjudicada`, `monto_linea`, `moneda` | Cuánto y por cuánto |
+
+: Tabla `tender_award` {#tbl-award}
+
+Son ~**1,06 millones** de líneas adjudicadas. Alimentan la vista de mercado (competencia y montos de referencia) y permiten reconocer lo que ha ganado la UAI.
+
+## Uso en la plataforma
+
+- **Reglas de exclusión por rubro**: una licitación se excluye solo si *todos* sus ítems caen en rubros excluidos ([Modelos de decisión](../matching/decision.qmd)).
+- **Texto para embeddings y modelos**: los nombres de los ítems se agregan al título y la descripción.
+- **Mercado**: licitaciones con ítems en las mismas categorías permiten estimar competidores y montos típicos ([Digest de organismos](../digest/organismos.qmd)).

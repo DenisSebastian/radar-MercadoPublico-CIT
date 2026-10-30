@@ -1,0 +1,34 @@
+# Ingest {.unnumbered}
+
+La etapa de ingesta lleva los datos de Mercado Público a PostgreSQL. Usa dos fuentes complementarias:
+
+- la **{{< var mp.api >}}**, para lo nuevo de cada día con descripción completa: es lo que se juzga;
+- los **{{< var chilecompra.datos >}}**, para el histórico, los estados finales y las adjudicaciones.
+
+```{=html}
+<iframe class="diagrama alto" src="../diagramas/02-ingesta.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/02-ingesta.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+| Entidad | Tabla | Fuente | Capítulo |
+|---|---|---|---|
+| Ofertas (licitaciones) | `tender` | API + Datos Abiertos | [Ofertas](ofertas.qmd) |
+| Organismos compradores | `buyer` (+ unidad de compra en `tender`) | API + Datos Abiertos | [Organismos](organismos.qmd) |
+| Productos (ítems) y adjudicaciones | `tender_item`, `tender_award` | API + Datos Abiertos (adjudicaciones solo DA) | [Productos](productos.qmd) |
+| Categorías UNSPSC | `product_category` | Datos Abiertos | [Categorías](categorias.qmd) |
+
+: Entidades de la ingesta {#tbl-entidades}
+
+## Volumen cargado
+
+| Métrica | Valor |
+|---|---|
+| Licitaciones (2024-01 → 2026-10) | ~339 mil |
+| Ítems con código UNSPSC | ~1,49 millones |
+| Líneas adjudicadas con proveedor y monto | ~1,06 millones |
+| Organismos compradores | 1.152 |
+| Tamaño en Postgres | ~1 GB |
+
+: Volumen histórico {#tbl-volumen}
+
+Cada corrida —diaria, de catch-up, de Datos Abiertos— queda registrada en `ingest_run` con sus parámetros, estado, estadísticas y error, y se ve en la pantalla de **Operación**.

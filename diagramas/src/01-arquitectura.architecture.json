@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Radar MP — arquitectura general",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1360,
+      620
+    ],
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interfaz"
+        },
+        "backend": {
+          "label": "Servicio / lógica"
+        },
+        "database": {
+          "label": "Datos"
+        },
+        "cloud": {
+          "label": "Nube"
+        },
+        "security": {
+          "label": "Regla / control"
+        },
+        "messagebus": {
+          "label": "Disparador"
+        },
+        "external": {
+          "label": "Externo"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "mp_api",
+      "type": "external",
+      "label": "API Mercado Público",
+      "sublabel": "listado diario + detalle",
+      "pos": [
+        40,
+        140
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "opendata",
+      "type": "external",
+      "label": "Datos Abiertos",
+      "sublabel": "ZIP mensual ChileCompra",
+      "pos": [
+        40,
+        340
+      ],
+      "size": [
+        190,
+        66
+      ]
+    },
+    {
+      "id": "smtp",
+      "type": "external",
+      "label": "Servidor SMTP",
+      "sublabel": "digest por email",
+      "pos": [
+        600,
+        40
+      ],
+      "size": [
+        190,
+        62
+      ]
+    },
+    {
+      "id": "worker",
+      "type": "backend",
+      "label": "Worker",
+      "sublabel": "APScheduler · radar worker",
+      "pos": [
+        320,
+        230
+      ],
+      "size": [
+        200,
+        72
+      ],
+      "tag": "06:00 diario"
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "PostgreSQL 16",
+      "sublabel": "pgvector · unaccent · trgm",
+      "pos": [
+        600,
+        230
+      ],
+      "size": [
+        200,
+        72
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API FastAPI",
+      "sublabel": "radar serve :8000",
+      "pos": [
+        880,
+        230
+      ],
+      "size": [
+        190,
+        72
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web React",
+      "sublabel": "Vite :5173 · nginx :8080",
+      "pos": [
+        1140,
+        230
+      ],
+      "size": [
+        180,
+        72
+      ]
+    },
+    {
+      "id": "ollama",
+      "type": "backend",
+      "label": "Ollama (local)",
+      "sublabel": "embeddinggemma · qwen3.5",
+      "pos": [
+        320,
+        460
+      ],
+      "size": [
+        200,
+        72
+      ],
+      "tag": "GPU Metal"
+    },
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Equipo CIT",
+      "sublabel": "navegador",
+      "pos": [
+        1140,
+        40
+      ],
+      "size": [
+        180,
+        62
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Máquina local del centro (sin nube)",
+      "wraps": [
+        "worker",
+        "db",
+        "api",
+        "web",
+        "ollama"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "pull-api",
+      "from": "mp_api",
+      "to": "worker",
+      "label": "HTTPS · 2 s/req",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pull-zip",
+      "from": "opendata",
+      "to": "worker",
+      "label": "ZIP mensual",
+      "variant": "dashed"
+    },
+    {
+      "id": "worker-db",
+      "from": "worker",
+      "to": "db",
+      "label": "upsert",
+      "variant": "emphasis"
+    },
+    {
+      "id": "worker-llm",
+      "from": "worker",
+      "to": "ollama",
+      "label": "embeddings · juez",
+      "labelAt": [
+        420,
+        381
+      ]
+    },
+    {
+      "id": "worker-smtp",
+      "from": "worker",
+      "to": "smtp",
+      "label": "digest",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "left"
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL"
+    },
+    {
+      "id": "api-llm",
+      "from": "api",
+      "to": "ollama",
+      "label": "probar servicio",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "right"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "REST /api"
+    },
+    {
+      "id": "users-web",
+      "from": "users",
+      "to": "web",
+      "label": "HTTP",
+      "labelAt": [
+        1230,
+        166
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Entradas",
+      "items": [
+        "API Mercado Público: lo publicado ayer, con detalle",
+        "Datos Abiertos: histórico, estados finales y adjudicaciones"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Núcleo local",
+      "items": [
+        "Worker: ingesta → matching → alertas",
+        "Postgres guarda datos, vectores y decisiones",
+        "Ollama: IA sin enviar datos fuera"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Uso",
+      "items": [
+        "API REST con OpenAPI",
+        "Web: bandeja, detalle, catálogo, configuración, operación"
+      ]
+    }
+  ]
+}

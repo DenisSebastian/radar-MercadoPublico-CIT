@@ -1,0 +1,34 @@
+# Objetivos {#sec-objetivos}
+
+## Objetivo general
+
+Que el equipo del {{< var cit.sigla >}} vea cada mañana **las pocas licitaciones de Mercado Público que calzan con sus servicios**, ordenadas por prioridad y con una explicación de por qué sirven, usando modelos de IA que corren dentro del propio centro.
+
+## Objetivos específicos
+
+1. **Cobertura completa.** Ingerir todas las licitaciones publicadas cada día, con su descripción, comprador e ítems, y mantener un histórico desde 2024 con estados finales y adjudicaciones ([Ingest](ingest/index.qmd)).
+2. **Detección con alto recall.** No perder oportunidades relevantes por diferencias de vocabulario: combinar reglas, búsqueda semántica y modelos de decisión para revisar *todas* las licitaciones recuperadas del día, no solo un subconjunto ([Modelos de decisión](matching/decision.qmd)).
+3. **Priorización explicable.** Ordenar las oportunidades con un puntaje que combine el juicio del LLM, la cercanía con los servicios, el monto y el plazo, y mostrar evidencia literal de la licitación ([Modelos de priorización](matching/priorizacion.qmd)).
+4. **Inteligencia sobre los organismos.** Mostrar quién gana en cada categoría, montos típicos y cómo compra cada organismo, a partir de más de un millón de adjudicaciones ([Digest de organismos](digest/organismos.qmd)).
+5. **Alertas oportunas.** Avisar por correo, una sola vez, las oportunidades nuevas de las prioridades elegidas ([Digest de usuarios](digest/usuarios.qmd)).
+6. **Uso diario y administración sin código.** Una web con bandeja, detalle, catálogo, configuración y operación, donde el equipo etiqueta con el teclado y los administradores ajustan criterios ([Plataforma](plataforma/index.qmd)).
+7. **Medición y mejora continua.** Guardar cada decisión, medir precisión y recall contra etiquetas del equipo y un dataset de referencia, calibrar umbrales y alimentar al juez con casos ya etiquetados.
+
+## Indicadores de éxito
+
+| Indicador | Meta | Estado (oct-2026) |
+|---|---|---|
+| Días ingeridos completos | 100 % de días hábiles | Catch-up automático de hasta 14 días; brechas mayores con Datos Abiertos |
+| Recall de oportunidades relevantes | ≥ 95 % | 96 % con triaje sí/no + categoría en la referencia `decision-v1` |
+| Precisión de la bandeja | ≥ 50 % | 52 % (triaje) en la referencia; pendiente medir con etiquetas del equipo |
+| Tamaño de la bandeja diaria | ~10 oportunidades alta + media | 10 el 27-oct-2026 |
+| Tiempo de procesamiento diario | < 30 min de ingesta + matching | ~20 min ingesta, ~6 min matching con LLM |
+| Etiquetas del equipo | ≥ 10 por clase para calibrar | [pendiente]{.pendiente}: hoy 0 |
+
+: Indicadores y estado actual {#tbl-indicadores}
+
+## Alcance
+
+**Incluye**: licitaciones públicas de Mercado Público (API y Datos Abiertos), perfil de búsqueda del CIT, web local, alertas por correo y evaluación.
+
+**No incluye aún**: Compra Ágil, Convenio Marco, órdenes de compra, lectura de bases en PDF, múltiples organizaciones con usuarios y roles, ni preparación o envío de ofertas. Estos puntos se discuten en [Trabajos futuros](futuro/index.qmd).

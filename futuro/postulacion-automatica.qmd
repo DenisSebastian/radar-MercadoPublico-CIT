@@ -1,0 +1,34 @@
+# Postulación automática {#sec-postulacion-automatica}
+
+La postulación automática es el horizonte más lejano: que la plataforma no solo encuentre y priorice oportunidades, sino que **prepare la oferta** lista para revisión y, en casos acotados, la **presente**.
+
+## Niveles de automatización
+
+| Nivel | La plataforma… | La persona… |
+|---|---|---|
+| 0 — Hoy | Detecta, prioriza y avisa | Lee las bases, decide y prepara todo |
+| 1 — Asistida | Resume bases, arma checklist y borradores ([Asistentes](asistentes.qmd)) | Decide, completa y presenta |
+| 2 — Preparada | Genera el paquete completo: propuesta técnica, económica y anexos | Revisa, ajusta, firma y presenta |
+| 3 — Automática | Presenta ofertas recurrentes de bajo riesgo según reglas aprobadas | Aprueba las reglas y audita |
+
+: Niveles de automatización {#tbl-niveles}
+
+## Componentes necesarios
+
+- **Biblioteca documental del centro**: certificados, CV, experiencia, propuestas anteriores y formatos tipo, versionados y con vigencia.
+- **Lectura de bases** con extracción estructurada de requisitos y criterios de evaluación.
+- **Generación de propuestas** a partir de plantillas y casos previos, citando las fuentes.
+- **Presupuesto** apoyado en montos de referencia del mercado y costos internos.
+- **Integración con Mercado Público** para la presentación, sujeta a los mecanismos de autenticación y firma que exige la plataforma.
+
+## Límites y resguardos
+
+- La presentación de una oferta compromete legal y económicamente a la universidad: **siempre requiere aprobación humana explícita** y firma de quien tenga la facultad.
+- Las credenciales de Mercado Público y la firma no deben quedar en manos de un proceso automático sin control.
+- Cada oferta generada debe ser auditable: qué documentos usó, qué decidió el modelo y quién aprobó.
+
+::: {.callout-note}
+## Estado
+
+Línea exploratoria. Depende de los asistentes de postulación y del embudo de postulaciones ([Aprendizaje de postulaciones](aprendizaje-postulaciones.qmd)). [pendiente]{.pendiente}
+:::

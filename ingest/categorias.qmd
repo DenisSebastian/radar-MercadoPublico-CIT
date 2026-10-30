@@ -1,0 +1,59 @@
+# Categorías {#sec-categorias}
+
+Los productos de Mercado Público se clasifican con el estándar {{< var unspsc.sigla >}}, una jerarquía de cuatro niveles codificada en 8 dígitos:
+
+| Nivel | Dígitos | Ejemplo |
+|---|---|---|
+| Segmento | `80 00 00 00` | Servicios de gestión, comerciales y administrativos |
+| Familia | `80 10 00 00` | Servicios de asesoría de gestión |
+| Clase | `80 10 15 00` | Servicios de consultoría de negocios y administración corporativa |
+| Producto | `80 10 15 04` | Servicios de asesoramiento sobre planificación estratégica |
+
+: Jerarquía UNSPSC {#tbl-unspsc}
+
+ChileCompra agrega su propia jerarquía de **rubros** (tres niveles) sobre las clases UNSPSC.
+
+## Tabla `product_category`
+
+| Campo | Descripción |
+|---|---|
+| `codigo_categoria` | Clase UNSPSC (8 dígitos, termina en `00`) |
+| `rubro1`, `rubro2`, `rubro3` | Jerarquía de rubros de ChileCompra |
+
+: Tabla `product_category` {#tbl-category}
+
+Se carga desde Datos Abiertos al importar cada mes. Cada ítem (`tender_item.codigo_categoria`) apunta a su clase.
+
+## Uso de las categorías
+
+### Exclusión por segmento
+
+El perfil define prefijos UNSPSC de rubros que el centro nunca provee (`rules.exclude_unspsc` en `cit.yaml`). Hoy son **43 prefijos** de segmento, por ejemplo:
+
+| Prefijo | Rubro |
+|---|---|
+| `10` | Plantas y animales vivos |
+| `15` | Combustibles y lubricantes |
+| `22` | Maquinaria de construcción |
+| `25` | Vehículos |
+| `42` | Equipos médicos |
+| `44` | Equipos y suministros de oficina |
+
+: Ejemplos de prefijos excluidos {#tbl-prefijos}
+
+La regla es conservadora: una licitación se excluye **solo si todos sus ítems** caen en prefijos excluidos y solo se comparan códigos UNSPSC de 8 dígitos.
+
+### Mercado por categoría
+
+Para estimar competencia y montos, la vista de mercado busca licitaciones de los últimos 24 meses con ítems en las **mismas clases UNSPSC** que la licitación en revisión. Es más grueso que la similitud semántica, pero cubre todo el histórico sin calcular embeddings ([Digest de organismos](../digest/organismos.qmd)).
+
+### Categorías de servicios del centro
+
+Se espera que las oportunidades del CIT se concentren en segmentos de servicios como `80` (gestión y administración), `81` (ingeniería e investigación), `86` (educación y formación) y `77` (servicios medioambientales). Esta hipótesis aún no se ha medido sobre las etiquetas.
+
+::: {.callout-tip}
+## Por completar
+
+- Tabla de clases UNSPSC más frecuentes entre las licitaciones etiquetadas como relevantes, para usarla como señal positiva. [pendiente]{.pendiente}
+- Validar la lista de segmentos de servicios contra las etiquetas del equipo. [pendiente]{.pendiente}
+:::

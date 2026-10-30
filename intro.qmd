@@ -1,0 +1,44 @@
+# Introducción {#sec-intro}
+
+## El problema
+
+{{< var mp.name >}} es la plataforma donde el Estado de Chile publica sus compras. Cada día aparecen **alrededor de 500 licitaciones** —unas 15.000 al mes— de municipios, gobiernos regionales, ministerios y servicios públicos. La gran mayoría compra bienes, obras o servicios operativos: aseo, guardias, alimentación, combustible, insumos médicos, mantención.
+
+Al {{< var cit.sigla >}} le sirven muy pocas: estudios territoriales, sistemas de información geográfica (SIG), plataformas de datos, evaluación de políticas públicas, medioambiente y riesgo, seguridad, movilidad, energía y capacitación especializada. Encontrarlas a mano significa leer cientos de títulos y descripciones cada semana, y aun así se pierden oportunidades que no usan las palabras esperadas: un *«Diagnóstico para la actualización del PLADECO»* o un *«Catastro de campamentos»* no dicen «SIG» ni «territorial», pero son exactamente el tipo de trabajo que hace el centro.
+
+## De la versión 1 a la versión 2
+
+La primera versión (2025, en R con `targets`) probó la idea con un flujo de tres puertas: un filtro léxico sobre el título, una clasificación con LLM de las candidatas y un umbral de selección. Funcionó como demostración, pero tenía límites claros:
+
+- solo veía lo que pasaba el filtro de palabras del título;
+- la decisión del LLM no se validaba ni se guardaba de forma trazable;
+- no había histórico, ni forma de medir aciertos, ni una herramienta de uso diario.
+
+La versión 2 reconstruye la plataforma con otros principios:
+
+| Aspecto | v1 (R, 2025) | v2 (2026) |
+|---|---|---|
+| Fuente | RDS con títulos | API diaria con detalle + Datos Abiertos con ítems y adjudicaciones |
+| Filtro | Palabras clave en el título | Reglas + búsqueda semántica (embeddings) + palabras clave |
+| Decisión | LLM sobre lo que pasaba el filtro léxico | Triaje con modelo de decisión + juez LLM local con salida JSON validada y evidencia verificada |
+| Almacenamiento | Archivos RDS | PostgreSQL + pgvector, historial completo desde 2024 |
+| Uso | Script y CSV | Web: bandeja, detalle, catálogo, configuración, operación |
+| Operación | Manual | Worker diario, reprocesos desde la web, alertas por email |
+| Calidad | Sin medición | Evaluación ponderada, calibración, dataset de referencia y aprendizaje desde etiquetas |
+
+: Comparación entre versiones {#tbl-versiones}
+
+El código R quedó en `legacy/` como referencia; la lógica útil (normalización de texto, criterios del centro) se portó a Python.
+
+## Principios de diseño
+
+Cuatro ideas guían todas las decisiones técnicas que se describen en el libro:
+
+1. **Local primero.** La base de datos, la API, la web y los modelos de IA corren en un computador del centro. Internet se usa solo para traer datos de Mercado Público y enviar correos. Los criterios del centro y las etiquetas del equipo no salen de la máquina.
+2. **Barato antes que caro.** Reglas → similitud semántica → modelo de decisión → juez LLM: cada etapa reduce el volumen que llega a la siguiente. El LLM grande es el recurso escaso.
+3. **Trazable.** Por cada licitación y perfil se guarda una fila `match` con todos los puntajes, la decisión del triaje, el juicio del LLM, la evidencia citada y los casos de ejemplo que vio el juez.
+4. **Configurable sin código.** Catálogo de servicios, pesos, umbrales, reglas y alertas se editan desde la web; el YAML del repositorio es el punto de partida.
+
+## Resultado típico
+
+El 27 de octubre de 2026 se publicaron 518 licitaciones. Las reglas excluyeron 377, la búsqueda semántica recuperó 141, el juez evaluó 25 y la bandeja mostró **10 oportunidades** de prioridad alta o media: entre ellas una consultoría de modelo de gobernanza para la Subdere, una caracterización ambiental y paisajística para el sitio Chinchorro y antecedentes expropiatorios para una avenida en Magallanes. Ese es el objetivo de la plataforma: transformar ~500 licitaciones diarias en una bandeja corta, explicada y medible.

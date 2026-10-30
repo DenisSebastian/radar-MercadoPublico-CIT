@@ -1,0 +1,75 @@
+project:
+  type: book
+  output-dir: docs
+  resources:
+    - diagramas/**
+
+lang: es
+
+book:
+  title: "Radar MP"
+  subtitle: "Plataforma local con IA para detectar, priorizar y alertar licitaciones de Mercado Público"
+  author:
+    - name: Denis Berroeta González
+      url: https://cit.uai.cl/denis-berroeta/
+      affiliation: Centro de Inteligencia Territorial
+      affiliation-url: https://cit.uai.cl
+      email: denis.berroeta@uai.cl
+  date: "2026-10-30"
+  date-format: "D [de] MMMM [de] YYYY"
+  search: true
+
+  page-footer:
+    left: "Copyright 2026, {{< var cit.name >}}"
+    right: "Radar MP · versión {{< var version >}} del libro"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - objetivos.qmd
+    - diseno.qmd
+    - part: ingest/index.qmd
+      chapters:
+        - ingest/ofertas.qmd
+        - ingest/organismos.qmd
+        - ingest/productos.qmd
+        - ingest/categorias.qmd
+    - part: matching/index.qmd
+      chapters:
+        - matching/decision.qmd
+        - matching/priorizacion.qmd
+    - part: digest/index.qmd
+      chapters:
+        - digest/organismos.qmd
+        - digest/usuarios.qmd
+    - part: plataforma/index.qmd
+      chapters:
+        - plataforma/pantallas.qmd
+        - plataforma/uso.qmd
+        - plataforma/administracion.qmd
+    - part: futuro/index.qmd
+      chapters:
+        - futuro/otros-centros.qmd
+        - futuro/aprendizaje-postulaciones.qmd
+        - futuro/asistentes.qmd
+        - futuro/postulacion-automatica.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+    html-math-method: katex
+    css: style.css
+    toc: true
+    toc-expand: 1
+    toc-title: "Contenidos"
+    fig-cap-location: "margin"
+    tab-cap-location: "bottom"
+    fig-align: "center"
+    mailto: "denis.berroeta@uai.cl"
+    code-copy: true
+    crossref:
+      fig-prefix: Figura # (default is "Figure")
+      tbl-prefix: Tabla # (default is "Table")
+      eq-prefix: Ecuación

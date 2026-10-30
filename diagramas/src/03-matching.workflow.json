@@ -1,0 +1,292 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Etapa 2 — Matching de un día (match_day)",
+    "quality_profile": "showcase",
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interfaz"
+        },
+        "backend": {
+          "label": "Servicio / lógica"
+        },
+        "database": {
+          "label": "Datos"
+        },
+        "cloud": {
+          "label": "Nube"
+        },
+        "security": {
+          "label": "Regla / control"
+        },
+        "messagebus": {
+          "label": "Disparador"
+        },
+        "external": {
+          "label": "Externo"
+        }
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "ia",
+      "label": "IA local (Ollama)"
+    },
+    {
+      "id": "pipe",
+      "label": "Pipeline por licitación"
+    },
+    {
+      "id": "out",
+      "label": "Resultado en la bandeja"
+    },
+    {
+      "id": "exc",
+      "label": "Fuera de la bandeja",
+      "variant": "exception"
+    }
+  ],
+  "phases": [
+    {
+      "id": "ph-filter",
+      "label": "Filtrar",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "ph-retrieve",
+      "label": "Recuperar",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "ph-judge",
+      "label": "Juzgar y puntuar",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "day",
+    "filters",
+    "retrieval",
+    "topk",
+    "judge",
+    "score",
+    "prio"
+  ],
+  "nodes": [
+    {
+      "id": "emb",
+      "lane": "ia",
+      "col": 2,
+      "type": "backend",
+      "label": "embeddinggemma",
+      "sublabel": "vectores 768d",
+      "tag": "~84 docs/s",
+      "width": 140
+    },
+    {
+      "id": "qwen",
+      "lane": "ia",
+      "col": 4,
+      "type": "backend",
+      "label": "qwen3.5",
+      "sublabel": "salida JSON Schema",
+      "tag": "~13 s/juicio",
+      "width": 140
+    },
+    {
+      "id": "day",
+      "lane": "pipe",
+      "col": 0,
+      "type": "database",
+      "label": "Licitaciones",
+      "sublabel": "del día (~500)",
+      "width": 140
+    },
+    {
+      "id": "filters",
+      "lane": "pipe",
+      "col": 1,
+      "type": "security",
+      "label": "Filtros duros",
+      "sublabel": "regex + UNSPSC",
+      "width": 140
+    },
+    {
+      "id": "retrieval",
+      "lane": "pipe",
+      "col": 2,
+      "type": "backend",
+      "label": "Retrieval híbrido",
+      "sublabel": "coseno + léxico",
+      "width": 140
+    },
+    {
+      "id": "topk",
+      "lane": "pipe",
+      "col": 3,
+      "type": "backend",
+      "label": "Top-k",
+      "sublabel": "25 por día",
+      "width": 140
+    },
+    {
+      "id": "judge",
+      "lane": "pipe",
+      "col": 4,
+      "type": "backend",
+      "label": "Juez LLM",
+      "sublabel": "+ casos few-shot",
+      "width": 140
+    },
+    {
+      "id": "score",
+      "lane": "pipe",
+      "col": 5,
+      "type": "backend",
+      "label": "Puntaje final",
+      "sublabel": "4 componentes",
+      "width": 140
+    },
+    {
+      "id": "prio",
+      "lane": "out",
+      "col": 5,
+      "type": "frontend",
+      "label": "Alta · media · baja",
+      "sublabel": "match.prioridad",
+      "width": 140
+    },
+    {
+      "id": "excluded",
+      "lane": "exc",
+      "col": 1,
+      "type": "security",
+      "label": "Excluida",
+      "sublabel": "~73 %",
+      "width": 140
+    },
+    {
+      "id": "unjudged",
+      "lane": "exc",
+      "col": 3,
+      "type": "external",
+      "label": "Sin evaluar",
+      "sublabel": "fuera del top-k",
+      "width": 140
+    },
+    {
+      "id": "discarded",
+      "lane": "exc",
+      "col": 4,
+      "type": "security",
+      "label": "Descartada",
+      "sublabel": "score < 60",
+      "width": 140
+    }
+  ],
+  "edges": [
+    {
+      "from": "day",
+      "to": "filters",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "filters",
+      "to": "retrieval",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "retrieval",
+      "to": "topk",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "topk",
+      "to": "judge",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "judge",
+      "to": "score",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "score",
+      "to": "prio",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "from": "retrieval",
+      "to": "emb",
+      "label": "vectores",
+      "role": "branch",
+      "variant": "dashed"
+    },
+    {
+      "from": "judge",
+      "to": "qwen",
+      "label": "prompt",
+      "role": "branch",
+      "variant": "dashed"
+    },
+    {
+      "from": "filters",
+      "to": "excluded",
+      "label": "regla",
+      "role": "error",
+      "variant": "security"
+    },
+    {
+      "from": "topk",
+      "to": "unjudged",
+      "role": "branch",
+      "variant": "dashed"
+    },
+    {
+      "from": "judge",
+      "to": "discarded",
+      "label": "no",
+      "role": "error",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "1. Filtrar barato",
+      "items": [
+        "Reglas sobre título normalizado",
+        "UNSPSC: excluye solo si todos los ítems caen en rubros excluidos"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "2. Recuperar",
+      "items": [
+        "retrieval = 0,75·similitud + 0,25·léxico",
+        "Similitud = máx. sobre descripción y ejemplos del servicio"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "3. Juzgar y puntuar",
+      "items": [
+        "Solo el top-k va al LLM (cuello de botella)",
+        "final = 0,60 LLM + 0,15 retrieval + 0,15 monto + 0,10 plazo"
+      ]
+    }
+  ]
+}

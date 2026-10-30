@@ -1,0 +1,60 @@
+# Matching {.unnumbered}
+
+El matching cruza cada licitación del día con el catálogo de servicios de un perfil y decide **si sirve** (modelos de decisión) y **cuánto importa** (modelos de priorización). Va de ~500 licitaciones a unas 10 oportunidades.
+
+```{=html}
+<iframe class="diagrama alto" src="../diagramas/03-matching.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/03-matching.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+| Paso | Qué hace | Costo | Capítulo |
+|---|---|---|---|
+| 1. Filtros duros | Reglas por título y rubro UNSPSC | instantáneo | [Decisión](decision.qmd) |
+| 2. Retrieval híbrido | Similitud semántica + palabras clave contra cada servicio | ~85 licitaciones/s | [Priorización](priorizacion.qmd) |
+| 3. Triaje | Modelo de decisión local: sí/no + categoría del entregable | ~1 s por pregunta | [Decisión](decision.qmd) |
+| 4. Juez LLM | Juicio con JSON validado, evidencia y riesgos | ~13 s por licitación | [Decisión](decision.qmd) |
+| 5. Puntaje final | LLM + retrieval + monto + plazo → prioridad | instantáneo | [Priorización](priorizacion.qmd) |
+
+: Pasos del matching {#tbl-pasos}
+
+```bash
+uv run radar match --date 2026-10-27        # evalúa un día y muestra el ranking
+uv run radar ranking --date 2025-12-01 --until 2025-12-11
+uv run radar match --date 2026-10-28 --rejudge     # vuelve a llamar al juez
+uv run radar match --date 2026-10-28 --no-triage   # fuerza el top-k clásico
+```
+
+Re-ejecutar recalcula retrieval y puntajes sin volver a llamar al LLM (salvo `--rejudge`); el triaje se reutiliza si ya se hizo con el mismo modelo (salvo `--retriage`). El worker corre el matching después de cada ingesta diaria.
+
+## Catálogo de servicios
+
+El matching parte del catálogo del perfil. El perfil `cit` tiene **10 servicios**:
+
+| Slug | Servicio |
+|---|---|
+| `analisis-territorial-sig` | Análisis territorial y SIG |
+| `planificacion-urbana-vivienda` | Planificación urbana y vivienda |
+| `movilidad-accesibilidad` | Movilidad y accesibilidad |
+| `medioambiente-clima-riesgo` | Medioambiente, cambio climático y riesgo |
+| `energia-territorio` | Energía y territorio |
+| `seguridad-analisis-delictual` | Seguridad pública y análisis delictual |
+| `datos-plataformas-ia` | Ciencia de datos, plataformas e IA |
+| `estudios-socioeconomicos` | Estudios socioeconómicos, demográficos y encuestas |
+| `politicas-publicas-evaluacion` | Políticas públicas, evaluación y planificación estratégica |
+| `capacitacion` | Capacitación y formación |
+
+: Servicios del perfil CIT {#tbl-servicios}
+
+Cada servicio tiene una **descripción** (qué hace el centro), **ejemplos** de licitaciones que sí calzan y **palabras clave**. La descripción y cada ejemplo se convierten en vectores.
+
+## Ciclo de vida de una licitación
+
+```{=html}
+<iframe class="diagrama" src="../diagramas/05-ciclo-vida.html?theme=light&embed=1" loading="lazy"></iframe>
+<a class="diagrama-link" href="../diagramas/05-ciclo-vida.html" target="_blank">abrir diagrama interactivo ↗</a>
+```
+
+- `match.stage`: `excluded` → `retrieved` → `judged`.
+- `match.prioridad`: `alta` · `media` · `baja` · `descartada` · `sin_evaluar` · `excluida`.
+- **Sin evaluar** no es definitivo: reprocesar o subir el tope de juicios la lleva al juez.
+- Nada se pierde en silencio: excluidas, descartadas y sin evaluar tienen su propia vista en la bandeja.

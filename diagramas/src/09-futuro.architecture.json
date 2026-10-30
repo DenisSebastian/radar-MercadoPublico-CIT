@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Hacia un producto nacional — arquitectura objetivo",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1340,
+      740
+    ],
+    "legend": {
+      "entries": {
+        "frontend": {
+          "label": "Interfaz"
+        },
+        "backend": {
+          "label": "Servicio / lógica"
+        },
+        "database": {
+          "label": "Datos"
+        },
+        "cloud": {
+          "label": "Nube"
+        },
+        "security": {
+          "label": "Regla / control"
+        },
+        "messagebus": {
+          "label": "Disparador"
+        },
+        "external": {
+          "label": "Externo"
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "id": "sso",
+      "type": "security",
+      "label": "SSO / OIDC",
+      "sublabel": "Google Workspace · ClaveÚnica",
+      "pos": [
+        300,
+        70
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "rbac",
+      "type": "security",
+      "label": "Roles y permisos",
+      "sublabel": "admin · analista · lector",
+      "pos": [
+        580,
+        70
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "crm",
+      "type": "database",
+      "label": "CRM de interacción",
+      "sublabel": "clics · temas · postulaciones",
+      "pos": [
+        860,
+        70
+      ],
+      "size": [
+        210,
+        64
+      ]
+    },
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Personas",
+      "sublabel": "de cada institución",
+      "pos": [
+        40,
+        260
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "web",
+      "type": "frontend",
+      "label": "Web + Admin",
+      "sublabel": "búsquedas personales",
+      "pos": [
+        300,
+        260
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "API multi-tenant",
+      "sublabel": "org_id en todo",
+      "pos": [
+        580,
+        260
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "Postgres multi-org",
+      "sublabel": "perfiles por institución",
+      "pos": [
+        860,
+        260
+      ],
+      "size": [
+        210,
+        64
+      ]
+    },
+    {
+      "id": "sources",
+      "type": "external",
+      "label": "Fuentes nacionales",
+      "sublabel": "licitaciones · compra ágil · OC",
+      "pos": [
+        40,
+        470
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "pipe",
+      "type": "backend",
+      "label": "Pipeline",
+      "sublabel": "ingesta + matching",
+      "pos": [
+        300,
+        470
+      ],
+      "size": [
+        200,
+        64
+      ]
+    },
+    {
+      "id": "router",
+      "type": "backend",
+      "label": "Router de modelos",
+      "sublabel": "decide quién juzga",
+      "pos": [
+        580,
+        470
+      ],
+      "size": [
+        200,
+        64
+      ],
+      "tag": "cascada"
+    },
+    {
+      "id": "small",
+      "type": "backend",
+      "label": "Modelo pequeño",
+      "sublabel": "~4B · decisiones rápidas",
+      "pos": [
+        880,
+        420
+      ],
+      "size": [
+        210,
+        64
+      ],
+      "tag": "mayoría"
+    },
+    {
+      "id": "big",
+      "type": "backend",
+      "label": "LLM grande",
+      "sublabel": "casos dudosos · bases PDF",
+      "pos": [
+        880,
+        580
+      ],
+      "size": [
+        210,
+        64
+      ],
+      "tag": "minoría"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Identidad y privilegios",
+      "wraps": [
+        "sso",
+        "rbac"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "IA local en cascada",
+      "wraps": [
+        "router",
+        "small",
+        "big"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "u-web",
+      "from": "users",
+      "to": "web",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-sso",
+      "from": "web",
+      "to": "sso",
+      "label": "login",
+      "variant": "security"
+    },
+    {
+      "id": "web-api",
+      "from": "web",
+      "to": "api",
+      "label": "REST",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-rbac",
+      "from": "api",
+      "to": "rbac",
+      "label": "autoriza",
+      "variant": "security"
+    },
+    {
+      "id": "api-crm",
+      "from": "api",
+      "to": "crm",
+      "label": "eventos",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom",
+      "via": [
+        [
+          830,
+          292
+        ],
+        [
+          830,
+          170
+        ],
+        [
+          965,
+          170
+        ]
+      ]
+    },
+    {
+      "id": "api-db",
+      "from": "api",
+      "to": "db",
+      "label": "SQL",
+      "variant": "emphasis",
+      "labelAt": [
+        845,
+        314
+      ]
+    },
+    {
+      "id": "src-pipe",
+      "from": "sources",
+      "to": "pipe",
+      "label": "API · ZIP"
+    },
+    {
+      "id": "pipe-router",
+      "from": "pipe",
+      "to": "router",
+      "label": "candidatas",
+      "variant": "emphasis"
+    },
+    {
+      "id": "router-small",
+      "from": "router",
+      "to": "small",
+      "label": "fácil"
+    },
+    {
+      "id": "router-big",
+      "from": "router",
+      "to": "big",
+      "label": "difícil"
+    },
+    {
+      "id": "pipe-db",
+      "from": "pipe",
+      "to": "db",
+      "label": "match por org",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "via": [
+        [
+          400,
+          400
+        ],
+        [
+          965,
+          400
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Personas y organizaciones",
+      "items": [
+        "Admin crea instituciones, personas y roles",
+        "Cada uno ve y edita según su privilegio"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Personalización",
+      "items": [
+        "Búsquedas propias dentro de la institución",
+        "El CRM aprende de clics, temas y postulaciones"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Sin cuello de botella",
+      "items": [
+        "Modelo pequeño decide la mayoría en milisegundos",
+        "El LLM grande solo ve lo dudoso o complejo"
+      ]
+    }
+  ]
+}
