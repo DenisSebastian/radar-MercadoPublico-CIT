@@ -1,6 +1,6 @@
 # Administración {#sec-administracion}
 
-Administrar Radar MP significa decidir **qué busca** cada unidad y **cómo decide**. Todo se hace desde la web o la línea de comandos, sin modificar código. Este capítulo explica, para cada objeto, cómo crearlo, modificarlo y eliminarlo.
+Administrar Radar MP significa decidir **qué busca** cada unidad, **cómo decide** y **quién puede hacer qué**. Todo se hace desde la web o la línea de comandos, sin modificar código. Este capítulo explica, para cada objeto, cómo crearlo, modificarlo y eliminarlo.
 
 ## Qué se administra
 
@@ -96,25 +96,64 @@ Los cambios hechos en la web quedan en la base de datos, no en el archivo YAML d
 
 **Perfiles.** Todavía no hay forma de eliminar un perfil desde la web ni desde la línea de comandos. [pendiente]{.pendiente}
 
-## Quién puede administrar
+## Personas, roles y permisos
 
-Hoy la plataforma supone un solo equipo de confianza: no hay inicio de sesión y cualquiera con acceso a la web puede cambiar criterios. Para abrirla a varias unidades se proponen cuatro roles:
+Cada persona tiene una **cuenta** con usuario (o correo) y contraseña, y un **rol en cada unidad** a la que pertenece. Así cada uno ve lo de su unidad y modifica solo lo que le corresponde. La única excepción es la superadministración, que es global.
 
-| Rol | Puede |
-|---|---|
-| Superadministración | Crear unidades, modelos y fuentes; ver el uso global |
-| Administración de unidad | Gestionar personas, catálogo, reglas, pesos y alertas de su unidad |
-| Analista | Etiquetar, marcar para postular y comentar |
-| Lectura | Ver la bandeja y el detalle de su unidad |
+### Los cinco roles
 
-: Roles propuestos {#tbl-roles}
+Los roles van de menos a más, y cada uno incluye todo lo que puede hacer el anterior:
 
-También falta un registro de auditoría: quién cambió qué regla, servicio o umbral, y cuándo. [pendiente]{.pendiente}
+| Rol | Bandeja | Catálogo | Etiquetar | Configuración y usuarios |
+|---|:---:|:---:|:---:|:---:|
+| **Lectura** | ✓ | | | |
+| **Analista** | ✓ | ✓ | | |
+| **Jefatura** | ✓ | ✓ | ✓ | |
+| **Admin** | ✓ | ✓ | ✓ | ✓ |
+| **Superadmin** | ✓ | ✓ | ✓ | ✓ + contraseñas y bajas |
+
+: Roles y permisos {#tbl-roles}
+
+- **Lectura** ve la bandeja y el detalle de las licitaciones de su unidad. Sirve para quien quiere enterarse sin intervenir.
+- **Analista** además usa el **Catálogo**: crea y edita servicios y los prueba con «Probar».
+- **Jefatura** además **etiqueta** licitaciones (relevante, no relevante, dudoso, postular). Las etiquetas enseñan al juez y calibran los umbrales ([El ciclo de retroalimentación](../digest/usuarios.qmd#el-ciclo-de-retroalimentación)), por eso quedan en manos de quien decide si se postula.
+- **Admin** además cambia la **Configuración** (pesos, umbrales, triaje, reglas y alertas), usa la vista de **Operación** y administra las **personas** de su unidad.
+- **Superadmin** puede todo en todas las unidades, y es el único que cambia contraseñas, da de baja o elimina personas, nombra a otros superadmin e importa personas desde un CSV.
+
+Para quien no tiene permiso, la web simplemente no muestra la opción: alguien con rol lectura no ve el Catálogo ni la Configuración en el menú, ni los botones de etiquetado. La API aplica las mismas reglas, de modo que no basta con esconder un botón.
+
+### La pantalla de Usuarios
+
+Admin y superadmin tienen en el menú la pantalla **Usuarios**, donde se ven las personas con su actividad (cuántas etiquetas puso cada una y cuántas marcó para postular) y su historial. Desde ahí:
+
+- **Crear** una persona: nombre, correo, usuario y su rol en cada unidad. Un admin solo puede asignar los roles lectura, analista o jefatura, y solo en sus unidades.
+- **Modificar** su rol o sus unidades.
+- **Dar de baja** (solo superadmin): la persona deja de poder entrar, pero sus etiquetas siguen atribuidas a ella.
+- **Cambiar contraseñas** (solo superadmin).
+
+Nadie puede quitarse a sí mismo el acceso, para evitar quedar sin administración por error.
+
+### Inicio de sesión
+
+Al entrar a la web se pide usuario y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. Cada etiqueta que pone alguien con sesión iniciada queda **atribuida a esa persona**, ya no a un nombre escrito a mano. Las etiquetas antiguas con nombre escrito se pueden vincular a la persona correspondiente con `radar users link-feedback`.
+
+Mientras no exista ningún superadmin con contraseña, la plataforma queda abierta como antes, para poder instalarla y crear la primera cuenta. El primer superadmin se crea desde la línea de comandos:
+
+```bash
+uv run radar users add ana@uai.cl --username ana --password --superadmin
+```
+
+Desde ese momento toda la plataforma exige iniciar sesión. Si alguien olvida su contraseña, un superadmin la cambia desde Usuarios o con `radar users set-password`.
+
+### Qué queda registrado
+
+La plataforma guarda un historial por persona: inicios de sesión, etiquetas (y etiquetas borradas), altas, cambios de estado, cambios de contraseña y de unidades. Lo que todavía no se registra son los cambios de criterios: quién modificó un servicio, una regla o un umbral, y cuándo. [pendiente]{.pendiente}
 
 ::: {.callout-tip}
 ## En resumen
 
 - Los servicios definen qué busca una unidad; describirlos bien es la tarea de administración más importante.
 - «Probar» permite ver el efecto de un cambio antes de guardarlo.
-- La parte siguiente, **Trabajos futuros**, retoma lo pendiente: roles, nuevas unidades y más IA.
+- Cinco roles por unidad, de lectura a superadmin, definen quién ve, quién edita el catálogo, quién etiqueta y quién configura.
+- La parte siguiente, **Trabajos futuros**, retoma lo pendiente: nuevas unidades y más IA.
 :::

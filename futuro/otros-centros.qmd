@@ -4,11 +4,11 @@ El capítulo [Centros y facultades](../digest/unidades.qmd) mostró que la plata
 
 ## Personas y permisos
 
-Con una sola unidad basta que el equipo se conozca. Con varias, cada persona debe ver lo de su unidad y modificar solo lo que le corresponde. Para eso se necesita:
+La base ya existe: cuentas con contraseña y cinco roles por unidad, de lectura a superadmin ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos)). Para varias unidades falta:
 
-- **Inicio de sesión** con la cuenta institucional (Google Workspace UAI), en lugar de escribir un nombre.
-- **Roles por unidad**: superadministración, administración de unidad, analista y lectura ([Administración](../plataforma/administracion.qmd)).
-- **Auditoría**: un registro de quién cambió qué y cuándo.
+- **Cuenta institucional.** Entrar con la cuenta UAI (Google Workspace) en lugar de una contraseña propia de la plataforma.
+- **Auditoría de criterios.** Registrar quién cambió un servicio, una regla o un umbral, y cuándo.
+- **Unidades desde la web.** Hoy un perfil nuevo se crea con un archivo YAML y la línea de comandos.
 
 ## Criterios propios en todas las capas
 

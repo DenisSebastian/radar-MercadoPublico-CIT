@@ -11,7 +11,7 @@ Radar MP resuelve hoy el problema del CIT: un perfil, un equipo y las licitacion
 
 Las cuatro líneas avanzan desde lo más cercano a lo más ambicioso:
 
-1. [**Integración de otros centros**](otros-centros.qmd): que cualquier centro o facultad de la UAI tenga su perfil, con usuarios y permisos.
+1. [**Integración de otros centros**](otros-centros.qmd): que cualquier centro o facultad de la UAI tenga su perfil y su equipo.
 2. [**Aprendizaje de postulaciones con IA**](aprendizaje-postulaciones.qmd): aprender no solo de las etiquetas, sino de qué se postuló, qué se ganó y qué se perdió.
 3. [**Asistentes de IA**](asistentes.qmd): ayudar a crear perfiles, leer bases y preparar postulaciones.
 4. [**Postulación automática**](postulacion-automatica.qmd): preparar ofertas completas para revisión humana.
@@ -31,7 +31,7 @@ Hay brechas que conviene cerrar primero, porque todo lo demás depende de ellas:
 | Plazo | Hitos |
 |---|---|
 | Corto (1–2 meses) | Etiquetado del equipo y primer reporte real · correo en uso diario · validación del triaje · ajuste de capacitación |
-| Mediano (3–6 meses) | Usuarios con inicio de sesión y roles · segundo perfil piloto · órdenes de compra y bases en PDF · asistente de perfiles |
+| Mediano (3–6 meses) | Inicio de sesión con la cuenta UAI · segundo perfil piloto · órdenes de compra y bases en PDF · asistente de perfiles |
 | Largo (6–12 meses) | Varias unidades UAI · aprendizaje de postulaciones · probabilidad de adjudicación · servidor con GPU |
 
 : Hoja de ruta propuesta {#tbl-hoja-ruta}

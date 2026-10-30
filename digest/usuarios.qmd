@@ -48,7 +48,7 @@ En el detalle de cada licitación hay cuatro botones, que también se activan co
 
 : Botones de retroalimentación {#tbl-etiquetas}
 
-Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en un historial con la persona y la hora.
+Los botones aparecen para las personas con rol **jefatura** o superior ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos)). Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en el historial de la persona que las puso, con la hora.
 
 ### ¿Qué pasa cuando alguien hace clic en 👍?
 
@@ -96,7 +96,7 @@ Una persona que etiqueta diez licitaciones a la semana mejora la bandeja de todo
 - Configurar el servidor de correo y la lista de destinatarios del CIT. [pendiente]{.pendiente}
 - Comenzar a etiquetar: hoy no hay etiquetas del equipo, así que el juez todavía no recibe casos de referencia y la calibración no tiene datos. [pendiente]{.pendiente}
 - Agregar un campo de comentario en la bandeja. [pendiente]{.pendiente}
-- Hoy las personas no tienen cuenta y la etiqueta guarda un nombre escrito a mano. Inicio de sesión, preferencias personales (servicios, regiones, frecuencia) y resúmenes semanales son parte de [Trabajos futuros](../futuro/index.qmd).
+- Preferencias personales (servicios, regiones, frecuencia) y resúmenes semanales son parte de [Trabajos futuros](../futuro/index.qmd).
 :::
 
 ::: {.callout-tip}

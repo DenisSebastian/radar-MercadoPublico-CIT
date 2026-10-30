@@ -1,14 +1,15 @@
 # Pantallas {#sec-pantallas}
 
-La web tiene cinco pantallas. Las dos primeras son para el trabajo diario de todo el equipo; las otras tres, para quien administra y mantiene la plataforma.
+La web tiene seis pantallas, más la de inicio de sesión. Las dos primeras son para el trabajo diario de todo el equipo; las otras, para quien administra y mantiene la plataforma. Cada persona ve en el menú solo las pantallas que su rol permite ([Administración](administracion.qmd#personas-roles-y-permisos)).
 
 | Pantalla | Para quién | Para qué |
 |---|---|---|
-| Bandeja | Todo el equipo | Revisar y etiquetar oportunidades |
-| Detalle | Todo el equipo | Entender por qué una licitación tiene su prioridad |
-| Catálogo | Administración | Describir y probar los servicios de la unidad |
-| Configuración | Administración | Ajustar puntaje, triaje, alertas y reglas |
-| Operación | Mantención | Ver que todo funcione y reprocesar días |
+| Bandeja | Lectura en adelante | Revisar oportunidades; etiquetarlas desde jefatura |
+| Detalle | Lectura en adelante | Entender por qué una licitación tiene su prioridad |
+| Catálogo | Analista en adelante | Describir y probar los servicios de la unidad |
+| Configuración | Admin | Ajustar puntaje, triaje, alertas y reglas |
+| Operación | Admin | Ver que todo funcione y reprocesar días |
+| Usuarios | Admin y superadmin | Crear personas, asignar roles y ver su actividad |
 
 : Pantallas de la web {#tbl-pantallas}
 
@@ -94,6 +95,10 @@ Es el tablero de salud de la plataforma:
 - **Ejecuciones recientes** con su duración y errores.
 
 ::: {.callout-tip}
+## Usuarios
+
+Lista de las personas con su rol en cada unidad, cuántas etiquetas pusieron y cuántas licitaciones marcaron para postular. Al abrir una persona se ve su historial: inicios de sesión, etiquetas y cambios de rol. Desde aquí se crean cuentas y se asignan roles; las contraseñas y las bajas las gestiona un superadmin. Las reglas se explican en [Administración](administracion.qmd#personas-roles-y-permisos).
+
 ## En resumen
 
 - Bandeja y Detalle son para el trabajo diario; Catálogo, Configuración y Operación, para administrar.

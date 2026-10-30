@@ -12,6 +12,7 @@ En Radar MP, cada unidad se representa con un **perfil**. El perfil reúne todo 
 - sus **reglas de exclusión**: qué no hace nunca;
 - sus **criterios**: pesos del puntaje, umbrales de prioridad y configuración del triaje;
 - sus **alertas**: a quién avisar y qué prioridades;
+- su **equipo**: las personas que pertenecen a la unidad, cada una con su rol ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos));
 - las **etiquetas** que pone su equipo.
 
 Hoy existe un solo perfil, `cit`, para el Centro de Inteligencia Territorial. La plataforma, sin embargo, ya está construida para tener varios.
@@ -61,7 +62,6 @@ Cada unidad tiene particularidades. Para educación ejecutiva, por ejemplo, las 
 ::: {.callout-warning}
 ## Lo que falta para varias unidades
 
-- **Usuarios y permisos**: hoy cualquier persona con acceso a la web ve y modifica todos los perfiles. Hace falta inicio de sesión y roles por unidad. [pendiente]{.pendiente}
 - **Triaje por unidad**: las categorías relevantes del triaje están pensadas para el CIT y deben poder configurarse en cada perfil. [pendiente]{.pendiente}
 - **Resumen para la dirección**: un informe periódico por unidad con oportunidades, postulaciones y resultados. [pendiente]{.pendiente}
 
