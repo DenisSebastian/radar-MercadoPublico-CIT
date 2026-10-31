@@ -2,8 +2,8 @@
 
 El catálogo describe **qué sabe hacer la unidad**: sus servicios. Es la pieza que más influye en lo que llega a la bandeja, porque de cada servicio salen los vectores de la [búsqueda por significado](../matching/embeddings.qmd) y el texto que lee el juez. Disponible desde el rol **analista**.
 
-::: {.captura}
-![Catálogo de servicios con «¿Qué traería?»](../images/v2/catalogo.png){#fig-catalogo width="100%"}
+::: {.column-page-right .captura}
+![Catálogo de servicios con «¿Qué traería?»](../images/v3/catalogo.png){#fig-catalogo width="100%"}
 :::
 
 ## Qué hay en la pantalla

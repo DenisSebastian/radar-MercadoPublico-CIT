@@ -2,8 +2,8 @@
 
 La bandeja es la pantalla principal y la única que usa todo el equipo: la lista de oportunidades de la unidad, ordenada por puntaje, con el detalle de cada una al lado. Disponible desde el rol **lectura**; los botones para etiquetar aparecen desde **jefatura**.
 
-::: {.captura}
-![Bandeja de oportunidades con el panel de detalle abierto](../images/v2/bandeja-panel.png){#fig-bandeja width="100%"}
+::: {.column-page-right .captura}
+![Bandeja de oportunidades con el panel de detalle abierto](../images/v3/bandeja-panel.png){#fig-bandeja width="100%"}
 :::
 
 ## Qué hay en la pantalla
@@ -52,7 +52,7 @@ Al seleccionar una fila se abre el detalle a la derecha, sin salir de la lista; 
 7. **Comprador**: cuántas licitaciones ha publicado, sus proveedores más adjudicados y sus licitaciones recientes.
 
 ::: {.captura}
-![Detalle con la evaluación del juez](../images/v2/detalle-juez.png){#fig-detalle width="70%"}
+![Detalle en página completa: evaluación del juez, puntajes y cercanía por servicio](../images/v3/detalle.png){#fig-detalle width="80%"}
 :::
 
 ### Teclado

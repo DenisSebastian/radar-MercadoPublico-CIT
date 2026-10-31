@@ -26,6 +26,10 @@ Los roles son **por unidad**; solo superadmin es global. Quien no tiene permiso 
 
 ## Qué hay en la pantalla
 
+::: {.column-page-right .captura}
+![Usuarios vista por un admin: puede cambiar el rol de una analista, pero no el del superadmin ni el propio](../images/v3/usuarios.png){#fig-usuarios width="100%"}
+:::
+
 Arriba, un recordatorio de lo que puede hacer quien mira (admin o superadmin), el buscador por nombre o correo y el botón **Nuevo usuario**. Debajo, la tabla de personas:
 
 | Columna | Qué muestra |
@@ -69,6 +73,10 @@ uv run radar users set-password ana
 - **Eliminar definitivamente**: borra la cuenta y su historial; sus etiquetas quedan sin autor. Pide confirmación y **no se puede deshacer**. Conviene preferir la baja.
 
 ### Iniciar sesión
+
+::: {.captura}
+![Inicio de sesión](../images/v3/login.png){#fig-login width="60%"}
+:::
 
 Al entrar a la web se pide usuario (o correo) y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. El nombre y el rol aparecen arriba a la derecha, junto al botón para cerrar sesión.
 

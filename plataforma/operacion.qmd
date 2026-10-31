@@ -2,15 +2,15 @@
 
 Operación es la sala de máquinas: muestra si todo funciona, qué días están completos, qué se está ejecutando, cuándo corre sola la rutina diaria y a quién le llegan los correos. Disponible para el rol **admin**. Es una sola página, de arriba hacia abajo; el botón **Actualizar** vuelve a consultar el estado.
 
-::: {.captura}
-![Estado, cobertura y reprocesos](../images/v2/operacion-top.png){#fig-operacion width="100%"}
+::: {.column-page-right .captura}
+![Estado, cobertura y reprocesos](../images/v3/operacion-top.png){#fig-operacion width="100%"}
 :::
 
 ## Qué hay en la pantalla
 
 ### Estado
 
-Cinco tarjetas con un ✓ verde o una ✗ roja:
+Cuatro tarjetas con un ✓ verde o una ✗ roja, y debajo una franja con las próximas ejecuciones del worker. La tarjeta de base de datos muestra además cuántas licitaciones hay guardadas (342.073 al 30 de octubre) y el último día completo.
 
 | Tarjeta | Qué revisa | Si falla |
 |---|---|---|
@@ -18,7 +18,7 @@ Cinco tarjetas con un ✓ verde o una ✗ roja:
 | API Mercado Público | Que exista el ticket | Completar `MERCADO_PUBLICO_TICKET` en `.env` |
 | Ollama (IA local) | Que Ollama responda y estén los modelos | Abrir Ollama; `ollama pull …` |
 | Alertas | Canal de correo | Sin SMTP ni API de correo, los correos se guardan como `.eml` |
-| Próximas ejecuciones | Cuándo corre el worker | Ver [Programación automática](#programación-automática) |
+| Próximas ejecuciones (franja) | Cuándo corre la rutina diaria y la carga de Datos Abiertos | Ver [Programación automática](#programación-automática) |
 
 : Tarjetas de estado {#tbl-estado}
 
@@ -47,6 +47,10 @@ Un formulario para ejecutar a mano cualquiera de las tres etapas:
 
 ### Programación automática
 
+::: {.captura}
+![Programación automática](../images/v3/operacion-programacion.png){#fig-programacion width="100%"}
+:::
+
 Define **qué días y a qué hora** corre sola la rutina diaria: ingesta de los días completos pendientes hasta ayer → matching → correos. Si un día no corre (fin de semana, feriado), la siguiente corrida recupera los días que falten, hasta 14.
 
 - **Activa**, los **días de la semana** y la **hora** (de Chile).
@@ -74,6 +78,10 @@ Coordina el **correo personal**: cada persona recibe su propio correo, sin las l
 Un correo guardado como `.eml` no llegó a nadie, así que no cuenta como recibido: la persona lo volverá a recibir cuando haya canal.
 
 ### Corridas recientes
+
+::: {.captura}
+![Corridas recientes](../images/v3/operacion-corridas.png){#fig-corridas width="100%"}
+:::
 
 El historial de ejecuciones (ingesta, Datos Abiertos, matching, digest) con su estado, duración, estadísticas y el error si lo hubo. Se guarda en la tabla `ingest_run`.
 

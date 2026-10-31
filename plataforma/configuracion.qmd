@@ -2,24 +2,13 @@
 
 Configuración reúne los **criterios** de la unidad: cómo se puntúa una licitación, cuántas llegan al juez, cómo aprende de las etiquetas, a quién se avisa y qué se excluye sin mirar. Disponible para el rol **admin**. Es una sola página con seis tarjetas; las cinco primeras se guardan con **Guardar cambios** arriba a la derecha y las reglas tienen su propio botón.
 
-::: {.columns}
-::: {.column width="49%"}
-::: {.captura}
-![Puntaje final y selección para el juez](../images/v2/config-puntaje.png){#fig-config-puntaje width="100%"}
-:::
-:::
-::: {.column width="2%"}
-:::
-::: {.column width="49%"}
-::: {.captura}
-![Reglas de exclusión](../images/v2/config-reglas.png){#fig-config-reglas width="100%"}
-:::
-:::
-:::
-
 ## Qué hay en la pantalla
 
 ### Puntaje final
+
+::: {.captura}
+![Puntaje final y selección para el juez](../images/v3/config-puntaje.png){#fig-config-puntaje width="100%"}
+:::
 
 Los cuatro pesos del puntaje final y los dos umbrales de prioridad ([Modelos de priorización](../matching/priorizacion.qmd)).
 
@@ -50,6 +39,10 @@ Los pesos deben sumar 1; si no, **Guardar cambios** queda desactivado.
 
 ### Triaje con modelo de decisión
 
+::: {.captura}
+![Triaje con modelo de decisión](../images/v3/config-triaje.png){#fig-config-triaje width="100%"}
+:::
+
 El triaje revisa **todas** las licitaciones recuperadas del día con un modelo pequeño (~1 s cada una) y solo las que pasan van al juez (~13 s) ([Modelos de decisión](../matching/decision.qmd)).
 
 - **Usar triaje antes del juez**: activado en el CIT.
@@ -67,18 +60,26 @@ Usa las etiquetas del equipo de dos formas ([El ciclo de retroalimentación](../
 **Calibración de umbrales.** Muestra cuántas relevantes y no relevantes hay etiquetadas y, con al menos diez de cada una, dibuja la precisión, el recall y el F1 para cada umbral posible, con los umbrales actuales marcados. Sugiere el umbral de **media** con mejor F1 y el de **alta** con precisión ≥ 80 %. **Usar sugerencia** los copia al formulario, pero no se aplican hasta guardar. Abajo indica en qué paso quedaron las relevantes que el sistema no priorizó (regla, triaje, juez, tope).
 
 ::: {.captura}
-![Calibración con etiquetas](../images/v2/config-aprendizaje.png){#fig-config-aprendizaje width="80%"}
+![Calibración con etiquetas](../images/v3/config-aprendizaje.png){#fig-config-aprendizaje width="100%"}
 :::
 
 **Casos de referencia para el juez.** Activa o desactiva los casos, cuántos ve el juez por licitación (4) y la similitud mínima entre licitaciones (0,55). Aquí también se ingresan los **RUT propios como proveedor**, que alimentan el «historial propio» del mercado, y la opción de usar las adjudicaciones propias como casos relevantes. Esta opción viene apagada: las adjudicaciones de la UAI son sobre todo docencia y sesgarían al juez hacia capacitación.
 
 ### Alertas por email
 
+::: {.captura}
+![Alertas por email con lista fija](../images/v3/config-alertas.png){#fig-config-alertas width="100%"}
+:::
+
 La configuración del **correo con lista fija** de la unidad: si se envía, los destinatarios (uno por línea), las prioridades que se avisan y si solo van las abiertas. **Vista previa** muestra el próximo correo sin marcar nada como enviado. Los correos **personales**, uno por persona, se coordinan en [Operación](operacion.qmd#correos-a-usuarios).
 
 ### Reglas de exclusión
 
-Las reglas descartan una licitación **antes** del triaje y del juez. Hay dos tipos:
+::: {.captura}
+![Reglas de exclusión: tipo, valor, nota, probar y eliminar](../images/v3/config-reglas.png){#fig-config-reglas width="100%"}
+:::
+
+El CIT tiene hoy 52 reglas. Las reglas descartan una licitación **antes** del triaje y del juez. Hay dos tipos:
 
 - **Título**: expresión regular sobre el título en minúsculas y sin tildes, por ejemplo `\b(compra|adquisicion)\b`.
 - **UNSPSC**: prefijo de código de producto. Solo excluye si **todos** los ítems lo tienen, y solo mira códigos de 8 dígitos.
