@@ -1,9 +1,63 @@
 # Plataforma {.unnumbered}
 
-Esta parte describe la **web** de Radar MP: lo que ven y hacen las personas. Se organiza según la pregunta que cada lector trae:
+Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**. Tiene un capítulo por cada sección del menú, en el mismo orden en que aparecen arriba en la pantalla:
 
-- **¿Qué hay en cada pantalla?** → [Pantallas](pantallas.qmd)
-- **¿Cómo la uso cada día y qué hago si algo falla?** → [Uso](uso.qmd)
-- **¿Cómo cambio lo que busca y cómo decide?** → [Administración](administracion.qmd)
+| Capítulo | Para qué sirve | Rol mínimo |
+|---|---|---|
+| [Bandeja](bandeja.qmd) | Revisar oportunidades, entender por qué llegaron y etiquetarlas | Lectura (etiquetar: jefatura) |
+| [Catálogo](catalogo.qmd) | Describir y probar los servicios de la unidad | Analista |
+| [Configuración](configuracion.qmd) | Ajustar puntaje, triaje, aprendizaje, alertas y reglas | Admin |
+| [Operación](operacion.qmd) | Ver que todo funcione, reprocesar días, programar la rutina y enviar correos | Admin |
+| [Usuarios](usuarios.qmd) | Crear cuentas, asignar roles y revisar la actividad | Admin |
 
-La web corre en el computador del centro: en `http://localhost:5173` durante el desarrollo o en `http://localhost:8080` si se levanta con Docker. Detrás de ella hay una API, documentada en `http://localhost:8000/docs`, que también se puede usar directamente.
+: Secciones de la web {#tbl-secciones}
+
+Cada persona ve en el menú solo las secciones que su rol permite ([Usuarios](usuarios.qmd)).
+
+## Cómo leer cada capítulo
+
+Todos los capítulos siguen el mismo orden:
+
+1. **Qué hay en la pantalla**: una captura y la descripción de cada parte.
+2. **Cómo se hace**: tareas concretas paso a paso («crear un servicio», «completar un día que falta»).
+3. **Bitácora**: qué cambió en esa sección, con fecha y el *commit* que lo introdujo. Sirve para saber desde cuándo existe algo y por qué se decidió así.
+
+Las tareas que todavía no se pueden hacer se marcan [pendiente]{.pendiente}.
+
+## La rutina en una página
+
+| Cuándo | Quién | Qué | Dónde |
+|---|---|---|---|
+| Cada mañana, solo | La plataforma | Descarga lo del día anterior, lo analiza y envía los correos | [Operación](operacion.qmd#programación-automática) |
+| Cada mañana | Todo el equipo | Lee el correo o revisa *Oportunidades* (5 a 10 licitaciones) | [Bandeja](bandeja.qmd) |
+| Cada mañana | Jefatura | Etiqueta lo revisado: `1`, `2`, `3` o `p` | [Bandeja](bandeja.qmd#etiquetar) |
+| Semanal | Admin | Revisa que no falten días | [Operación](operacion.qmd#cobertura) |
+| Semanal | Jefatura | Mira *Descartadas* y *Excluidas* por si se perdió algo | [Bandeja](bandeja.qmd#vistas) |
+| Mensual | Analista | Ajusta los servicios que traen ruido | [Catálogo](catalogo.qmd) |
+| Con ≥ 10 etiquetas por clase | Admin | Revisa la calibración de umbrales | [Configuración](configuracion.qmd#aprendizaje) |
+| Trimestral | Admin | Reporte de evaluación con `radar eval report` | Línea de comandos |
+
+: Rutina del equipo {#tbl-rutina}
+
+::: {.callout-important}
+## Etiquetar es parte del trabajo
+
+Sin etiquetas no hay forma de saber si la plataforma acierta, ni de calibrar umbrales, ni de mostrarle al juez el criterio del equipo ([El ciclo de retroalimentación](../digest/usuarios.qmd#el-ciclo-de-retroalimentación)).
+:::
+
+## Dónde corre
+
+La web corre en el computador del centro: en `http://localhost:5173` durante el desarrollo o en `http://localhost:8080` si se levanta con Docker. Detrás hay una API documentada en `http://localhost:8000/docs`, que aplica los mismos permisos que la web. Cómo instalarla y levantarla se explica en [Operación](operacion.qmd#puesta-en-marcha).
+
+## Bitácora general
+
+La web nació en tres días. Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
+
+| Fecha | Hito |
+|---|---|
+| 28-oct-2026 | Backend, ingesta programada y matching con modelos locales (sin web todavía) |
+| 29-oct-2026 | Primera web: Bandeja, Detalle y Catálogo; luego Configuración y Operación; casos de referencia, calibración y mercado |
+| 30-oct-2026 | Triaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales desde Operación |
+| En curso | Programación de la rutina diaria desde la web (días y hora) |
+
+: Hitos de la plataforma {#tbl-hitos}

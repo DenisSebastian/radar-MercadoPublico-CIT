@@ -4,7 +4,7 @@ El capítulo [Centros y facultades](../digest/unidades.qmd) mostró que la plata
 
 ## Personas y permisos
 
-La base ya existe: cuentas con contraseña y cinco roles por unidad, de lectura a superadmin ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos)). Para varias unidades falta:
+La base ya existe: cuentas con contraseña y cinco roles por unidad, de lectura a superadmin ([Usuarios](../plataforma/usuarios.qmd)). Para varias unidades falta:
 
 - **Cuenta institucional.** Entrar con la cuenta UAI (Google Workspace) en lugar de una contraseña propia de la plataforma.
 - **Auditoría de criterios.** Registrar quién cambió un servicio, una regla o un umbral, y cuándo.

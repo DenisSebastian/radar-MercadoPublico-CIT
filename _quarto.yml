@@ -44,9 +44,11 @@ book:
         - digest/usuarios.qmd
     - part: plataforma/index.qmd
       chapters:
-        - plataforma/pantallas.qmd
-        - plataforma/uso.qmd
-        - plataforma/administracion.qmd
+        - plataforma/bandeja.qmd
+        - plataforma/catalogo.qmd
+        - plataforma/configuracion.qmd
+        - plataforma/operacion.qmd
+        - plataforma/usuarios.qmd
     - part: futuro/index.qmd
       chapters:
         - futuro/otros-centros.qmd

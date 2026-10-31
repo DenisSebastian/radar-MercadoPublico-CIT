@@ -12,7 +12,7 @@ En Radar MP, cada unidad se representa con un **perfil**. El perfil reúne todo 
 - sus **reglas de exclusión**: qué no hace nunca;
 - sus **criterios**: pesos del puntaje, umbrales de prioridad y configuración del triaje;
 - sus **alertas**: a quién avisar y qué prioridades;
-- su **equipo**: las personas que pertenecen a la unidad, cada una con su rol ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos));
+- su **equipo**: las personas que pertenecen a la unidad, cada una con su rol ([Usuarios](../plataforma/usuarios.qmd));
 - las **etiquetas** que pone su equipo.
 
 Hoy existe un solo perfil, `cit`, para el Centro de Inteligencia Territorial. La plataforma, sin embargo, ya está construida para tener varios.
@@ -53,7 +53,7 @@ Cada mañana, después del matching, cada unidad cuenta con:
 Incorporar un centro o una facultad tiene cuatro pasos:
 
 1. **Describir sus servicios.** Con el equipo de la unidad, escribir qué sabe hacer, con ejemplos reales de licitaciones que le habrían servido. Es el paso más importante.
-2. **Crear el perfil.** Cargar un archivo YAML con el catálogo, partiendo de una copia del perfil del CIT ([Administración](../plataforma/administracion.qmd)).
+2. **Crear el perfil.** Cargar un archivo YAML con el catálogo, partiendo de una copia del perfil del CIT ([Catálogo](../plataforma/catalogo.qmd#crear-el-perfil-de-una-unidad-nueva)).
 3. **Probar.** Con «Probar» en el catálogo, revisar qué licitaciones de los últimos 30 días traería cada servicio y ajustar descripciones hasta que el resultado tenga sentido.
 4. **Operar y etiquetar.** Activar las alertas y pedir al equipo que etiquete durante las primeras semanas para calibrar umbrales.
 

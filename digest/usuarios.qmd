@@ -5,7 +5,7 @@ Dentro de cada unidad hay personas que revisan oportunidades y deciden si postul
 ## Dos formas de recibir oportunidades
 
 - **El correo diario** llega sin que la persona lo pida. Sirve para enterarse.
-- **La bandeja web** se consulta cuando se quiere. Sirve para revisar con calma, filtrar y etiquetar ([Pantallas](../plataforma/pantallas.qmd)).
+- **La bandeja web** se consulta cuando se quiere. Sirve para revisar con calma, filtrar y etiquetar ([Bandeja](../plataforma/bandeja.qmd)).
 
 ## El correo diario
 
@@ -25,7 +25,12 @@ El 27 de octubre, el correo del CIT habría incluido la consultoría de la Subde
 
 ### Cómo se envía
 
-Si la plataforma tiene configurado un servidor de correo (variables `SMTP_*` en `.env`), envía el mensaje a los destinatarios de la unidad. Si no lo tiene, guarda el correo como archivo `.eml` en `data/outbox/`, para revisarlo antes de activar el envío real. En ambos casos se puede ver una **vista previa** en Configuración → Alertas sin marcar nada como enviado.
+El correo puede ir de dos formas:
+
+- **Personal**: cada persona marcada para el correo diario recibe el suyo, sin las licitaciones que ya recibió. Se coordina en [Operación → Correos a usuarios](../plataforma/operacion.qmd#correos-a-usuarios), con vista previa por persona e historial de envíos.
+- **Lista fija**: un mismo correo para una lista de direcciones, configurada en [Configuración → Alertas por email](../plataforma/configuracion.qmd#alertas-por-email).
+
+Si la plataforma tiene un canal de envío configurado (`SMTP_*` en `.env`, o una API de correo por HTTPS con `MAIL_PROVIDER`), el correo llega a las casillas. Si no, se guarda como archivo `.eml` en el servidor, para revisarlo antes de activar el envío real; ese correo no cuenta como recibido.
 
 ```bash
 uv run radar digest --preview digest.html   # vista previa en un archivo
@@ -33,7 +38,7 @@ uv run radar digest --preview digest.html   # vista previa en un archivo
 
 ### Qué se configura
 
-En Configuración → Alertas, por cada perfil: si las alertas están activas, qué prioridades se avisan, si solo se incluyen las abiertas y la lista de destinatarios.
+Por unidad: si el correo sale solo con la rutina diaria, si va a las personas marcadas o a la lista fija, qué prioridades se avisan y si solo se incluyen las abiertas. Los días y la hora de la rutina se eligen en [Operación → Programación automática](../plataforma/operacion.qmd#programación-automática).
 
 ## El ciclo de retroalimentación
 
@@ -48,7 +53,7 @@ En el detalle de cada licitación hay cuatro botones, que también se activan co
 
 : Botones de retroalimentación {#tbl-etiquetas}
 
-Los botones aparecen para las personas con rol **jefatura** o superior ([Administración](../plataforma/administracion.qmd#personas-roles-y-permisos)). Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en el historial de la persona que las puso, con la hora.
+Los botones aparecen para las personas con rol **jefatura** o superior ([Usuarios](../plataforma/usuarios.qmd)). Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en el historial de la persona que las puso, con la hora.
 
 ### ¿Qué pasa cuando alguien hace clic en 👍?
 
@@ -68,7 +73,7 @@ Un 👎 funciona igual, pero como ejemplo de lo que **no** sirve. Así el criter
 
 **2. Para calibrar los umbrales (cuando hay suficientes).** Con al menos diez licitaciones marcadas 👍 y diez 👎, Configuración → Aprendizaje compara las etiquetas con el puntaje final y sugiere los umbrales de prioridad: el de **media** que mejor equilibra precisión y recall, y el de **alta** que asegura al menos 80 % de precisión. También muestra en qué paso quedaron las licitaciones que el equipo marcó relevantes y el sistema no priorizó (reglas, triaje, juez). La sugerencia no se aplica sola: alguien tiene que presionar *Usar sugerencia* ([Modelos de priorización](../matching/priorizacion.qmd)).
 
-**3. Para medir si la plataforma acierta.** Las etiquetas son la respuesta correcta contra la que se calculan la precisión y el recall del sistema, y en Administración se ve cuántas etiquetas puso cada persona.
+**3. Para medir si la plataforma acierta.** Las etiquetas son la respuesta correcta contra la que se calculan la precisión y el recall del sistema, y en [Usuarios](../plataforma/usuarios.qmd) se ve cuántas etiquetas puso cada persona.
 
 | Etiqueta | Caso para el juez | Calibración | Métricas |
 |---|---|---|---|
@@ -93,7 +98,7 @@ Una persona que etiqueta diez licitaciones a la semana mejora la bandeja de todo
 ::: {.callout-warning}
 ## Pendiente para el uso real
 
-- Configurar el servidor de correo y la lista de destinatarios del CIT. [pendiente]{.pendiente}
+- Marcar a las personas del CIT para el correo diario y activar el envío automático. El canal SMTP ya funciona: los primeros correos llegaron el 30 de octubre. [pendiente]{.pendiente}
 - Comenzar a etiquetar: hoy no hay etiquetas del equipo, así que el juez todavía no recibe casos de referencia y la calibración no tiene datos. [pendiente]{.pendiente}
 - Agregar un campo de comentario en la bandeja. [pendiente]{.pendiente}
 - Preferencias personales (servicios, regiones, frecuencia) y resúmenes semanales son parte de [Trabajos futuros](../futuro/index.qmd).

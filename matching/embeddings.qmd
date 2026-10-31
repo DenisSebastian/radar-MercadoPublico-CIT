@@ -155,7 +155,7 @@ Ese día, 51 de las 152 licitaciones superaron el piso de 0,30, 54 tuvieron al m
 
 Los mismos vectores se usan en otras partes de la plataforma:
 
-- **«Probar»** en el Catálogo muestra qué licitaciones de los últimos 30 días traería un servicio antes de guardarlo ([Administración](../plataforma/administracion.qmd)).
+- **«Probar»** en el Catálogo muestra qué licitaciones de los últimos 30 días traería un servicio antes de guardarlo ([Catálogo](../plataforma/catalogo.qmd)).
 - **Casos parecidos para el juez**: se buscan licitaciones ya etiquetadas por el equipo cuyo coseno con la licitación a juzgar sea al menos 0,55, y se le muestran como ejemplos.
 - **Muestras de evaluación**: para medir si los filtros botan oportunidades, la muestra que etiqueta el equipo incluye licitaciones excluidas que aun así se parecen a algún servicio.
 
@@ -170,7 +170,7 @@ Como la similitud se toma del vector más parecido, la herramienta principal son
 ::: {.callout-note}
 ## Parámetros
 
-El piso (0,30), el techo (0,60) y el peso del significado frente a las palabras (0,75) se configuran por perfil en Configuración → Puntaje. Los valores actuales se fijaron mirando la distribución real de cosenos de `embeddinggemma`; si se cambia de modelo de embeddings hay que revisarlos, porque cada modelo tiene su propio rango.
+El piso (0,30), el techo (0,60) y el peso del significado frente a las palabras (0,75) se configuran por perfil en [Configuración → Selección para el juez](../plataforma/configuracion.qmd#selección-para-el-juez). Los valores actuales se fijaron mirando la distribución real de cosenos de `embeddinggemma`; si se cambia de modelo de embeddings hay que revisarlos, porque cada modelo tiene su propio rango.
 :::
 
 ::: {.callout-tip}

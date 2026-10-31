@@ -43,7 +43,7 @@ Todo el matching se apoya en el **catálogo** del perfil: la lista de lo que la 
 - Políticas públicas, evaluación y planificación estratégica
 - Capacitación y formación
 
-Cada servicio se describe con tres elementos: un **texto** que explica qué hace el centro, **ejemplos** de títulos de licitaciones que sí calzan y **palabras clave**. La calidad del matching depende mucho de esa descripción: un servicio descrito de forma demasiado amplia trae ruido, y uno demasiado estrecho pierde oportunidades. Cómo editarlo se explica en [Administración](../plataforma/administracion.qmd).
+Cada servicio se describe con tres elementos: un **texto** que explica qué hace el centro, **ejemplos** de títulos de licitaciones que sí calzan y **palabras clave**. La calidad del matching depende mucho de esa descripción: un servicio descrito de forma demasiado amplia trae ruido, y uno demasiado estrecho pierde oportunidades. Cómo editarlo se explica en [Catálogo](../plataforma/catalogo.qmd).
 
 ## Qué estados puede tener una licitación
 

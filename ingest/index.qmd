@@ -40,4 +40,4 @@ La base contiene el histórico desde enero de 2024 hasta octubre de 2026:
 - ~**1,06 millones** de líneas adjudicadas, con proveedor y monto,
 - **1.152** organismos compradores,
 
-en aproximadamente 1 GB de PostgreSQL. Cada carga queda registrada en la tabla `ingest_run` y se puede revisar en la pantalla de [Operación](../plataforma/pantallas.qmd).
+en aproximadamente 1 GB de PostgreSQL. Cada carga queda registrada en la tabla `ingest_run` y se puede revisar en la pantalla de [Operación](../plataforma/operacion.qmd).
