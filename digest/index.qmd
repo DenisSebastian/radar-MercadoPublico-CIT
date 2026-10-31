@@ -9,6 +9,6 @@ Hay dos destinatarios, en dos niveles:
 
 ## Cuándo ocurre
 
-Todos los días a las 06:00 (hora de Chile) el worker ejecuta la secuencia completa: **ingesta → matching → digest**. Cuando el equipo llega en la mañana, la bandeja y el correo ya tienen las oportunidades del día anterior.
+A la hora programada (por defecto, de lunes a viernes a las 08:30, hora de Chile) el worker ejecuta la secuencia completa: **ingesta → matching → digest**. Cuando el equipo llega en la mañana, la bandeja y el correo ya tienen las oportunidades del día anterior.
 
 Cada paso queda registrado. Si algo falla —por ejemplo, si los modelos de IA no están disponibles—, el error se registra, la ingesta queda guardada y el correo no avisa nada nuevo hasta que el día se reprocese. Esto se explica en detalle en [Operación](../plataforma/operacion.qmd).

@@ -1,6 +1,6 @@
 # Bandeja {#sec-bandeja}
 
-La bandeja es la pantalla principal y la única que usa todo el equipo: la lista de oportunidades de la unidad, ordenada por puntaje, con el detalle de cada una al lado. Disponible desde el rol **lectura**; los botones para etiquetar aparecen desde **jefatura**.
+La bandeja es la pantalla principal y la única que usa todo el equipo: la lista de oportunidades de la unidad, ordenada por puntaje, con el detalle de cada una al lado. Disponible desde el rol **lectura**; los botones para etiquetar aparecen desde **analista**.
 
 ::: {.column-page-right .captura}
 ![Bandeja de oportunidades con el panel de detalle abierto](../images/v3/bandeja-panel.png){#fig-bandeja width="100%"}
@@ -37,7 +37,7 @@ Todo queda en la dirección de la página (`?vista=descartadas&servicio=…&sel=
 
 ### Cada fila
 
-A la izquierda, el **puntaje final** y la prioridad. Al centro, el nombre, el comprador y la región, el **servicio propuesto** y la primera línea del resumen del juez (o el motivo de exclusión). A la derecha, el **monto**, cuántos días faltan para el cierre y, para jefatura en adelante, los botones de etiqueta.
+A la izquierda, el **puntaje final** y la prioridad. Al centro, el nombre, el comprador y la región, el **servicio propuesto** y la primera línea del resumen del juez (o el motivo de exclusión). A la derecha, el **monto**, cuántos días faltan para el cierre y, para analista en adelante, los botones de etiqueta.
 
 ### El detalle
 
@@ -66,7 +66,7 @@ La bandeja se puede recorrer entera sin mouse:
 | `Enter` | Abrir en página completa |
 | `/` | Ir al buscador |
 | `Esc` | Cerrar el detalle |
-| `1` `2` `3` `p` | Relevante, no relevante, dudoso, postular (jefatura en adelante) |
+| `1` `2` `3` `p` | Relevante, no relevante, dudoso, postular (analista en adelante) |
 
 : Atajos de teclado {#tbl-teclado}
 
@@ -81,7 +81,7 @@ La bandeja se puede recorrer entera sin mouse:
 
 ### Etiquetar
 
-Desde el rol **jefatura**, cada licitación se puede marcar con un botón o una tecla:
+Desde el rol **analista**, cada licitación se puede marcar con un botón o una tecla:
 
 | Botón | Tecla | Significa |
 |---|---|---|
@@ -94,7 +94,7 @@ Desde el rol **jefatura**, cada licitación se puede marcar con un botón o una 
 
 - Repetir el mismo botón **quita** la etiqueta.
 - Hay **una etiqueta vigente por licitación y unidad**: si otra persona marca otra cosa, la última gana.
-- La etiqueta queda **atribuida** a quien la puso y se ve en el encabezado del detalle.
+- La etiqueta queda **atribuida** a quien la puso y se ve en el encabezado del detalle. Los votos de cada persona, y en qué no coinciden, se ven en la [Vista general](vista-general.qmd).
 - El clic no cambia el puntaje ni vuelve a juzgar la licitación: sirve desde el día siguiente como caso de referencia para el juez, para calibrar umbrales y para medir aciertos ([El ciclo de retroalimentación](../digest/usuarios.qmd#el-ciclo-de-retroalimentación)).
 
 ### Buscar lo que se pudo haber perdido
@@ -116,6 +116,7 @@ Seleccionarla y copiar la dirección del navegador. Quien la abra verá la misma
 | 30-oct-2026 | Llega el **triaje**: el detalle muestra si pasó y la categoría de entregable; las descartadas explican el motivo. | `1b163ff` |
 | 30-oct-2026 | Con inicio de sesión, cada etiqueta queda atribuida a la persona con sesión iniciada, ya no a un nombre escrito a mano. | `6e70353` |
 | 30-oct-2026 | Los botones de etiqueta solo aparecen desde **jefatura**; para lectura y analista la bandeja es de consulta. | `263246a` |
+| 31-oct-2026 | Los analistas también etiquetan; lectura sigue siendo solo consulta. Abrir el detalle o Mercado Público queda registrado, y cada voto guarda lo que decían el triaje y el juez. | `0c23c23`, `f658574` |
 
 : Bitácora de la Bandeja {#tbl-bitacora-bandeja tbl-colwidths="[14,74,12]"}
 

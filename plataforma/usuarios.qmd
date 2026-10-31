@@ -9,7 +9,7 @@ Los roles van de menos a más, y cada uno incluye todo lo que puede hacer el ant
 | Rol | Bandeja | Catálogo | Etiquetar | Configuración, Operación y Usuarios |
 |---|:---:|:---:|:---:|:---:|
 | **Lectura** | ✓ | | | |
-| **Analista** | ✓ | ✓ | | |
+| **Analista** | ✓ | ✓ | ✓ | |
 | **Jefatura** | ✓ | ✓ | ✓ | |
 | **Admin** | ✓ | ✓ | ✓ | ✓ |
 | **Superadmin** | ✓ | ✓ | ✓ | ✓ + contraseñas y bajas |
@@ -17,8 +17,8 @@ Los roles van de menos a más, y cada uno incluye todo lo que puede hacer el ant
 : Roles y permisos {#tbl-roles}
 
 - **Lectura** ve la bandeja y el detalle. Sirve para quien quiere enterarse sin intervenir.
-- **Analista** además edita el **Catálogo**.
-- **Jefatura** además **etiqueta**. Las etiquetas enseñan al juez y calibran los umbrales, por eso quedan en manos de quien decide si se postula.
+- **Analista** además edita el **Catálogo** y **etiqueta** licitaciones. Las etiquetas enseñan al juez y calibran los umbrales.
+- **Jefatura** tiene hoy los mismos permisos que analista. Se mantiene como rol aparte para distinguir a quien decide postular.
 - **Admin** además cambia la **Configuración**, usa **Operación** y administra las **personas** de su unidad.
 - **Superadmin** puede todo en todas las unidades y es el único que cambia contraseñas, da de baja o elimina personas, nombra admin o superadmin e importa personas desde un CSV.
 
@@ -107,7 +107,7 @@ La casilla **Correo diario** de cada persona se marca en [Operación → Correos
 
 ## Qué queda registrado
 
-La plataforma guarda un **historial por persona**: inicios de sesión, etiquetas y etiquetas borradas, altas, cambios de rol o de unidad, de estado y de contraseña, y vínculos de etiquetas antiguas. Hoy la pantalla muestra solo el resumen (votos y última actividad); el historial completo se consulta por la API en `/admin/users/{id}/timeline`. [pendiente]{.pendiente}
+La plataforma guarda un **historial por persona**: inicios de sesión, etiquetas y etiquetas borradas (cada una con lo que decían el triaje y el juez en ese momento), vistas de detalle, aperturas en Mercado Público, altas, cambios de rol o de unidad, de estado y de contraseña, y vínculos de etiquetas antiguas. Hoy la pantalla muestra solo el resumen (votos y última actividad); el historial completo se consulta por la API en `/admin/users/{id}/timeline`. [pendiente]{.pendiente}
 
 Lo que todavía no se registra son los **cambios de criterios**: quién modificó un servicio, una regla o un umbral, y cuándo. [pendiente]{.pendiente}
 
@@ -120,6 +120,7 @@ Lo que todavía no se registra son los **cambios de criterios**: quién modific�
 | 30-oct-2026 | **Inicio de sesión** con usuario y contraseña (sesiones de 7 días) y pantalla **Usuarios** para listar, crear, cambiar contraseñas y dar de baja. El primer superadmin con contraseña cierra la plataforma. | `6e70353` |
 | 30-oct-2026 | **Cinco roles** por unidad, de lectura a superadmin. Toda la API exige su permiso, el menú se filtra por rol y nadie puede quitarse su propio acceso. | `263246a` |
 | 30-oct-2026 | Cada persona tiene una **frecuencia de correo**; quién recibe el correo diario se decide en Operación. | `e91361d` |
+| 31-oct-2026 | Los **analistas** también etiquetan; analista y jefatura quedan con los mismos permisos. | `0c23c23` |
 
 : Bitácora de Usuarios {#tbl-bitacora-usuarios tbl-colwidths="[14,74,12]"}
 

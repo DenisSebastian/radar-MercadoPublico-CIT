@@ -4,7 +4,8 @@ Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**.
 
 | Capítulo | Para qué sirve | Rol mínimo |
 |---|---|---|
-| [Bandeja](bandeja.qmd) | Revisar oportunidades, entender por qué llegaron y etiquetarlas | Lectura (etiquetar: jefatura) |
+| [Bandeja](bandeja.qmd) | Revisar oportunidades, entender por qué llegaron y etiquetarlas | Lectura (etiquetar: analista) |
+| [Vista general](vista-general.qmd) | Ver cómo vota el equipo: consenso, montos, plazos y acuerdo con el juez | Lectura |
 | [Catálogo](catalogo.qmd) | Describir y probar los servicios de la unidad | Analista |
 | [Configuración](configuracion.qmd) | Ajustar puntaje, triaje, aprendizaje, alertas y reglas | Admin |
 | [Operación](operacion.qmd) | Ver que todo funcione, reprocesar días, programar la rutina y enviar correos | Admin |
@@ -30,8 +31,9 @@ Las tareas que todavía no se pueden hacer se marcan [pendiente]{.pendiente}.
 |---|---|---|---|
 | Cada mañana, solo | La plataforma | Descarga lo del día anterior, lo analiza y envía los correos | [Operación](operacion.qmd#programación-automática) |
 | Cada mañana | Todo el equipo | Lee el correo o revisa *Oportunidades* (5 a 10 licitaciones) | [Bandeja](bandeja.qmd) |
-| Cada mañana | Jefatura | Etiqueta lo revisado: `1`, `2`, `3` o `p` | [Bandeja](bandeja.qmd#etiquetar) |
+| Cada mañana | Analista o jefatura | Etiqueta lo revisado: `1`, `2`, `3` o `p` | [Bandeja](bandeja.qmd#etiquetar) |
 | Semanal | Admin | Revisa que no falten días | [Operación](operacion.qmd#cobertura) |
+| Semanal | Jefatura | Revisa los desacuerdos y los plazos de lo postulado | [Vista general](vista-general.qmd) |
 | Semanal | Jefatura | Mira *Descartadas* y *Excluidas* por si se perdió algo | [Bandeja](bandeja.qmd#vistas) |
 | Mensual | Analista | Ajusta los servicios que traen ruido | [Catálogo](catalogo.qmd) |
 | Con ≥ 10 etiquetas por clase | Admin | Revisa la calibración de umbrales | [Configuración](configuracion.qmd#aprendizaje) |
@@ -51,13 +53,13 @@ La web corre en el computador del centro: en `http://localhost:5173` durante el 
 
 ## Bitácora general
 
-La web nació en tres días. Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
+La web nació en cuatro días. Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
 
 | Fecha | Hito |
 |---|---|
 | 28-oct-2026 | Backend, ingesta programada y matching con modelos locales (sin web todavía) |
 | 29-oct-2026 | Primera web: Bandeja, Detalle y Catálogo; luego Configuración y Operación; casos de referencia, calibración y mercado |
-| 30-oct-2026 | Triaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales desde Operación |
-| En curso | Programación de la rutina diaria desde la web (días y hora) |
+| 30-oct-2026 | Triaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales y programación de la rutina desde Operación |
+| 31-oct-2026 | Los analistas también etiquetan; nueva pantalla Vista general con el consenso del equipo |
 
 : Hitos de la plataforma {#tbl-hitos}

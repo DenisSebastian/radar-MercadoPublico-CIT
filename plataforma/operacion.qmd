@@ -53,7 +53,7 @@ Un formulario para ejecutar a mano cualquiera de las tres etapas:
 
 Define **qué días y a qué hora** corre sola la rutina diaria: ingesta de los días completos pendientes hasta ayer → matching → correos. Si un día no corre (fin de semana, feriado), la siguiente corrida recupera los días que falten, hasta 14.
 
-- **Activa**, los **días de la semana** y la **hora** (de Chile).
+- **Activa**, los **días de la semana** y la **hora** (de Chile). Por defecto, de lunes a viernes a las 08:30.
 - **Enviar correos al terminar**: los correos salen solo en las unidades con *Correo diario automático* activo.
 - **Próxima corrida** y **última ingesta**.
 - **Ejecutar ahora**: pone la rutina completa en la cola.
@@ -197,6 +197,6 @@ También se puede levantar todo con `docker compose --profile app up -d --build`
 | 30-oct-2026 | Operación exige rol **admin**. | `263246a` |
 | 30-oct-2026 | Tarjeta **Correos a usuarios**: correo personal por persona, vista previa, envío manual e historial. Envío por SMTP o por API HTTPS (Brevo o Resend). | `e91361d` |
 | 30-oct-2026 | Primeros envíos reales: a las 18:45 dos correos de prueba quedaron como `.eml`; a las 23:18, con SMTP configurado, llegaron a sus casillas con 25 oportunidades cada uno (@fig-correos-usuarios). | — |
-| En curso | Tarjeta **Programación automática**: días y hora configurables desde la web, estado del worker y *Ejecutar ahora*. Hasta ahora la hora era fija (06:00). | sin *commit* |
+| 30-oct-2026 | Tarjeta **Programación automática**: días y hora configurables desde la web, guardados en la base de datos (`app_setting`), estado del worker y *Ejecutar ahora*. La hora deja de ser fija (06:00); por defecto, de lunes a viernes a las 08:30. El worker relee la programación cada minuto. | `9a27648` |
 
 : Bitácora de Operación {#tbl-bitacora-operacion tbl-colwidths="[14,74,12]"}

@@ -53,7 +53,7 @@ Todas las piezas giran en torno a una base de datos PostgreSQL. Un proceso progr
 |---|---|---|
 | Base de datos | PostgreSQL 16 con `pgvector` | Guarda licitaciones, vectores, decisiones, etiquetas y registros de ejecución |
 | Backend y API | Python 3.13, FastAPI | Contiene la lógica y la expone en `localhost:8000` |
-| Worker | APScheduler | Ejecuta la ingesta, el matching y el correo a las 06:00 |
+| Worker | APScheduler | Ejecuta la ingesta, el matching y el correo a la hora programada en Operación |
 | Modelos de IA | Ollama | `embeddinggemma` (búsqueda por significado), `nimble` (triaje) y `qwen3.5` (juez) |
 | Lectura de archivos | DuckDB | Lee rápido los archivos mensuales de Datos Abiertos |
 | Web | React y TypeScript | Bandeja, detalle, catálogo, configuración y operación, en `localhost:5173` |

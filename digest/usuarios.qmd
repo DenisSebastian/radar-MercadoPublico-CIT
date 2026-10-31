@@ -53,7 +53,7 @@ En el detalle de cada licitación hay cuatro botones, que también se activan co
 
 : Botones de retroalimentación {#tbl-etiquetas}
 
-Los botones aparecen para las personas con rol **jefatura** o superior ([Usuarios](../plataforma/usuarios.qmd)). Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en el historial de la persona que las puso, con la hora.
+Los botones aparecen para las personas con rol **analista** o superior ([Usuarios](../plataforma/usuarios.qmd)). Repetir el mismo botón quita la etiqueta. Cada licitación tiene **una sola etiqueta vigente por unidad**: si otra persona marca otra cosa, la última gana. Todas las marcas quedan además en el historial de la persona que las puso, con la hora.
 
 ### ¿Qué pasa cuando alguien hace clic en 👍?
 

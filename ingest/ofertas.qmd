@@ -4,7 +4,7 @@ En este libro usamos **ofertas** u **ofertas públicas** para referirnos a las l
 
 ## Cada mañana: la API de Mercado Público
 
-Todos los días a las 06:00 el worker pregunta a la API por las licitaciones publicadas el día anterior. El proceso tiene dos pasos:
+Cada día programado (por defecto, de lunes a viernes a las 08:30) el worker pregunta a la API por las licitaciones publicadas hasta el día anterior que falten. El proceso tiene dos pasos:
 
 1. **Listado.** Una consulta por fecha devuelve los códigos de las licitaciones publicadas, con su nombre, estado y fecha de cierre. Esto toma segundos.
 2. **Detalle.** Para cada código se pide la ficha completa: descripción, comprador, monto estimado, fechas y lista de productos. Esto es lo lento.

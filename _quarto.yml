@@ -45,6 +45,7 @@ book:
     - part: plataforma/index.qmd
       chapters:
         - plataforma/bandeja.qmd
+        - plataforma/vista-general.qmd
         - plataforma/catalogo.qmd
         - plataforma/configuracion.qmd
         - plataforma/operacion.qmd
