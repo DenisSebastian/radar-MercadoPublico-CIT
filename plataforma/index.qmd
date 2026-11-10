@@ -1,6 +1,6 @@
 # Plataforma {.unnumbered}
 
-Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**. Tiene un capítulo por cada sección del menú, en el mismo orden en que aparecen arriba en la pantalla:
+Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**. Tiene un capítulo por cada sección del menú, en el mismo orden en que aparecen en la barra lateral:
 
 | Capítulo | Para qué sirve | Rol mínimo |
 |---|---|---|
@@ -14,6 +14,16 @@ Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**.
 : Secciones de la web {#tbl-secciones}
 
 Cada persona ve en el menú solo las secciones que su rol permite ([Usuarios](usuarios.qmd)).
+
+## Cómo moverse por la web
+
+::: {.column-page-right .captura}
+![La web con la barra lateral: Trabajo arriba, Administración abajo, y la persona con sesión al pie](../images/v3/bandeja-panel.png){#fig-navegacion width="100%"}
+:::
+
+- **Barra lateral.** A la izquierda, las secciones en dos grupos: **Trabajo** (Bandeja, Vista general, Catálogo) y **Administración** (Configuración, Operación, Usuarios). Al pie están la persona con sesión iniciada, su rol y el botón para cerrar sesión. **Compactar** deja solo los íconos; en pantallas angostas la barra se muestra compacta.
+- **Encabezado.** Arriba, el nombre de la sección, el rol de quien mira y el interruptor de tema.
+- **Tema claro u oscuro.** El interruptor ☀/☾ cambia el tema. Sin elegir, la web sigue el tema del sistema; la elección se recuerda en cada navegador. Las capturas de este libro están en tema claro.
 
 ## Cómo leer cada capítulo
 
@@ -53,7 +63,7 @@ La web corre en el computador del centro: en `http://localhost:5173` durante el 
 
 ## Bitácora general
 
-La web nació en cuatro días. Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
+Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
 
 | Fecha | Hito |
 |---|---|
@@ -61,5 +71,8 @@ La web nació en cuatro días. Esta tabla resume los hitos; el detalle está en 
 | 29-oct-2026 | Primera web: Bandeja, Detalle y Catálogo; luego Configuración y Operación; casos de referencia, calibración y mercado |
 | 30-oct-2026 | Triaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales y programación de la rutina desde Operación |
 | 31-oct-2026 | Los analistas también etiquetan; nueva pantalla Vista general con el consenso del equipo |
+| 03-nov-2026 | Operación muestra el avance de una ingesta mientras corre |
+| 04-nov-2026 | Nueva interfaz: barra lateral agrupada en Trabajo y Administración, e interruptor de tema claro/oscuro |
+| 09-nov-2026 | Versión 1: empaquetado para correr en un servidor (`gpu-box`) y web endurecida para exponerla en Internet |
 
 : Hitos de la plataforma {#tbl-hitos}

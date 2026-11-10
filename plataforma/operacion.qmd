@@ -64,7 +64,7 @@ Además del trabajo diario, el worker carga el día 3 de cada mes los Datos Abie
 ### Correos a usuarios
 
 ::: {.captura}
-![Correos a usuarios con historial de envíos](../images/correos-usuarios.png){#fig-correos-usuarios width="100%"}
+![Correos a usuarios con historial de envíos (correos desenfocados)](../images/v3/operacion-correos.png){#fig-correos-usuarios width="100%"}
 :::
 
 Coordina el **correo personal**: cada persona recibe su propio correo, sin las licitaciones que ya recibió.
@@ -84,6 +84,8 @@ Un correo guardado como `.eml` no llegó a nadie, así que no cuenta como recibi
 :::
 
 El historial de ejecuciones (ingesta, Datos Abiertos, matching, digest) con su estado, duración, estadísticas y el error si lo hubo. Se guarda en la tabla `ingest_run`.
+
+Una ingesta de un día hábil toma unos 20 minutos, porque pide la ficha de cada licitación por separado. Mientras corre, su fila muestra el avance: primero «pidiendo listado…» y luego cuántas listó y cuántas fichas lleva, con una estimación de lo que falta (por ejemplo, «detalles 246/498 (~10 min)») y el tiempo transcurrido.
 
 ## Cómo funciona la operación automática
 
@@ -196,7 +198,10 @@ También se puede levantar todo con `docker compose --profile app up -d --build`
 | 29-oct-2026 | Pantalla **Operación**: estado, cobertura con arreglos rápidos, formulario de reproceso, cola y corridas recientes. El matching y el correo quedan registrados en `ingest_run`. | `12887b1` |
 | 30-oct-2026 | Operación exige rol **admin**. | `263246a` |
 | 30-oct-2026 | Tarjeta **Correos a usuarios**: correo personal por persona, vista previa, envío manual e historial. Envío por SMTP o por API HTTPS (Brevo o Resend). | `e91361d` |
-| 30-oct-2026 | Primeros envíos reales: a las 18:45 dos correos de prueba quedaron como `.eml`; a las 23:18, con SMTP configurado, llegaron a sus casillas con 25 oportunidades cada uno (@fig-correos-usuarios). | — |
+| 30-oct-2026 | Primeros envíos reales: a las 18:45 dos correos de prueba quedaron como `.eml`; a las 23:18, con SMTP configurado, llegaron a sus casillas con 25 oportunidades cada uno. | — |
 | 30-oct-2026 | Tarjeta **Programación automática**: días y hora configurables desde la web, guardados en la base de datos (`app_setting`), estado del worker y *Ejecutar ahora*. La hora deja de ser fija (06:00); por defecto, de lunes a viernes a las 08:30. El worker relee la programación cada minuto. | `9a27648` |
+| 03-nov-2026 | La ingesta guarda su avance cada 10 fichas y *Corridas recientes* lo muestra mientras corre, con una estimación del tiempo que falta. Antes solo escribía sus cifras al final y parecía detenida. | `5713579` |
+| 06-nov-2026 | Entre las 11:18 y las 11:20 fallaron diez intentos de envío a cinco personas; el envío de las 11:21 llegó a todas. | — |
+| 09-nov-2026 | **Versión 1**: archivos para correr la plataforma en el servidor `gpu-box` (compose propio, `Makefile`, respaldos y migración de la base) y nginx endurecido para exponer la web: límite de 5 intentos de inicio de sesión por minuto, documentación de la API oculta y cabeceras de seguridad. | `c385e39`, `f095ae1` |
 
 : Bitácora de Operación {#tbl-bitacora-operacion tbl-colwidths="[14,74,12]"}

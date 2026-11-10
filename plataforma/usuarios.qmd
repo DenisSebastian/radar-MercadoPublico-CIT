@@ -30,6 +30,8 @@ Los roles son **por unidad**; solo superadmin es global. Quien no tiene permiso 
 ![Usuarios vista por un admin: puede cambiar el rol de una analista, pero no el del superadmin ni el propio](../images/v3/usuarios.png){#fig-usuarios width="100%"}
 :::
 
+Los correos de las personas aparecen desenfocados en las capturas de este libro.
+
 Arriba, un recordatorio de lo que puede hacer quien mira (admin o superadmin), el buscador por nombre o correo y el botón **Nuevo usuario**. Debajo, la tabla de personas:
 
 | Columna | Qué muestra |
@@ -78,11 +80,11 @@ uv run radar users set-password ana
 ![Inicio de sesión](../images/v3/login.png){#fig-login width="60%"}
 :::
 
-Al entrar a la web se pide usuario (o correo) y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. El nombre y el rol aparecen arriba a la derecha, junto al botón para cerrar sesión.
+Al entrar a la web se pide usuario (o correo) y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. El nombre y el rol aparecen al pie de la barra lateral, junto al botón para cerrar sesión; el rol también se ve en el encabezado.
 
 ### Crear el primer superadmin
 
-Mientras no exista ningún superadmin con contraseña, la plataforma queda **abierta**, para poder instalarla. En ese modo, arriba a la derecha hay un campo «Tu nombre» que se guarda con cada etiqueta. El primer superadmin se crea desde la línea de comandos:
+Mientras no exista ningún superadmin con contraseña, la plataforma queda **abierta**, para poder instalarla. En ese modo, al pie de la barra lateral hay un campo «Tu nombre» que se guarda con cada etiqueta. El primer superadmin se crea desde la línea de comandos:
 
 ```bash
 uv run radar users add ana@uai.cl --username ana --password --superadmin

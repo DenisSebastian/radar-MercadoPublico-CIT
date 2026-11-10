@@ -1,6 +1,6 @@
 # Vista general {#sec-vista-general}
 
-La vista general muestra **cómo vota el equipo**: cuántas licitaciones etiquetó cada persona, en cuáles coinciden y en cuáles no, cuánta plata hay detrás de cada decisión, cuánto plazo les queda a las que se decidió postular y qué tan de acuerdo está el equipo con el juez. Disponible desde el rol **lectura**, en la segunda pestaña del menú.
+La vista general muestra **cómo vota el equipo**: cuántas licitaciones etiquetó cada persona, en cuáles coinciden y en cuáles no, cuánta plata hay detrás de cada decisión, cuánto plazo les queda a las que se decidió postular y qué tan de acuerdo está el equipo con el juez. Disponible desde el rol **lectura**, segunda en la barra lateral, dentro de **Trabajo**.
 
 La bandeja sirve para decidir licitación por licitación. La vista general sirve para mirar las decisiones **en conjunto**.
 
