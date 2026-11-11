@@ -788,7 +788,7 @@
     "href": "plataforma/index.html#cómo-moverse-por-la-web",
     "title": "Plataforma",
     "section": "",
-    "text": "Figura 1: La web con la barra lateral: Trabajo arriba, Administración abajo, y la persona con sesión al pie\n\n\n\n\n\nBarra lateral. A la izquierda, las secciones en dos grupos: Trabajo (Bandeja, Vista general, Catálogo) y Administración (Configuración, Operación, Usuarios). Al pie están la persona con sesión iniciada, su rol y el botón para cerrar sesión. Compactar deja solo los íconos; en pantallas angostas la barra se muestra compacta.\nEncabezado. Arriba, el nombre de la sección, el rol de quien mira y el interruptor de tema.\nTema claro u oscuro. El interruptor ☀/☾ cambia el tema. Sin elegir, la web sigue el tema del sistema; la elección se recuerda en cada navegador. Las capturas de este libro están en tema claro.",
+    "text": "Figura 1: La web con la barra lateral: Trabajo arriba, Administración abajo, y la persona con sesión al pie\n\n\n\n\n\nBarra lateral. A la izquierda, las secciones en dos grupos: Trabajo (Bandeja, Vista general, Catálogo, Análisis histórico) y Administración (Configuración, Operación, Usuarios). Al pie están la persona con sesión iniciada, su rol y el botón para cerrar sesión. Compactar deja solo los íconos; en pantallas angostas la barra se muestra compacta.\nEncabezado. Arriba, el nombre de la sección, el rol de quien mira y el interruptor de tema.\nTema claro u oscuro. El interruptor ☀/☾ cambia el tema. Sin elegir, la web sigue el tema del sistema; la elección se recuerda en cada navegador. Las capturas de este libro están en tema claro.",
     "crumbs": [
       "Plataforma"
     ]
@@ -828,7 +828,7 @@
     "href": "plataforma/index.html#bitácora-general",
     "title": "Plataforma",
     "section": "Bitácora general",
-    "text": "Bitácora general\nEsta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.\n\n\n\nTabla 3: Hitos de la plataforma\n\n\n\n\n\n\n\n\n\nFecha\nHito\n\n\n\n\n28-oct-2026\nBackend, ingesta programada y matching con modelos locales (sin web todavía)\n\n\n29-oct-2026\nPrimera web: Bandeja, Detalle y Catálogo; luego Configuración y Operación; casos de referencia, calibración y mercado\n\n\n30-oct-2026\nTriaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales y programación de la rutina desde Operación\n\n\n31-oct-2026\nLos analistas también etiquetan; nueva pantalla Vista general con el consenso del equipo\n\n\n03-nov-2026\nOperación muestra el avance de una ingesta mientras corre\n\n\n04-nov-2026\nNueva interfaz: barra lateral agrupada en Trabajo y Administración, e interruptor de tema claro/oscuro\n\n\n09-nov-2026\nVersión 1: empaquetado para correr en un servidor (gpu-box) y web endurecida para exponerla en Internet",
+    "text": "Bitácora general\nEsta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.\n\n\n\nTabla 3: Hitos de la plataforma\n\n\n\n\n\n\n\n\n\nFecha\nHito\n\n\n\n\n28-oct-2026\nBackend, ingesta programada y matching con modelos locales (sin web todavía)\n\n\n29-oct-2026\nPrimera web: Bandeja, Detalle y Catálogo; luego Configuración y Operación; casos de referencia, calibración y mercado\n\n\n30-oct-2026\nTriaje con modelo de decisión; base de usuarios, inicio de sesión y cinco roles; correos personales y programación de la rutina desde Operación\n\n\n31-oct-2026\nLos analistas también etiquetan; nueva pantalla Vista general con el consenso del equipo\n\n\n03-nov-2026\nOperación muestra el avance de una ingesta mientras corre\n\n\n04-nov-2026\nNueva interfaz: barra lateral agrupada en Trabajo y Administración, e interruptor de tema claro/oscuro\n\n\n09-nov-2026\nVersión 1: empaquetado para correr en un servidor (gpu-box) y web endurecida para exponerla en Internet\n\n\n11-nov-2026\nPantalla Análisis histórico con las ofertas de Datos Abiertos desde 2021 (en desarrollo)",
     "crumbs": [
       "Plataforma"
     ]
@@ -977,179 +977,234 @@
     ]
   },
   {
-    "objectID": "plataforma/configuracion.html",
-    "href": "plataforma/configuracion.html",
-    "title": "16  Configuración",
+    "objectID": "plataforma/historico.html",
+    "href": "plataforma/historico.html",
+    "title": "16  Análisis histórico",
     "section": "",
-    "text": "16.1 Qué hay en la pantalla\nConfiguración reúne los criterios de la unidad: cómo se puntúa una licitación, cuántas llegan al juez, cómo aprende de las etiquetas, a quién se avisa y qué se excluye sin mirar. Disponible para el rol admin. Es una sola página con seis tarjetas; las cinco primeras se guardan con Guardar cambios arriba a la derecha y las reglas tienen su propio botón.",
+    "text": "16.1 Qué hay en la pantalla\nEl análisis histórico mira hacia atrás: en qué licitaciones ofertó la UAI, quién más ofertó, por cuánto y quién ganó. Sirve para conocer a la competencia antes de decidir si postular y a qué precio. Está en Trabajo, bajo Catálogo, y lo ven los roles jefatura, admin y superadmin.\nLa bandeja mira lo que se puede postular hoy. Esta pantalla mira lo que ya se resolvió. Todo sale de los Datos Abiertos de ChileCompra, sin modelos de lenguaje.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Configuración</span>"
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Análisis histórico</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/historico.html#qué-hay-en-la-pantalla",
+    "href": "plataforma/historico.html#qué-hay-en-la-pantalla",
+    "title": "16  Análisis histórico",
+    "section": "",
+    "text": "16.1.1 Filtros comunes\nArriba hay tres pestañas (Resumen, Licitaciones y Competidores) y una fila de filtros que se aplica a las tres:\n\nDesde y hasta: años de publicación, de 2021 en adelante.\nMarca CIT: Toda la UAI, Solo CIT, No CIT o Sin marcar. La UAI postula con un solo RUT, así que la plataforma no sabe qué postulaciones son del CIT y cuáles de otras unidades. Alguien tiene que marcarlas (Marcar una postulación como del CIT).\nIncluir convenios marco: por defecto se dejan fuera las licitaciones con más de 100 oferentes, como los convenios marco, porque distorsionan los indicadores de competencia.\n\nLos montos se suman solo en pesos. Los que vienen en otra moneda se muestran, pero no se suman.\n\n\n16.1.2 Resumen\nIndicadores de las postulaciones de la UAI:\n\n\n\nTabla 16.1: Indicadores del análisis histórico\n\n\n\n\n\n\n\n\n\nIndicador\nQué muestra\n\n\n\n\nPostulaciones\nLicitaciones en que ofertó el RUT de la UAI\n\n\nGanadas\nAl pasar el mouse: perdidas, rechazadas, desiertas y sin resolver\n\n\nTasa de adjudicación\nGanadas / (ganadas + perdidas)\n\n\nMonto adjudicado\nSuma de lo adjudicado a la UAI\n\n\nCompetidores\nRUT distintos que ofertaron en las mismas licitaciones\n\n\nSin marcar\nPostulaciones que todavía no se han marcado como CIT o no\n\n\n\n\n\n\nDebajo, seis tarjetas:\n\nResultados por año de publicación: ganadas, perdidas, ofertas rechazadas, desiertas, revocadas y sin resolver.\nCompetidores más frecuentes: en cuántas licitaciones coincidió cada uno con la UAI y cuántas de esas ganó. Un clic abre su perfil.\nPosición de precio de la oferta UAI: cuántas veces la oferta de la UAI fue la 1ª más barata, la 2ª, la 3ª, la 4ª o la 5ª o más, y con qué resultado. Compara la suma de las líneas de cada oferente.\nUnidades que más compiten: lo mismo, pero por sucursal (por ejemplo, «Escuela de Ingeniería UC» en vez de «Pontificia Universidad Católica»).\nOrganismos compradores y rubros donde postula la UAI, con cuántas ganó.\n\n\n\n16.1.3 Licitaciones\n\n\n\n\n\n\n\nFigura 16.2: Pestaña Licitaciones: búsqueda y tabla\n\n\n\n\nUn buscador por código, nombre u organismo y dos selectores. El primero elige el ámbito: Donde ofertó la UAI o Todas las licitaciones del país. El segundo filtra por resultado. La tabla muestra fecha de publicación, licitación, número de oferentes, monto estimado, oferta de la UAI, resultado, a quién se adjudicó y los botones CIT / No.\nAl abrir una licitación se ve su ficha:\n\n\n\n\n\n\n\nFigura 16.3: Ficha de una licitación: ofertas de los diez oferentes\n\n\n\n\n\nEstado, publicación, monto estimado, número de oferentes, resultado de la UAI y rubro.\nMontos ofertados: una barra por oferente, con la adjudicada en verde, la UAI destacada y una línea en el monto estimado.\nOfertas: cada oferente con su unidad, monto ofertado, porcentaje frente al estimado, líneas adjudicadas sobre ofertadas, resultado y monto adjudicado.\nArriba a la derecha, la marca ¿Es del CIT? y el enlace a Mercado Público.\n\nEn el ejemplo de la Figura 16.3, Elaboración de mapa solar del área urbana de Lo Barnechea, la UAI ofertó el 82 % del estimado y quedó séptima de diez en precio. Ganó una consultora ambiental con el 62 %.\n\n\n16.1.4 Competidores\n\n\n\n\n\n\n\nFigura 16.4: Pestaña Competidores\n\n\n\n\nUn buscador por RUT, razón social o nombre de unidad, con dos ámbitos. Competidores de la UAI son los proveedores que coincidieron con ella al menos una vez. Cualquier proveedor busca en todo el país y pide al menos tres caracteres. La tabla muestra cuántas unidades tiene cada proveedor, en cuántas licitaciones coincidió con la UAI, cuántas de esas ganó, cuántas veces le ganó a la UAI y su actividad en todo el país: ofertas, adjudicaciones, tasa y monto adjudicado.\nAl abrir un proveedor se ve su perfil:\n\n\n\n\n\n\n\nFigura 16.5: Perfil de un competidor y su historial frente a la UAI\n\n\n\n\n\nLicitaciones en que ofertó, adjudicadas, tasa, monto adjudicado y oferta mediana.\nActividad por año y unidades con que oferta.\nFrente a la UAI: las licitaciones en común, con la oferta de cada uno y sus resultados. Arriba se lee quién ganó más veces.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Análisis histórico</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/historico.html#cómo-se-hace",
+    "href": "plataforma/historico.html#cómo-se-hace",
+    "title": "16  Análisis histórico",
+    "section": "16.2 Cómo se hace",
+    "text": "16.2 Cómo se hace\n\n16.2.1 Conocer a la competencia antes de postular\n\nIr a Competidores y buscar al proveedor que suele aparecer en ese tipo de licitación.\nEn su perfil, revisar con qué unidad oferta, su oferta mediana y cómo le ha ido frente a la UAI.\nAbrir las licitaciones en común para ver por cuánto ganó.\n\n\n\n16.2.2 Revisar si la UAI compite bien en precio\n\nEn Resumen, mirar Posición de precio de la oferta UAI.\nSi muchas ofertas quedan en 5ª o más y se pierden, el precio puede ser un problema. Si se pierde siendo la más barata, probablemente pesó la evaluación técnica.\n\n\n\n16.2.3 Marcar una postulación como del CIT\n\nEn Licitaciones, dejar Donde ofertó la UAI y, si se quiere ir rápido, filtrar Sin marcar.\nPresionar CIT o No en cada fila, o en la ficha de la licitación.\nUn clic sobre la opción ya marcada la borra.\n\nCon las postulaciones marcadas, el filtro Solo CIT muestra los indicadores del centro en vez de los de toda la UAI.\n\n\n16.2.4 Buscar una licitación o un proveedor cualquiera\nEn Licitaciones, elegir el ámbito Todas; en Competidores, Cualquier proveedor. Ambos buscan en todas las licitaciones cargadas, haya ofertado o no la UAI.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Análisis histórico</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/historico.html#de-dónde-salen-los-datos",
+    "href": "plataforma/historico.html#de-dónde-salen-los-datos",
+    "title": "16  Análisis histórico",
+    "section": "16.3 De dónde salen los datos",
+    "text": "16.3 De dónde salen los datos\nLos archivos mensuales de Datos Abiertos traen una fila por licitación, ítem y oferta (Ofertas). La carga mensual (radar opendata) ahora guarda también las ofertas, agregadas:\n\n\n\nTabla 16.2: Tablas del análisis histórico\n\n\n\n\n\n\n\n\n\nTabla\nContenido\n\n\n\n\ntender_bid\nUna fila por licitación, RUT y sucursal: líneas ofertadas y adjudicadas, monto ofertado y adjudicado, moneda, si fue rechazada y fecha de envío\n\n\nsupplier\nRUT y razón social\n\n\nsupplier_branch\nCódigo de sucursal, su RUT y el nombre de la unidad\n\n\nown_bid_mark\nPor perfil y licitación: si es del CIT, quién lo marcó y cuándo\n\n\ntender.n_oferentes\nCuántos RUT distintos ofertaron\n\n\n\n\n\n\nUn mismo RUT puede ofertar con varias sucursales: la Universidad de Chile lo hace con FCFM, FEN y otras. Por eso la pantalla distingue proveedor (RUT) y unidad (sucursal). El detalle por línea no se guarda, porque las líneas adjudicadas ya están en tender_award.\nPara tener historia se cargan los meses de enero de 2021 a octubre de 2026: 70 archivos. Con ellos, la UAI aparece en 150 postulaciones, de las cuales ganó 51 (41 % de adjudicación) por $15.600 millones, frente a 439 competidores distintos.\n\n\n\n\n\n\nPersonas naturales\n\n\n\nAlgunos oferentes son personas naturales, con su nombre y RUT. En las capturas de este libro esas celdas aparecen desenfocadas.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Análisis histórico</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/historico.html#bitácora",
+    "href": "plataforma/historico.html#bitácora",
+    "title": "16  Análisis histórico",
+    "section": "16.4 Bitácora",
+    "text": "16.4 Bitácora\n\n\n\nTabla 16.3: Bitácora del Análisis histórico\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n11-nov-2026\nPantalla Análisis histórico, para jefatura, admin y superadmin (permiso nuevo historico): Resumen, Licitaciones y Competidores, con la marca manual «es del CIT». La carga de Datos Abiertos guarda las ofertas de todo el país y se cargan 70 meses (2021-01 a 2026-10). Lleva a la web lo que se había probado en planillas Excel.\nen desarrollo, sin commit\n\n\n11-nov-2026\nPrimera lectura: 150 postulaciones de la UAI, 51 ganadas (41 %), $15.600 millones adjudicados y 439 competidores. Los más frecuentes son la PUC y la Universidad de Chile, con 33 licitaciones en común cada una. Ninguna postulación está marcada todavía como del CIT.\n—\n\n\n\n\n\n\n\n\n\n\n\n\nPendiente\n\n\n\n\nMarcar qué postulaciones de la UAI son del CIT. pendiente\nDesplegar la pantalla en el servidor gpu-box y cargar allá los 70 meses. pendiente\nVolver a importar los últimos meses en cada carga mensual, para captar adjudicaciones tardías. pendiente\nExportar a Excel desde la pantalla. pendiente\nSumar Compra Ágil, trato directo y actas de adjudicación. pendiente",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Análisis histórico</span>"
+    ]
+  },
+  {
+    "objectID": "plataforma/configuracion.html",
+    "href": "plataforma/configuracion.html",
+    "title": "17  Configuración",
+    "section": "",
+    "text": "17.1 Qué hay en la pantalla\nConfiguración reúne los criterios de la unidad: cómo se puntúa una licitación, cuántas llegan al juez, cómo aprende de las etiquetas, a quién se avisa y qué se excluye sin mirar. Disponible para el rol admin. Es una sola página con seis tarjetas; las cinco primeras se guardan con Guardar cambios arriba a la derecha y las reglas tienen su propio botón.",
+    "crumbs": [
+      "Plataforma",
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Configuración</span>"
     ]
   },
   {
     "objectID": "plataforma/configuracion.html#qué-hay-en-la-pantalla",
     "href": "plataforma/configuracion.html#qué-hay-en-la-pantalla",
-    "title": "16  Configuración",
+    "title": "17  Configuración",
     "section": "",
-    "text": "16.1.1 Puntaje final\n\n\n\n\n\n\n\nFigura 16.1: Puntaje final y selección para el juez\n\n\n\n\nLos cuatro pesos del puntaje final y los dos umbrales de prioridad (Modelos de priorización).\n\n\n\nTabla 16.1: Puntaje final\n\n\n\n\n\nCampo\nValor del CIT\nQué controla\n\n\n\n\nJuez LLM\n0,60\nPeso del puntaje 0–100 del juez\n\n\nSimilitud\n0,15\nPeso de la cercanía (embeddings + palabras clave)\n\n\nEconómico\n0,15\nPeso del monto estimado\n\n\nPlazo\n0,10\nPeso de los días hasta el cierre\n\n\nUmbral prioridad alta\n75\nPuntaje mínimo para alta\n\n\nUmbral prioridad media\n55\nBajo esto, la licitación es baja\n\n\n\n\n\n\nLos pesos deben sumar 1; si no, Guardar cambios queda desactivado.\n\n\n16.1.2 Selección para el juez\n\n\n\nTabla 16.2: Selección para el juez\n\n\n\n\n\nCampo\nValor del CIT\nQué controla\n\n\n\n\nTop-k diario\n25\nCuántas juzga por día si el triaje está apagado\n\n\nSimilitud mínima extra\n0\nCon valor &gt; 0, juzga además todas las que lo superen\n\n\nAlpha\n0,75\nPeso del significado frente a las palabras clave\n\n\nCoseno mínimo / máximo\n0,30 / 0,60\nRango del coseno que se reescala a 0–1 (Búsqueda por significado)\n\n\nMonto mínimo / máximo\n$10 M / $300 M\nBajo el mínimo, puntaje económico bajo; sobre el máximo, 100\n\n\n\n\n\n\n\n\n16.1.3 Triaje con modelo de decisión\n\n\n\n\n\n\n\nFigura 16.2: Triaje con modelo de decisión\n\n\n\n\nEl triaje revisa todas las licitaciones recuperadas del día con un modelo pequeño (~1 s cada una) y solo las que pasan van al juez (~13 s) (Modelos de decisión).\n\nUsar triaje antes del juez: activado en el CIT.\nSegunda pregunta: tipo de entregable: descarta capacitación genérica, obras, contratación de personas y operación.\nModelo: nimble:latest; vacío usa el DECISION_MODEL del servidor.\nSiempre al juez (0): las N de mejor similitud se juzgan aunque el triaje diga que no.\nTope de juicios (25 por día): vacío es sin tope.\nSimilitud mínima: solo se trían las que la superan.\nQuién postula (en inglés): completa la pregunta «Should … bid on this public tender?». Va en inglés porque los modelos de decisión se afinaron en ese idioma.\n\n\n\n16.1.4 Aprendizaje\nUsa las etiquetas del equipo de dos formas (El ciclo de retroalimentación).\nCalibración de umbrales. Muestra cuántas relevantes y no relevantes hay etiquetadas y, con al menos diez de cada una, dibuja la precisión, el recall y el F1 para cada umbral posible, con los umbrales actuales marcados. Sugiere el umbral de media con mejor F1 y el de alta con precisión ≥ 80 %. Usar sugerencia los copia al formulario, pero no se aplican hasta guardar. Abajo indica en qué paso quedaron las relevantes que el sistema no priorizó (regla, triaje, juez, tope).\n\n\n\n\n\n\n\nFigura 16.3: Calibración con etiquetas\n\n\n\n\nCasos de referencia para el juez. Activa o desactiva los casos, cuántos ve el juez por licitación (4) y la similitud mínima entre licitaciones (0,55). Aquí también se ingresan los RUT propios como proveedor, que alimentan el «historial propio» del mercado, y la opción de usar las adjudicaciones propias como casos relevantes. Esta opción viene apagada: las adjudicaciones de la UAI son sobre todo docencia y sesgarían al juez hacia capacitación.\n\n\n16.1.5 Alertas por email\n\n\n\n\n\n\n\nFigura 16.4: Alertas por email con lista fija\n\n\n\n\nLa configuración del correo con lista fija de la unidad: si se envía, los destinatarios (uno por línea), las prioridades que se avisan y si solo van las abiertas. Vista previa muestra el próximo correo sin marcar nada como enviado. Los correos personales, uno por persona, se coordinan en Operación.\n\n\n16.1.6 Reglas de exclusión\n\n\n\n\n\n\n\nFigura 16.5: Reglas de exclusión: tipo, valor, nota, probar y eliminar\n\n\n\n\nEl CIT tiene hoy 52 reglas. Las reglas descartan una licitación antes del triaje y del juez. Hay dos tipos:\n\nTítulo: expresión regular sobre el título en minúsculas y sin tildes, por ejemplo \\b(compra|adquisicion)\\b.\nUNSPSC: prefijo de código de producto. Solo excluye si todos los ítems lo tienen, y solo mira códigos de 8 dígitos.\n\nCada regla tiene una nota, que es lo que se muestra como motivo en Excluidas por filtro. El buscador de arriba filtra la lista.",
+    "text": "17.1.1 Puntaje final\n\n\n\n\n\n\n\nFigura 17.1: Puntaje final y selección para el juez\n\n\n\n\nLos cuatro pesos del puntaje final y los dos umbrales de prioridad (Modelos de priorización).\n\n\n\nTabla 17.1: Puntaje final\n\n\n\n\n\nCampo\nValor del CIT\nQué controla\n\n\n\n\nJuez LLM\n0,60\nPeso del puntaje 0–100 del juez\n\n\nSimilitud\n0,15\nPeso de la cercanía (embeddings + palabras clave)\n\n\nEconómico\n0,15\nPeso del monto estimado\n\n\nPlazo\n0,10\nPeso de los días hasta el cierre\n\n\nUmbral prioridad alta\n75\nPuntaje mínimo para alta\n\n\nUmbral prioridad media\n55\nBajo esto, la licitación es baja\n\n\n\n\n\n\nLos pesos deben sumar 1; si no, Guardar cambios queda desactivado.\n\n\n17.1.2 Selección para el juez\n\n\n\nTabla 17.2: Selección para el juez\n\n\n\n\n\nCampo\nValor del CIT\nQué controla\n\n\n\n\nTop-k diario\n25\nCuántas juzga por día si el triaje está apagado\n\n\nSimilitud mínima extra\n0\nCon valor &gt; 0, juzga además todas las que lo superen\n\n\nAlpha\n0,75\nPeso del significado frente a las palabras clave\n\n\nCoseno mínimo / máximo\n0,30 / 0,60\nRango del coseno que se reescala a 0–1 (Búsqueda por significado)\n\n\nMonto mínimo / máximo\n$10 M / $300 M\nBajo el mínimo, puntaje económico bajo; sobre el máximo, 100\n\n\n\n\n\n\n\n\n17.1.3 Triaje con modelo de decisión\n\n\n\n\n\n\n\nFigura 17.2: Triaje con modelo de decisión\n\n\n\n\nEl triaje revisa todas las licitaciones recuperadas del día con un modelo pequeño (~1 s cada una) y solo las que pasan van al juez (~13 s) (Modelos de decisión).\n\nUsar triaje antes del juez: activado en el CIT.\nSegunda pregunta: tipo de entregable: descarta capacitación genérica, obras, contratación de personas y operación.\nModelo: nimble:latest; vacío usa el DECISION_MODEL del servidor.\nSiempre al juez (0): las N de mejor similitud se juzgan aunque el triaje diga que no.\nTope de juicios (25 por día): vacío es sin tope.\nSimilitud mínima: solo se trían las que la superan.\nQuién postula (en inglés): completa la pregunta «Should … bid on this public tender?». Va en inglés porque los modelos de decisión se afinaron en ese idioma.\n\n\n\n17.1.4 Aprendizaje\nUsa las etiquetas del equipo de dos formas (El ciclo de retroalimentación).\nCalibración de umbrales. Muestra cuántas relevantes y no relevantes hay etiquetadas y, con al menos diez de cada una, dibuja la precisión, el recall y el F1 para cada umbral posible, con los umbrales actuales marcados. Sugiere el umbral de media con mejor F1 y el de alta con precisión ≥ 80 %. Usar sugerencia los copia al formulario, pero no se aplican hasta guardar. Abajo indica en qué paso quedaron las relevantes que el sistema no priorizó (regla, triaje, juez, tope).\n\n\n\n\n\n\n\nFigura 17.3: Calibración con etiquetas\n\n\n\n\nCasos de referencia para el juez. Activa o desactiva los casos, cuántos ve el juez por licitación (4) y la similitud mínima entre licitaciones (0,55). Aquí también se ingresan los RUT propios como proveedor, que alimentan el «historial propio» del mercado, y la opción de usar las adjudicaciones propias como casos relevantes. Esta opción viene apagada: las adjudicaciones de la UAI son sobre todo docencia y sesgarían al juez hacia capacitación.\n\n\n17.1.5 Alertas por email\n\n\n\n\n\n\n\nFigura 17.4: Alertas por email con lista fija\n\n\n\n\nLa configuración del correo con lista fija de la unidad: si se envía, los destinatarios (uno por línea), las prioridades que se avisan y si solo van las abiertas. Vista previa muestra el próximo correo sin marcar nada como enviado. Los correos personales, uno por persona, se coordinan en Operación.\n\n\n17.1.6 Reglas de exclusión\n\n\n\n\n\n\n\nFigura 17.5: Reglas de exclusión: tipo, valor, nota, probar y eliminar\n\n\n\n\nEl CIT tiene hoy 52 reglas. Las reglas descartan una licitación antes del triaje y del juez. Hay dos tipos:\n\nTítulo: expresión regular sobre el título en minúsculas y sin tildes, por ejemplo \\b(compra|adquisicion)\\b.\nUNSPSC: prefijo de código de producto. Solo excluye si todos los ítems lo tienen, y solo mira códigos de 8 dígitos.\n\nCada regla tiene una nota, que es lo que se muestra como motivo en Excluidas por filtro. El buscador de arriba filtra la lista.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Configuración</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Configuración</span>"
     ]
   },
   {
     "objectID": "plataforma/configuracion.html#cómo-se-hace",
     "href": "plataforma/configuracion.html#cómo-se-hace",
-    "title": "16  Configuración",
-    "section": "16.2 Cómo se hace",
-    "text": "16.2 Cómo se hace\n\n16.2.1 Cambiar pesos o umbrales\n\nEditar los valores en Puntaje final.\nGuardar cambios.\nEn el aviso verde, presionar Recalcular últimos 14 días (sin LLM). Reaplica los puntajes en segundos sin volver a llamar al juez; el avance se ve en Operación.\n\n\n\n16.2.2 Aplicar la calibración sugerida\n\nEtiquetar al menos diez relevantes y diez no relevantes en la bandeja.\nEn Aprendizaje, revisar la curva y la sugerencia.\nUsar sugerencia → Guardar cambios → Recalcular últimos 14 días.\n\n\n\n16.2.3 Cambiar el modelo de triaje\n\nDescargar el modelo nuevo en Ollama (ollama pull …).\nEscribir su nombre en Modelo y guardar.\nPara días pasados, reprocesar desde la línea de comandos con radar match --date … --retriage.\n\n\n\n16.2.4 Agregar una regla de exclusión\n\nEn Reglas de exclusión, presionar Agregar.\nElegir el tipo, escribir el valor y una nota clara.\nPresionar el matraz (Probar en los últimos 30 días). Muestra cuántas habría excluido, ejemplos y, en rojo, cuáles son hoy oportunidades alta o media.\nSi no bota nada bueno, Guardar reglas.\n\nLa regla de oro: excluir solo lo inequívoco. Lo dudoso lo resuelven el triaje y el juez.\n\n\n16.2.5 Quitar una regla\nPresionar el basurero de la fila y Guardar reglas. Las licitaciones que esa regla excluía se vuelven a evaluar al reprocesar los días.",
+    "title": "17  Configuración",
+    "section": "17.2 Cómo se hace",
+    "text": "17.2 Cómo se hace\n\n17.2.1 Cambiar pesos o umbrales\n\nEditar los valores en Puntaje final.\nGuardar cambios.\nEn el aviso verde, presionar Recalcular últimos 14 días (sin LLM). Reaplica los puntajes en segundos sin volver a llamar al juez; el avance se ve en Operación.\n\n\n\n17.2.2 Aplicar la calibración sugerida\n\nEtiquetar al menos diez relevantes y diez no relevantes en la bandeja.\nEn Aprendizaje, revisar la curva y la sugerencia.\nUsar sugerencia → Guardar cambios → Recalcular últimos 14 días.\n\n\n\n17.2.3 Cambiar el modelo de triaje\n\nDescargar el modelo nuevo en Ollama (ollama pull …).\nEscribir su nombre en Modelo y guardar.\nPara días pasados, reprocesar desde la línea de comandos con radar match --date … --retriage.\n\n\n\n17.2.4 Agregar una regla de exclusión\n\nEn Reglas de exclusión, presionar Agregar.\nElegir el tipo, escribir el valor y una nota clara.\nPresionar el matraz (Probar en los últimos 30 días). Muestra cuántas habría excluido, ejemplos y, en rojo, cuáles son hoy oportunidades alta o media.\nSi no bota nada bueno, Guardar reglas.\n\nLa regla de oro: excluir solo lo inequívoco. Lo dudoso lo resuelven el triaje y el juez.\n\n\n17.2.5 Quitar una regla\nPresionar el basurero de la fila y Guardar reglas. Las licitaciones que esa regla excluía se vuelven a evaluar al reprocesar los días.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Configuración</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Configuración</span>"
     ]
   },
   {
     "objectID": "plataforma/configuracion.html#bitácora",
     "href": "plataforma/configuracion.html#bitácora",
-    "title": "16  Configuración",
-    "section": "16.3 Bitácora",
-    "text": "16.3 Bitácora\n\n\n\nTabla 16.3: Bitácora de Configuración\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n28-oct-2026\nPesos, umbrales y reglas viven solo en cit.yaml; se cambian editando el archivo.\n77f0a42\n\n\n29-oct-2026\nPantalla Configuración: pesos, umbrales, selección para el juez y alertas con vista previa, y editor de reglas con Probar.\n12887b1\n\n\n29-oct-2026\nTarjeta Aprendizaje: curva de calibración, sugerencia de umbrales y casos de referencia para el juez. Las adjudicaciones propias quedan apagadas por defecto.\n751cfab\n\n\n30-oct-2026\nTarjeta Triaje: el modelo nimble filtra antes del juez. En la referencia de 297 licitaciones: recall 96 % y precisión 52 %, contra 95 % y 35 % del juez solo.\n1b163ff\n\n\n30-oct-2026\nLas reglas UNSPSC solo miran códigos de 8 dígitos. Los códigos internos de 9 dígitos del MOP hacían que la regla 10 (plantas y animales) excluyera 111 consultorías, entre ellas un estudio de evaluación de impacto de $358 M.\nae4c702\n\n\n30-oct-2026\nNueva regla de título para inspección técnica de obras (AIF, ITO). La precisión del triaje sube a 54 %.\ne780d49\n\n\n30-oct-2026\nConfiguración exige rol admin.\n263246a\n\n\n\n\n\n\n\n\n\n\n\n\nPendiente\n\n\n\n\nRegistrar quién cambió un peso, un umbral o una regla, y cuándo. pendiente",
+    "title": "17  Configuración",
+    "section": "17.3 Bitácora",
+    "text": "17.3 Bitácora\n\n\n\nTabla 17.3: Bitácora de Configuración\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n28-oct-2026\nPesos, umbrales y reglas viven solo en cit.yaml; se cambian editando el archivo.\n77f0a42\n\n\n29-oct-2026\nPantalla Configuración: pesos, umbrales, selección para el juez y alertas con vista previa, y editor de reglas con Probar.\n12887b1\n\n\n29-oct-2026\nTarjeta Aprendizaje: curva de calibración, sugerencia de umbrales y casos de referencia para el juez. Las adjudicaciones propias quedan apagadas por defecto.\n751cfab\n\n\n30-oct-2026\nTarjeta Triaje: el modelo nimble filtra antes del juez. En la referencia de 297 licitaciones: recall 96 % y precisión 52 %, contra 95 % y 35 % del juez solo.\n1b163ff\n\n\n30-oct-2026\nLas reglas UNSPSC solo miran códigos de 8 dígitos. Los códigos internos de 9 dígitos del MOP hacían que la regla 10 (plantas y animales) excluyera 111 consultorías, entre ellas un estudio de evaluación de impacto de $358 M.\nae4c702\n\n\n30-oct-2026\nNueva regla de título para inspección técnica de obras (AIF, ITO). La precisión del triaje sube a 54 %.\ne780d49\n\n\n30-oct-2026\nConfiguración exige rol admin.\n263246a\n\n\n\n\n\n\n\n\n\n\n\n\nPendiente\n\n\n\n\nRegistrar quién cambió un peso, un umbral o una regla, y cuándo. pendiente",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>16</span>  <span class='chapter-title'>Configuración</span>"
+      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Configuración</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html",
     "href": "plataforma/operacion.html",
-    "title": "17  Operación",
+    "title": "18  Operación",
     "section": "",
-    "text": "17.1 Qué hay en la pantalla\nOperación es la sala de máquinas: muestra si todo funciona, qué días están completos, qué se está ejecutando, cuándo corre sola la rutina diaria y a quién le llegan los correos. Disponible para el rol admin. Es una sola página, de arriba hacia abajo; el botón Actualizar vuelve a consultar el estado.",
+    "text": "18.1 Qué hay en la pantalla\nOperación es la sala de máquinas: muestra si todo funciona, qué días están completos, qué se está ejecutando, cuándo corre sola la rutina diaria y a quién le llegan los correos. Disponible para el rol admin. Es una sola página, de arriba hacia abajo; el botón Actualizar vuelve a consultar el estado.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html#qué-hay-en-la-pantalla",
     "href": "plataforma/operacion.html#qué-hay-en-la-pantalla",
-    "title": "17  Operación",
+    "title": "18  Operación",
     "section": "",
-    "text": "17.1.1 Estado\nCuatro tarjetas con un ✓ verde o una ✗ roja, y debajo una franja con las próximas ejecuciones del worker. La tarjeta de base de datos muestra además cuántas licitaciones hay guardadas (342.073 al 30 de octubre) y el último día completo.\n\n\n\nTabla 17.1: Tarjetas de estado\n\n\n\n\n\nTarjeta\nQué revisa\nSi falla\n\n\n\n\nBase de datos\nConexión a PostgreSQL\ndocker compose up -d db\n\n\nAPI Mercado Público\nQue exista el ticket\nCompletar MERCADO_PUBLICO_TICKET en .env\n\n\nOllama (IA local)\nQue Ollama responda y estén los modelos\nAbrir Ollama; ollama pull …\n\n\nAlertas\nCanal de correo\nSin SMTP ni API de correo, los correos se guardan como .eml\n\n\nPróximas ejecuciones (franja)\nCuándo corre la rutina diaria y la carga de Datos Abiertos\nVer Programación automática\n\n\n\n\n\n\n\n\n17.1.2 Cobertura\nLa tabla de los últimos 14 días muestra, para cada día: licitaciones descargadas, cuántas tienen ficha completa (con detalle), cuántas se procesaron, cuántas juzgó el juez y cuántas oportunidades resultaron. Lo incompleto se pinta en naranja o rojo, y al lado aparece el botón para arreglarlo:\n\nIngerir, si el día no tiene licitaciones o le faltan fichas.\nMatching, si están descargadas pero no procesadas.\n\nEl día de hoy nunca se marca como incompleto, porque todavía no termina.\n\n\n17.1.3 Reprocesar\nUn formulario para ejecutar a mano cualquiera de las tres etapas:\n\n\n\nTabla 17.2: Opciones de reproceso\n\n\n\n\n\n\n\n\n\nTipo\nOpciones\n\n\n\n\nIngesta\nRango de fechas; Volver a descargar detalles ya guardados\n\n\nMatching\nRango de fechas; Usar el juez LLM (sin él solo recalcula filtros, similitud y puntajes, en segundos); Volver a juzgar las ya evaluadas (tras cambiar el catálogo o el modelo)\n\n\nDigest\nEnviar aunque las alertas estén desactivadas\n\n\n\n\n\n\nEncolar lo agrega a la cola, que aparece debajo con el estado de cada trabajo (en cola, corriendo, ok o error). Los trabajos se ejecutan de a uno y usan exactamente el mismo código que la rutina automática.\n\n\n17.1.4 Programación automática\n\n\n\n\n\n\n\nFigura 17.2: Programación automática\n\n\n\n\nDefine qué días y a qué hora corre sola la rutina diaria: ingesta de los días completos pendientes hasta ayer → matching → correos. Si un día no corre (fin de semana, feriado), la siguiente corrida recupera los días que falten, hasta 14.\n\nActiva, los días de la semana y la hora (de Chile). Por defecto, de lunes a viernes a las 08:30.\nEnviar correos al terminar: los correos salen solo en las unidades con Correo diario automático activo.\nPróxima corrida y última ingesta.\nEjecutar ahora: pone la rutina completa en la cola.\nArriba a la derecha, si el worker está activo, detenido (desde cuándo) o sin iniciar. Los cambios se aplican sin reiniciarlo.\n\nAdemás del trabajo diario, el worker carga el día 3 de cada mes los Datos Abiertos del mes anterior (Ingest).\n\n\n17.1.5 Correos a usuarios\n\n\n\n\n\n\n\nFigura 17.3: Correos a usuarios con historial de envíos (correos desenfocados)\n\n\n\n\nCoordina el correo personal: cada persona recibe su propio correo, sin las licitaciones que ya recibió.\n\nCorreo diario automático: si sale con la rutina. Va a: los usuarios marcados abajo (un correo personal a cada uno) o la lista fija de Configuración.\nLa tabla de personas de la unidad: rol, la casilla Correo diario, cuántas oportunidades por enviar tiene, su último envío con su estado y el ojo para ver la vista previa de su correo. Las personas dadas de baja aparecen atenuadas.\nOportunidades de los últimos N días y Solo lo que la persona no ha recibido: definen qué entra en un envío manual.\nEnviar ahora: a los seleccionados o, si no hay selección, a los marcados. Pide confirmación y advierte si no hay canal configurado.\nHistorial de envíos: fecha, destinatario, tipo (manual o automático), cuántas oportunidades, estado (enviado o guardado .eml) y quién lo envió.\n\nUn correo guardado como .eml no llegó a nadie, así que no cuenta como recibido: la persona lo volverá a recibir cuando haya canal.\n\n\n17.1.6 Corridas recientes\n\n\n\n\n\n\n\nFigura 17.4: Corridas recientes\n\n\n\n\nEl historial de ejecuciones (ingesta, Datos Abiertos, matching, digest) con su estado, duración, estadísticas y el error si lo hubo. Se guarda en la tabla ingest_run.\nUna ingesta de un día hábil toma unos 20 minutos, porque pide la ficha de cada licitación por separado. Mientras corre, su fila muestra el avance: primero «pidiendo listado…» y luego cuántas listó y cuántas fichas lleva, con una estimación de lo que falta (por ejemplo, «detalles 246/498 (~10 min)») y el tiempo transcurrido.",
+    "text": "18.1.1 Estado\nCuatro tarjetas con un ✓ verde o una ✗ roja, y debajo una franja con las próximas ejecuciones del worker. La tarjeta de base de datos muestra además cuántas licitaciones hay guardadas (342.073 al 30 de octubre) y el último día completo.\n\n\n\nTabla 18.1: Tarjetas de estado\n\n\n\n\n\nTarjeta\nQué revisa\nSi falla\n\n\n\n\nBase de datos\nConexión a PostgreSQL\ndocker compose up -d db\n\n\nAPI Mercado Público\nQue exista el ticket\nCompletar MERCADO_PUBLICO_TICKET en .env\n\n\nOllama (IA local)\nQue Ollama responda y estén los modelos\nAbrir Ollama; ollama pull …\n\n\nAlertas\nCanal de correo\nSin SMTP ni API de correo, los correos se guardan como .eml\n\n\nPróximas ejecuciones (franja)\nCuándo corre la rutina diaria y la carga de Datos Abiertos\nVer Programación automática\n\n\n\n\n\n\n\n\n18.1.2 Cobertura\nLa tabla de los últimos 14 días muestra, para cada día: licitaciones descargadas, cuántas tienen ficha completa (con detalle), cuántas se procesaron, cuántas juzgó el juez y cuántas oportunidades resultaron. Lo incompleto se pinta en naranja o rojo, y al lado aparece el botón para arreglarlo:\n\nIngerir, si el día no tiene licitaciones o le faltan fichas.\nMatching, si están descargadas pero no procesadas.\n\nEl día de hoy nunca se marca como incompleto, porque todavía no termina.\n\n\n18.1.3 Reprocesar\nUn formulario para ejecutar a mano cualquiera de las tres etapas:\n\n\n\nTabla 18.2: Opciones de reproceso\n\n\n\n\n\n\n\n\n\nTipo\nOpciones\n\n\n\n\nIngesta\nRango de fechas; Volver a descargar detalles ya guardados\n\n\nMatching\nRango de fechas; Usar el juez LLM (sin él solo recalcula filtros, similitud y puntajes, en segundos); Volver a juzgar las ya evaluadas (tras cambiar el catálogo o el modelo)\n\n\nDigest\nEnviar aunque las alertas estén desactivadas\n\n\n\n\n\n\nEncolar lo agrega a la cola, que aparece debajo con el estado de cada trabajo (en cola, corriendo, ok o error). Los trabajos se ejecutan de a uno y usan exactamente el mismo código que la rutina automática.\n\n\n18.1.4 Programación automática\n\n\n\n\n\n\n\nFigura 18.2: Programación automática\n\n\n\n\nDefine qué días y a qué hora corre sola la rutina diaria: ingesta de los días completos pendientes hasta ayer → matching → correos. Si un día no corre (fin de semana, feriado), la siguiente corrida recupera los días que falten, hasta 14.\n\nActiva, los días de la semana y la hora (de Chile). Por defecto, de lunes a viernes a las 08:30.\nEnviar correos al terminar: los correos salen solo en las unidades con Correo diario automático activo.\nPróxima corrida y última ingesta.\nEjecutar ahora: pone la rutina completa en la cola.\nArriba a la derecha, si el worker está activo, detenido (desde cuándo) o sin iniciar. Los cambios se aplican sin reiniciarlo.\n\nAdemás del trabajo diario, el worker carga el día 3 de cada mes los Datos Abiertos del mes anterior (Ingest).\n\n\n18.1.5 Correos a usuarios\n\n\n\n\n\n\n\nFigura 18.3: Correos a usuarios con historial de envíos (correos desenfocados)\n\n\n\n\nCoordina el correo personal: cada persona recibe su propio correo, sin las licitaciones que ya recibió.\n\nCorreo diario automático: si sale con la rutina. Va a: los usuarios marcados abajo (un correo personal a cada uno) o la lista fija de Configuración.\nLa tabla de personas de la unidad: rol, la casilla Correo diario, cuántas oportunidades por enviar tiene, su último envío con su estado y el ojo para ver la vista previa de su correo. Las personas dadas de baja aparecen atenuadas.\nOportunidades de los últimos N días y Solo lo que la persona no ha recibido: definen qué entra en un envío manual.\nEnviar ahora: a los seleccionados o, si no hay selección, a los marcados. Pide confirmación y advierte si no hay canal configurado.\nHistorial de envíos: fecha, destinatario, tipo (manual o automático), cuántas oportunidades, estado (enviado o guardado .eml) y quién lo envió.\n\nUn correo guardado como .eml no llegó a nadie, así que no cuenta como recibido: la persona lo volverá a recibir cuando haya canal.\n\n\n18.1.6 Corridas recientes\n\n\n\n\n\n\n\nFigura 18.4: Corridas recientes\n\n\n\n\nEl historial de ejecuciones (ingesta, Datos Abiertos, matching, digest) con su estado, duración, estadísticas y el error si lo hubo. Se guarda en la tabla ingest_run.\nUna ingesta de un día hábil toma unos 20 minutos, porque pide la ficha de cada licitación por separado. Mientras corre, su fila muestra el avance: primero «pidiendo listado…» y luego cuántas listó y cuántas fichas lleva, con una estimación de lo que falta (por ejemplo, «detalles 246/498 (~10 min)») y el tiempo transcurrido.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html#cómo-funciona-la-operación-automática",
     "href": "plataforma/operacion.html#cómo-funciona-la-operación-automática",
-    "title": "17  Operación",
-    "section": "17.2 Cómo funciona la operación automática",
-    "text": "17.2 Cómo funciona la operación automática\n\n\nabrir diagrama interactivo ↗\n\nLa operación tolera fallas parciales: si los modelos de IA no responden, el matching se marca con error pero las licitaciones descargadas quedan guardadas, y basta reprocesar el día cuando el problema se resuelve.",
+    "title": "18  Operación",
+    "section": "18.2 Cómo funciona la operación automática",
+    "text": "18.2 Cómo funciona la operación automática\n\n\nabrir diagrama interactivo ↗\n\nLa operación tolera fallas parciales: si los modelos de IA no responden, el matching se marca con error pero las licitaciones descargadas quedan guardadas, y basta reprocesar el día cuando el problema se resuelve.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html#cómo-se-hace",
     "href": "plataforma/operacion.html#cómo-se-hace",
-    "title": "17  Operación",
-    "section": "17.3 Cómo se hace",
-    "text": "17.3 Cómo se hace\n\n17.3.1 Completar un día que falta\n\nEn Cobertura, buscar el día en rojo o naranja.\nPresionar Ingerir o Matching en su fila.\nSeguir el avance en la cola y, al terminar, en Corridas recientes.\n\nDesde la línea de comandos:\nuv run radar ingest --date 2026-10-20 --until 2026-10-24   # completar días faltantes\n\n\n17.3.2 Volver a juzgar después de cambiar el catálogo\n\nEn Reprocesar, elegir Matching y el rango de fechas.\nMarcar Usar el juez LLM y Volver a juzgar las ya evaluadas.\nEncolar. Cada licitación juzgada toma unos 13 segundos.\n\nuv run radar match --date 2026-10-28 --rejudge    # volver a juzgar\nuv run radar match --date 2026-10-28 --retriage   # volver a triar con otro modelo\n\n\n17.3.3 Cambiar el horario de la rutina\n\nEn Programación automática, elegir los días y la hora.\nGuardar. La próxima corrida se actualiza sin reiniciar el worker.\n\n\n\n17.3.4 Activar el correo personal\n\nConfigurar un canal de envío en .env: SMTP_*, o una API de correo por HTTPS (MAIL_PROVIDER = Brevo o Resend, y MAIL_API_KEY) si la red bloquea SMTP.\nCrear las personas en Usuarios.\nEn Correos a usuarios, marcar Correo diario para cada una y revisar su vista previa con el ojo.\nElegir Va a: usuarios marcados y activar Correo diario automático.\nEn Programación automática, dejar activo Enviar correos al terminar.\n\n\n\n17.3.5 Si algo falla\n\n\n\nTabla 17.3: Problemas comunes\n\n\n\n\n\n\n\n\n\n\nSíntoma\nCausa probable\nSolución\n\n\n\n\n«No se pudo cargar la bandeja»\nLa API no está corriendo\ncd backend && uv run radar serve\n\n\nError de conexión a localhost:5432\nDocker o la base de datos apagados\ndocker compose up -d db\n\n\n«Modelo de embeddings no disponible»\nOllama apagado o falta un modelo\nAbrir Ollama; ollama pull embeddinggemma\n\n\nMuchos rechazos (429) al descargar\nLímite de la API de Mercado Público\nAumentar MP_MIN_INTERVAL_S en .env\n\n\nLa API falla tras actualizar el código\nFaltan cambios en la base de datos\ncd backend && uv run alembic upgrade head\n\n\n«Worker sin iniciar» o «detenido»\nEl proceso del worker no corre\ncd backend && uv run radar worker\n\n\nCorreos «guardado .eml»\nNo hay canal de envío\nConfigurar SMTP_* o MAIL_PROVIDER\n\n\n\n\n\n\nEl script scripts/estado.sh muestra qué componentes están funcionando.",
+    "title": "18  Operación",
+    "section": "18.3 Cómo se hace",
+    "text": "18.3 Cómo se hace\n\n18.3.1 Completar un día que falta\n\nEn Cobertura, buscar el día en rojo o naranja.\nPresionar Ingerir o Matching en su fila.\nSeguir el avance en la cola y, al terminar, en Corridas recientes.\n\nDesde la línea de comandos:\nuv run radar ingest --date 2026-10-20 --until 2026-10-24   # completar días faltantes\n\n\n18.3.2 Volver a juzgar después de cambiar el catálogo\n\nEn Reprocesar, elegir Matching y el rango de fechas.\nMarcar Usar el juez LLM y Volver a juzgar las ya evaluadas.\nEncolar. Cada licitación juzgada toma unos 13 segundos.\n\nuv run radar match --date 2026-10-28 --rejudge    # volver a juzgar\nuv run radar match --date 2026-10-28 --retriage   # volver a triar con otro modelo\n\n\n18.3.3 Cambiar el horario de la rutina\n\nEn Programación automática, elegir los días y la hora.\nGuardar. La próxima corrida se actualiza sin reiniciar el worker.\n\n\n\n18.3.4 Activar el correo personal\n\nConfigurar un canal de envío en .env: SMTP_*, o una API de correo por HTTPS (MAIL_PROVIDER = Brevo o Resend, y MAIL_API_KEY) si la red bloquea SMTP.\nCrear las personas en Usuarios.\nEn Correos a usuarios, marcar Correo diario para cada una y revisar su vista previa con el ojo.\nElegir Va a: usuarios marcados y activar Correo diario automático.\nEn Programación automática, dejar activo Enviar correos al terminar.\n\n\n\n18.3.5 Si algo falla\n\n\n\nTabla 18.3: Problemas comunes\n\n\n\n\n\n\n\n\n\n\nSíntoma\nCausa probable\nSolución\n\n\n\n\n«No se pudo cargar la bandeja»\nLa API no está corriendo\ncd backend && uv run radar serve\n\n\nError de conexión a localhost:5432\nDocker o la base de datos apagados\ndocker compose up -d db\n\n\n«Modelo de embeddings no disponible»\nOllama apagado o falta un modelo\nAbrir Ollama; ollama pull embeddinggemma\n\n\nMuchos rechazos (429) al descargar\nLímite de la API de Mercado Público\nAumentar MP_MIN_INTERVAL_S en .env\n\n\nLa API falla tras actualizar el código\nFaltan cambios en la base de datos\ncd backend && uv run alembic upgrade head\n\n\n«Worker sin iniciar» o «detenido»\nEl proceso del worker no corre\ncd backend && uv run radar worker\n\n\nCorreos «guardado .eml»\nNo hay canal de envío\nConfigurar SMTP_* o MAIL_PROVIDER\n\n\n\n\n\n\nEl script scripts/estado.sh muestra qué componentes están funcionando.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html#puesta-en-marcha",
     "href": "plataforma/operacion.html#puesta-en-marcha",
-    "title": "17  Operación",
-    "section": "17.4 Puesta en marcha",
-    "text": "17.4 Puesta en marcha\n\n17.4.1 Requisitos\n\nDocker Desktop, para la base de datos.\nuv (Python 3.13) y Node 22 o superior.\nOllama instalado en macOS (no en Docker, para que use la GPU) con los modelos embeddinggemma, qwen3.5 y nimble:latest.\nUn ticket de acceso a la API de Mercado Público.\n\n\n\n17.4.2 Primera vez\ncp .env.example .env                 # completar MERCADO_PUBLICO_TICKET y el canal de correo\ndocker compose up -d db\ncd backend && uv sync\nuv run alembic upgrade head\nuv run radar catalog load catalogs/cit.yaml\nuv run radar users add ana@uai.cl --username ana --password --superadmin\ncd ../frontend && npm install\n\n\n17.4.3 Cada día\nCada proceso en su propia terminal, desde la raíz del repositorio:\ndocker compose up -d db                  # base de datos\nopen -a Ollama                           # modelos de IA\ncd backend && uv run radar serve         # API\ncd frontend && npm run dev               # web\ncd backend && uv run radar worker        # tareas programadas\nTambién se puede levantar todo con docker compose --profile app up -d --build (Ollama sigue fuera de Docker).\n¿Necesita internet? Solo para descargar licitaciones, enviar correos e instalar. Los modelos, la bandeja y el análisis funcionan sin conexión.",
+    "title": "18  Operación",
+    "section": "18.4 Puesta en marcha",
+    "text": "18.4 Puesta en marcha\n\n18.4.1 Requisitos\n\nDocker Desktop, para la base de datos.\nuv (Python 3.13) y Node 22 o superior.\nOllama instalado en macOS (no en Docker, para que use la GPU) con los modelos embeddinggemma, qwen3.5 y nimble:latest.\nUn ticket de acceso a la API de Mercado Público.\n\n\n\n18.4.2 Primera vez\ncp .env.example .env                 # completar MERCADO_PUBLICO_TICKET y el canal de correo\ndocker compose up -d db\ncd backend && uv sync\nuv run alembic upgrade head\nuv run radar catalog load catalogs/cit.yaml\nuv run radar users add ana@uai.cl --username ana --password --superadmin\ncd ../frontend && npm install\n\n\n18.4.3 Cada día\nCada proceso en su propia terminal, desde la raíz del repositorio:\ndocker compose up -d db                  # base de datos\nopen -a Ollama                           # modelos de IA\ncd backend && uv run radar serve         # API\ncd frontend && npm run dev               # web\ncd backend && uv run radar worker        # tareas programadas\nTambién se puede levantar todo con docker compose --profile app up -d --build (Ollama sigue fuera de Docker).\n¿Necesita internet? Solo para descargar licitaciones, enviar correos e instalar. Los modelos, la bandeja y el análisis funcionan sin conexión.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/operacion.html#bitácora",
     "href": "plataforma/operacion.html#bitácora",
-    "title": "17  Operación",
-    "section": "17.5 Bitácora",
-    "text": "17.5 Bitácora\n\n\n\nTabla 17.4: Bitácora de Operación\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n28-oct-2026\nWorker con APScheduler: recuperación diaria a las 06:00 (hasta 14 días pendientes) y Datos Abiertos el día 3 de cada mes. Perfil app de Docker Compose.\ne5fbcaa\n\n\n28-oct-2026\nEl worker ejecuta el matching después de la ingesta diaria.\n77f0a42\n\n\n29-oct-2026\nPantalla Operación: estado, cobertura con arreglos rápidos, formulario de reproceso, cola y corridas recientes. El matching y el correo quedan registrados en ingest_run.\n12887b1\n\n\n30-oct-2026\nOperación exige rol admin.\n263246a\n\n\n30-oct-2026\nTarjeta Correos a usuarios: correo personal por persona, vista previa, envío manual e historial. Envío por SMTP o por API HTTPS (Brevo o Resend).\ne91361d\n\n\n30-oct-2026\nPrimeros envíos reales: a las 18:45 dos correos de prueba quedaron como .eml; a las 23:18, con SMTP configurado, llegaron a sus casillas con 25 oportunidades cada uno.\n—\n\n\n30-oct-2026\nTarjeta Programación automática: días y hora configurables desde la web, guardados en la base de datos (app_setting), estado del worker y Ejecutar ahora. La hora deja de ser fija (06:00); por defecto, de lunes a viernes a las 08:30. El worker relee la programación cada minuto.\n9a27648\n\n\n03-nov-2026\nLa ingesta guarda su avance cada 10 fichas y Corridas recientes lo muestra mientras corre, con una estimación del tiempo que falta. Antes solo escribía sus cifras al final y parecía detenida.\n5713579\n\n\n06-nov-2026\nEntre las 11:18 y las 11:20 fallaron diez intentos de envío a cinco personas; el envío de las 11:21 llegó a todas.\n—\n\n\n09-nov-2026\nVersión 1: archivos para correr la plataforma en el servidor gpu-box (compose propio, Makefile, respaldos y migración de la base) y nginx endurecido para exponer la web: límite de 5 intentos de inicio de sesión por minuto, documentación de la API oculta y cabeceras de seguridad.\nc385e39, f095ae1",
+    "title": "18  Operación",
+    "section": "18.5 Bitácora",
+    "text": "18.5 Bitácora\n\n\n\nTabla 18.4: Bitácora de Operación\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n28-oct-2026\nWorker con APScheduler: recuperación diaria a las 06:00 (hasta 14 días pendientes) y Datos Abiertos el día 3 de cada mes. Perfil app de Docker Compose.\ne5fbcaa\n\n\n28-oct-2026\nEl worker ejecuta el matching después de la ingesta diaria.\n77f0a42\n\n\n29-oct-2026\nPantalla Operación: estado, cobertura con arreglos rápidos, formulario de reproceso, cola y corridas recientes. El matching y el correo quedan registrados en ingest_run.\n12887b1\n\n\n30-oct-2026\nOperación exige rol admin.\n263246a\n\n\n30-oct-2026\nTarjeta Correos a usuarios: correo personal por persona, vista previa, envío manual e historial. Envío por SMTP o por API HTTPS (Brevo o Resend).\ne91361d\n\n\n30-oct-2026\nPrimeros envíos reales: a las 18:45 dos correos de prueba quedaron como .eml; a las 23:18, con SMTP configurado, llegaron a sus casillas con 25 oportunidades cada uno.\n—\n\n\n30-oct-2026\nTarjeta Programación automática: días y hora configurables desde la web, guardados en la base de datos (app_setting), estado del worker y Ejecutar ahora. La hora deja de ser fija (06:00); por defecto, de lunes a viernes a las 08:30. El worker relee la programación cada minuto.\n9a27648\n\n\n03-nov-2026\nLa ingesta guarda su avance cada 10 fichas y Corridas recientes lo muestra mientras corre, con una estimación del tiempo que falta. Antes solo escribía sus cifras al final y parecía detenida.\n5713579\n\n\n06-nov-2026\nEntre las 11:18 y las 11:20 fallaron diez intentos de envío a cinco personas; el envío de las 11:21 llegó a todas.\n—\n\n\n09-nov-2026\nVersión 1: archivos para correr la plataforma en el servidor gpu-box (compose propio, Makefile, respaldos y migración de la base) y nginx endurecido para exponer la web: límite de 5 intentos de inicio de sesión por minuto, documentación de la API oculta y cabeceras de seguridad.\nc385e39, f095ae1",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>17</span>  <span class='chapter-title'>Operación</span>"
+      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Operación</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html",
     "href": "plataforma/usuarios.html",
-    "title": "18  Usuarios",
+    "title": "19  Usuarios",
     "section": "",
-    "text": "18.1 Los cinco roles\nUsuarios define quién puede hacer qué. Cada persona tiene una cuenta con usuario (o correo) y contraseña, y un rol en cada unidad a la que pertenece. Disponible para admin y superadmin.\nLos roles van de menos a más, y cada uno incluye todo lo que puede hacer el anterior:\nLos roles son por unidad; solo superadmin es global. Quien no tiene permiso no ve la opción: el menú, los botones de etiqueta y las secciones se ocultan, y si entra por un enlace directo ve «Tu rol no tiene acceso a esta sección». La API aplica las mismas reglas, así que no basta con esconder un botón.",
+    "text": "19.1 Los cinco roles\nUsuarios define quién puede hacer qué. Cada persona tiene una cuenta con usuario (o correo) y contraseña, y un rol en cada unidad a la que pertenece. Disponible para admin y superadmin.\nLos roles van de menos a más, y cada uno incluye todo lo que puede hacer el anterior:\nLos roles son por unidad; solo superadmin es global. Quien no tiene permiso no ve la opción: el menú, los botones de etiqueta y las secciones se ocultan, y si entra por un enlace directo ve «Tu rol no tiene acceso a esta sección». La API aplica las mismas reglas, así que no basta con esconder un botón.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html#los-cinco-roles",
     "href": "plataforma/usuarios.html#los-cinco-roles",
-    "title": "18  Usuarios",
+    "title": "19  Usuarios",
     "section": "",
-    "text": "Tabla 18.1: Roles y permisos\n\n\n\n\n\n\n\n\n\n\n\n\nRol\nBandeja\nCatálogo\nEtiquetar\nConfiguración, Operación y Usuarios\n\n\n\n\nLectura\n✓\n\n\n\n\n\nAnalista\n✓\n✓\n✓\n\n\n\nJefatura\n✓\n✓\n✓\n\n\n\nAdmin\n✓\n✓\n✓\n✓\n\n\nSuperadmin\n✓\n✓\n✓\n✓ + contraseñas y bajas\n\n\n\n\n\n\n\nLectura ve la bandeja y el detalle. Sirve para quien quiere enterarse sin intervenir.\nAnalista además edita el Catálogo y etiqueta licitaciones. Las etiquetas enseñan al juez y calibran los umbrales.\nJefatura tiene hoy los mismos permisos que analista. Se mantiene como rol aparte para distinguir a quien decide postular.\nAdmin además cambia la Configuración, usa Operación y administra las personas de su unidad.\nSuperadmin puede todo en todas las unidades y es el único que cambia contraseñas, da de baja o elimina personas, nombra admin o superadmin e importa personas desde un CSV.",
+    "text": "Tabla 19.1: Roles y permisos\n\n\n\n\n\n\n\n\n\n\n\n\n\nRol\nBandeja\nCatálogo\nEtiquetar\nHistórico\nConfiguración, Operación y Usuarios\n\n\n\n\nLectura\n✓\n\n\n\n\n\n\nAnalista\n✓\n✓\n✓\n\n\n\n\nJefatura\n✓\n✓\n✓\n✓\n\n\n\nAdmin\n✓\n✓\n✓\n✓\n✓\n\n\nSuperadmin\n✓\n✓\n✓\n✓\n✓ + contraseñas y bajas\n\n\n\n\n\n\n\nLectura ve la bandeja y el detalle. Sirve para quien quiere enterarse sin intervenir.\nAnalista además edita el Catálogo y etiqueta licitaciones. Las etiquetas enseñan al juez y calibran los umbrales.\nJefatura es quien decide postular: además ve el Análisis histórico de competidores y montos.\nAdmin además cambia la Configuración, usa Operación y administra las personas de su unidad.\nSuperadmin puede todo en todas las unidades y es el único que cambia contraseñas, da de baja o elimina personas, nombra admin o superadmin e importa personas desde un CSV.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html#qué-hay-en-la-pantalla",
     "href": "plataforma/usuarios.html#qué-hay-en-la-pantalla",
-    "title": "18  Usuarios",
-    "section": "18.2 Qué hay en la pantalla",
-    "text": "18.2 Qué hay en la pantalla\n\n\n\n\n\n\n\nFigura 18.1: Usuarios vista por un admin: puede cambiar el rol de una analista, pero no el del superadmin ni el propio\n\n\n\n\nLos correos de las personas aparecen desenfocados en las capturas de este libro.\nArriba, un recordatorio de lo que puede hacer quien mira (admin o superadmin), el buscador por nombre o correo y el botón Nuevo usuario. Debajo, la tabla de personas:\n\n\n\nTabla 18.2: Columnas de Usuarios\n\n\n\n\n\n\n\n\n\nColumna\nQué muestra\n\n\n\n\nNombre\nNombre y correo; un escudo marca a los superadmin y «(tú)» a uno mismo\n\n\nUsuario\nEl nombre para iniciar sesión; avisa «sin contraseña» si todavía no puede entrar\n\n\nRol en cit\nUn selector para cambiarlo, si quien mira puede asignar ese rol\n\n\nEstado\nActivo, pausado o baja\n\n\nVotos 30 d\nCuántas etiquetas puso en los últimos 30 días\n\n\nÚltima actividad\nSu último inicio de sesión o etiqueta\n\n\n\n\n\n\nAl final de cada fila, solo para superadmin: 🔑 cambiar contraseña, dar de baja (o Reactivar) y 🗑 eliminar definitivamente.",
+    "title": "19  Usuarios",
+    "section": "19.2 Qué hay en la pantalla",
+    "text": "19.2 Qué hay en la pantalla\n\n\n\n\n\n\n\nFigura 19.1: Usuarios vista por un admin: puede cambiar el rol de una analista, pero no el del superadmin ni el propio\n\n\n\n\nLos correos de las personas aparecen desenfocados en las capturas de este libro.\nArriba, un recordatorio de lo que puede hacer quien mira (admin o superadmin), el buscador por nombre o correo y el botón Nuevo usuario. Debajo, la tabla de personas:\n\n\n\nTabla 19.2: Columnas de Usuarios\n\n\n\n\n\n\n\n\n\nColumna\nQué muestra\n\n\n\n\nNombre\nNombre y correo; un escudo marca a los superadmin y «(tú)» a uno mismo\n\n\nUsuario\nEl nombre para iniciar sesión; avisa «sin contraseña» si todavía no puede entrar\n\n\nRol en cit\nUn selector para cambiarlo, si quien mira puede asignar ese rol\n\n\nEstado\nActivo, pausado o baja\n\n\nVotos 30 d\nCuántas etiquetas puso en los últimos 30 días\n\n\nÚltima actividad\nSu último inicio de sesión o etiqueta\n\n\n\n\n\n\nAl final de cada fila, solo para superadmin: 🔑 cambiar contraseña, dar de baja (o Reactivar) y 🗑 eliminar definitivamente.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html#cómo-se-hace",
     "href": "plataforma/usuarios.html#cómo-se-hace",
-    "title": "18  Usuarios",
-    "section": "18.3 Cómo se hace",
-    "text": "18.3 Cómo se hace\n\n18.3.1 Crear una persona\n\nPresionar Nuevo usuario.\nCompletar nombre, correo (ahí recibirá los resúmenes), usuario (letras, números, ., _, -), contraseña (mínimo 8 caracteres) y su rol en la unidad.\nCrear usuario. La persona ya puede entrar.\n\nUn admin solo puede asignar lectura, analista o jefatura, y solo en sus unidades.\n\n\n18.3.2 Cambiar el rol\nElegir el nuevo rol en el selector de la fila; se guarda al instante. Nadie puede cambiar su propio rol, para no quedar sin administración por error.\n\n\n18.3.3 Cambiar una contraseña (superadmin)\nPresionar 🔑 y escribir la nueva (mínimo 8 caracteres). Todas las sesiones abiertas de esa persona se cierran. También desde la línea de comandos:\nuv run radar users set-password ana\n\n\n18.3.4 Dar de baja o eliminar (superadmin)\n\nDar de baja: la persona deja de poder entrar y sus sesiones se cierran, pero conserva su historial y sus etiquetas siguen atribuidas a ella. Se revierte con Reactivar.\nEliminar definitivamente: borra la cuenta y su historial; sus etiquetas quedan sin autor. Pide confirmación y no se puede deshacer. Conviene preferir la baja.\n\n\n\n18.3.5 Iniciar sesión\n\n\n\n\n\n\n\nFigura 18.2: Inicio de sesión\n\n\n\n\nAl entrar a la web se pide usuario (o correo) y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. El nombre y el rol aparecen al pie de la barra lateral, junto al botón para cerrar sesión; el rol también se ve en el encabezado.\n\n\n18.3.6 Crear el primer superadmin\nMientras no exista ningún superadmin con contraseña, la plataforma queda abierta, para poder instalarla. En ese modo, al pie de la barra lateral hay un campo «Tu nombre» que se guarda con cada etiqueta. El primer superadmin se crea desde la línea de comandos:\nuv run radar users add ana@uai.cl --username ana --password --superadmin\nDesde ese momento toda la plataforma exige iniciar sesión.\n\n\n18.3.7 Otras tareas desde la línea de comandos\n\n\n\nTabla 18.3: Comandos de usuarios\n\n\n\n\n\n\n\n\n\nComando\nPara qué\n\n\n\n\nradar users list\nListar personas con su rol\n\n\nradar users import personas.csv\nCargar varias personas desde un CSV\n\n\nradar users seed\nCrear personas a partir de los destinatarios de las alertas\n\n\nradar users link-feedback\nAtribuir a una persona las etiquetas antiguas que tenían un nombre escrito a mano\n\n\n\n\n\n\n\n\n18.3.8 Decidir quién recibe correo\nLa casilla Correo diario de cada persona se marca en Operación → Correos a usuarios, donde también se ve su vista previa y su historial de envíos.",
+    "title": "19  Usuarios",
+    "section": "19.3 Cómo se hace",
+    "text": "19.3 Cómo se hace\n\n19.3.1 Crear una persona\n\nPresionar Nuevo usuario.\nCompletar nombre, correo (ahí recibirá los resúmenes), usuario (letras, números, ., _, -), contraseña (mínimo 8 caracteres) y su rol en la unidad.\nCrear usuario. La persona ya puede entrar.\n\nUn admin solo puede asignar lectura, analista o jefatura, y solo en sus unidades.\n\n\n19.3.2 Cambiar el rol\nElegir el nuevo rol en el selector de la fila; se guarda al instante. Nadie puede cambiar su propio rol, para no quedar sin administración por error.\n\n\n19.3.3 Cambiar una contraseña (superadmin)\nPresionar 🔑 y escribir la nueva (mínimo 8 caracteres). Todas las sesiones abiertas de esa persona se cierran. También desde la línea de comandos:\nuv run radar users set-password ana\n\n\n19.3.4 Dar de baja o eliminar (superadmin)\n\nDar de baja: la persona deja de poder entrar y sus sesiones se cierran, pero conserva su historial y sus etiquetas siguen atribuidas a ella. Se revierte con Reactivar.\nEliminar definitivamente: borra la cuenta y su historial; sus etiquetas quedan sin autor. Pide confirmación y no se puede deshacer. Conviene preferir la baja.\n\n\n\n19.3.5 Iniciar sesión\n\n\n\n\n\n\n\nFigura 19.2: Inicio de sesión\n\n\n\n\nAl entrar a la web se pide usuario (o correo) y contraseña. La sesión dura siete días y se cierra sola si la persona cambia su contraseña o es dada de baja. El nombre y el rol aparecen al pie de la barra lateral, junto al botón para cerrar sesión; el rol también se ve en el encabezado.\n\n\n19.3.6 Crear el primer superadmin\nMientras no exista ningún superadmin con contraseña, la plataforma queda abierta, para poder instalarla. En ese modo, al pie de la barra lateral hay un campo «Tu nombre» que se guarda con cada etiqueta. El primer superadmin se crea desde la línea de comandos:\nuv run radar users add ana@uai.cl --username ana --password --superadmin\nDesde ese momento toda la plataforma exige iniciar sesión.\n\n\n19.3.7 Otras tareas desde la línea de comandos\n\n\n\nTabla 19.3: Comandos de usuarios\n\n\n\n\n\n\n\n\n\nComando\nPara qué\n\n\n\n\nradar users list\nListar personas con su rol\n\n\nradar users import personas.csv\nCargar varias personas desde un CSV\n\n\nradar users seed\nCrear personas a partir de los destinatarios de las alertas\n\n\nradar users link-feedback\nAtribuir a una persona las etiquetas antiguas que tenían un nombre escrito a mano\n\n\n\n\n\n\n\n\n19.3.8 Decidir quién recibe correo\nLa casilla Correo diario de cada persona se marca en Operación → Correos a usuarios, donde también se ve su vista previa y su historial de envíos.",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html#qué-queda-registrado",
     "href": "plataforma/usuarios.html#qué-queda-registrado",
-    "title": "18  Usuarios",
-    "section": "18.4 Qué queda registrado",
-    "text": "18.4 Qué queda registrado\nLa plataforma guarda un historial por persona: inicios de sesión, etiquetas y etiquetas borradas (cada una con lo que decían el triaje y el juez en ese momento), vistas de detalle, aperturas en Mercado Público, altas, cambios de rol o de unidad, de estado y de contraseña, y vínculos de etiquetas antiguas. Hoy la pantalla muestra solo el resumen (votos y última actividad); el historial completo se consulta por la API en /admin/users/{id}/timeline. pendiente\nLo que todavía no se registra son los cambios de criterios: quién modificó un servicio, una regla o un umbral, y cuándo. pendiente",
+    "title": "19  Usuarios",
+    "section": "19.4 Qué queda registrado",
+    "text": "19.4 Qué queda registrado\nLa plataforma guarda un historial por persona: inicios de sesión, etiquetas y etiquetas borradas (cada una con lo que decían el triaje y el juez en ese momento), vistas de detalle, aperturas en Mercado Público, altas, cambios de rol o de unidad, de estado y de contraseña, y vínculos de etiquetas antiguas. Hoy la pantalla muestra solo el resumen (votos y última actividad); el historial completo se consulta por la API en /admin/users/{id}/timeline. pendiente\nLo que todavía no se registra son los cambios de criterios: quién modificó un servicio, una regla o un umbral, y cuándo. pendiente",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
     "objectID": "plataforma/usuarios.html#bitácora",
     "href": "plataforma/usuarios.html#bitácora",
-    "title": "18  Usuarios",
-    "section": "18.5 Bitácora",
-    "text": "18.5 Bitácora\n\n\n\nTabla 18.4: Bitácora de Usuarios\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n29-oct-2026\nSin cuentas: cada persona escribe su nombre en la barra superior y se guarda como texto con cada etiqueta.\nddbfd17\n\n\n30-oct-2026\nBase de usuarios: tablas app_user, user_profile y user_event; las etiquetas pueden apuntar a una persona y cada voto queda en su historial. API /admin/users, protegida por ADMIN_TOKEN, y comandos radar users.\n8a22502\n\n\n30-oct-2026\nInicio de sesión con usuario y contraseña (sesiones de 7 días) y pantalla Usuarios para listar, crear, cambiar contraseñas y dar de baja. El primer superadmin con contraseña cierra la plataforma.\n6e70353\n\n\n30-oct-2026\nCinco roles por unidad, de lectura a superadmin. Toda la API exige su permiso, el menú se filtra por rol y nadie puede quitarse su propio acceso.\n263246a\n\n\n30-oct-2026\nCada persona tiene una frecuencia de correo; quién recibe el correo diario se decide en Operación.\ne91361d\n\n\n31-oct-2026\nLos analistas también etiquetan; analista y jefatura quedan con los mismos permisos.\n0c23c23\n\n\n\n\n\n\n\n\n\n\n\n\nPendiente\n\n\n\n\nIniciar sesión con la cuenta UAI (Google Workspace) en vez de una contraseña propia (Otros centros). pendiente\nVer el historial de cada persona en la pantalla. pendiente",
+    "title": "19  Usuarios",
+    "section": "19.5 Bitácora",
+    "text": "19.5 Bitácora\n\n\n\nTabla 19.4: Bitácora de Usuarios\n\n\n\n\n\n\n\n\n\n\nFecha\nCambio\nCommit\n\n\n\n\n29-oct-2026\nSin cuentas: cada persona escribe su nombre en la barra superior y se guarda como texto con cada etiqueta.\nddbfd17\n\n\n30-oct-2026\nBase de usuarios: tablas app_user, user_profile y user_event; las etiquetas pueden apuntar a una persona y cada voto queda en su historial. API /admin/users, protegida por ADMIN_TOKEN, y comandos radar users.\n8a22502\n\n\n30-oct-2026\nInicio de sesión con usuario y contraseña (sesiones de 7 días) y pantalla Usuarios para listar, crear, cambiar contraseñas y dar de baja. El primer superadmin con contraseña cierra la plataforma.\n6e70353\n\n\n30-oct-2026\nCinco roles por unidad, de lectura a superadmin. Toda la API exige su permiso, el menú se filtra por rol y nadie puede quitarse su propio acceso.\n263246a\n\n\n30-oct-2026\nCada persona tiene una frecuencia de correo; quién recibe el correo diario se decide en Operación.\ne91361d\n\n\n31-oct-2026\nLos analistas también etiquetan; analista y jefatura quedan con los mismos permisos.\n0c23c23\n\n\n11-nov-2026\nPermiso nuevo historico: jefatura deja de ser igual a analista y además ve el Análisis histórico.\nen desarrollo, sin commit\n\n\n\n\n\n\n\n\n\n\n\n\nPendiente\n\n\n\n\nIniciar sesión con la cuenta UAI (Google Workspace) en vez de una contraseña propia (Otros centros). pendiente\nVer el historial de cada persona en la pantalla. pendiente",
     "crumbs": [
       "Plataforma",
-      "<span class='chapter-number'>18</span>  <span class='chapter-title'>Usuarios</span>"
+      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Usuarios</span>"
     ]
   },
   {
@@ -1185,210 +1240,210 @@
   {
     "objectID": "futuro/otros-centros.html",
     "href": "futuro/otros-centros.html",
-    "title": "19  Integración de otros centros",
+    "title": "20  Integración de otros centros",
     "section": "",
-    "text": "19.1 Personas y permisos\nEl capítulo Centros y facultades mostró que la plataforma ya está pensada para varias unidades: cada una es un perfil, y la descarga y los modelos se comparten. Este capítulo trata de lo que falta para que otros centros y facultades de la UAI la usen de verdad.\nLa base ya existe: cuentas con contraseña y cinco roles por unidad, de lectura a superadmin (Usuarios). Para varias unidades falta:",
+    "text": "20.1 Personas y permisos\nEl capítulo Centros y facultades mostró que la plataforma ya está pensada para varias unidades: cada una es un perfil, y la descarga y los modelos se comparten. Este capítulo trata de lo que falta para que otros centros y facultades de la UAI la usen de verdad.\nLa base ya existe: cuentas con contraseña y cinco roles por unidad, de lectura a superadmin (Usuarios). Para varias unidades falta:",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/otros-centros.html#personas-y-permisos",
     "href": "futuro/otros-centros.html#personas-y-permisos",
-    "title": "19  Integración de otros centros",
+    "title": "20  Integración de otros centros",
     "section": "",
     "text": "Cuenta institucional. Entrar con la cuenta UAI (Google Workspace) en lugar de una contraseña propia de la plataforma.\nAuditoría de criterios. Registrar quién cambió un servicio, una regla o un umbral, y cuándo.\nUnidades desde la web. Hoy un perfil nuevo se crea con un archivo YAML y la línea de comandos.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/otros-centros.html#criterios-propios-en-todas-las-capas",
     "href": "futuro/otros-centros.html#criterios-propios-en-todas-las-capas",
-    "title": "19  Integración de otros centros",
-    "section": "19.2 Criterios propios en todas las capas",
-    "text": "19.2 Criterios propios en todas las capas\nHoy algunas piezas están pensadas para el CIT y deben volverse configurables por unidad:\n\nCategorías del triaje. Para el CIT, una «capacitación genérica» es ruido; para educación ejecutiva es la oportunidad principal. Cada perfil debe poder decidir qué categorías de entregable le sirven.\nInstrucciones del juez. Los criterios («mantención secundaria es un riesgo», «no se venden bienes») deben poder escribirse por unidad.\nUso de adjudicaciones propias. Para una unidad que ya gana licitaciones de su área, sus adjudicaciones sí pueden ser buenos ejemplos.",
+    "title": "20  Integración de otros centros",
+    "section": "20.2 Criterios propios en todas las capas",
+    "text": "20.2 Criterios propios en todas las capas\nHoy algunas piezas están pensadas para el CIT y deben volverse configurables por unidad:\n\nCategorías del triaje. Para el CIT, una «capacitación genérica» es ruido; para educación ejecutiva es la oportunidad principal. Cada perfil debe poder decidir qué categorías de entregable le sirven.\nInstrucciones del juez. Los criterios («mantención secundaria es un riesgo», «no se venden bienes») deben poder escribirse por unidad.\nUso de adjudicaciones propias. Para una unidad que ya gana licitaciones de su área, sus adjudicaciones sí pueden ser buenos ejemplos.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/otros-centros.html#plantillas-para-empezar-rápido",
     "href": "futuro/otros-centros.html#plantillas-para-empezar-rápido",
-    "title": "19  Integración de otros centros",
-    "section": "19.3 Plantillas para empezar rápido",
-    "text": "19.3 Plantillas para empezar rápido\nDescribir bien los servicios de una unidad es el trabajo más difícil. Se propone ofrecer plantillas por tipo de unidad —centro de investigación aplicada, escuela de negocios, ingeniería, derecho, educación ejecutiva— que cada unidad adapta, y apoyar ese trabajo con el asistente de perfiles.",
+    "title": "20  Integración de otros centros",
+    "section": "20.3 Plantillas para empezar rápido",
+    "text": "20.3 Plantillas para empezar rápido\nDescribir bien los servicios de una unidad es el trabajo más difícil. Se propone ofrecer plantillas por tipo de unidad —centro de investigación aplicada, escuela de negocios, ingeniería, derecho, educación ejecutiva— que cada unidad adapta, y apoyar ese trabajo con el asistente de perfiles.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/otros-centros.html#colaboración-entre-unidades",
     "href": "futuro/otros-centros.html#colaboración-entre-unidades",
-    "title": "19  Integración de otros centros",
-    "section": "19.4 Colaboración entre unidades",
-    "text": "19.4 Colaboración entre unidades\nUna misma licitación puede interesar a varias unidades. La plataforma podría detectar esas oportunidades conjuntas y sugerir que se postule en consorcio: por ejemplo, un plan de movilidad que combine el análisis territorial del CIT con el modelamiento de transporte de Ingeniería.",
+    "title": "20  Integración de otros centros",
+    "section": "20.4 Colaboración entre unidades",
+    "text": "20.4 Colaboración entre unidades\nUna misma licitación puede interesar a varias unidades. La plataforma podría detectar esas oportunidades conjuntas y sugerir que se postule en consorcio: por ejemplo, un plan de movilidad que combine el análisis territorial del CIT con el modelamiento de transporte de Ingeniería.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/otros-centros.html#consideraciones-técnicas",
     "href": "futuro/otros-centros.html#consideraciones-técnicas",
-    "title": "19  Integración de otros centros",
-    "section": "19.5 Consideraciones técnicas",
-    "text": "19.5 Consideraciones técnicas\n\nCosto del juez. Cada unidad agrega juicios. El triaje, que tarda un segundo, es lo que hace viable evaluar varias unidades por día.\nHardware. Con muchas unidades conviene pasar de un Mac a un servidor con GPU.\nInstituciones externas. El mismo diseño permitiría, más adelante, ofrecer la plataforma a otras universidades o centros de investigación.\n\n\n\n\n\n\n\nPor completar\n\n\n\n\nIdentificar con la universidad qué unidades están interesadas. pendiente\nElegir una segunda unidad para un piloto. pendiente",
+    "title": "20  Integración de otros centros",
+    "section": "20.5 Consideraciones técnicas",
+    "text": "20.5 Consideraciones técnicas\n\nCosto del juez. Cada unidad agrega juicios. El triaje, que tarda un segundo, es lo que hace viable evaluar varias unidades por día.\nHardware. Con muchas unidades conviene pasar de un Mac a un servidor con GPU.\nInstituciones externas. El mismo diseño permitiría, más adelante, ofrecer la plataforma a otras universidades o centros de investigación.\n\n\n\n\n\n\n\nPor completar\n\n\n\n\nIdentificar con la universidad qué unidades están interesadas. pendiente\nElegir una segunda unidad para un piloto. pendiente",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>19</span>  <span class='chapter-title'>Integración de otros centros</span>"
+      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Integración de otros centros</span>"
     ]
   },
   {
     "objectID": "futuro/aprendizaje-postulaciones.html",
     "href": "futuro/aprendizaje-postulaciones.html",
-    "title": "20  Aprendizaje de postulaciones con IA",
+    "title": "21  Aprendizaje de postulaciones con IA",
     "section": "",
-    "text": "20.1 Fuentes de aprendizaje\nHoy Radar MP aprende de etiquetas explícitas (relevante, no relevante, dudoso, postulado) a través de la calibración y los ejemplos few-shot. El siguiente paso es aprender del resultado de cada postulación y de la interacción del equipo con la bandeja.",
+    "text": "21.1 Fuentes de aprendizaje\nHoy Radar MP aprende de etiquetas explícitas (relevante, no relevante, dudoso, postulado) a través de la calibración y los ejemplos few-shot. El siguiente paso es aprender del resultado de cada postulación y de la interacción del equipo con la bandeja.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
     ]
   },
   {
     "objectID": "futuro/aprendizaje-postulaciones.html#fuentes-de-aprendizaje",
     "href": "futuro/aprendizaje-postulaciones.html#fuentes-de-aprendizaje",
-    "title": "20  Aprendizaje de postulaciones con IA",
+    "title": "21  Aprendizaje de postulaciones con IA",
     "section": "",
-    "text": "Tabla 20.1: Señales de aprendizaje\n\n\n\n\n\n\n\n\n\n\nSeñal\nOrigen\nQué enseña\n\n\n\n\nEtiquetas\nBandeja (ya existe)\nQué le sirve al equipo\n\n\nPostulaciones\nEtiqueta postulado (ya existe) + embudo de postulación\nA qué se decide postular\n\n\nResultados\nAdjudicaciones de Datos Abiertos (RUT UAI)\nQué se gana y qué se pierde, contra quién y por cuánto\n\n\nInteracción\nRegistro de uso: clics, aperturas, tiempo de lectura\nInterés implícito por persona y tema\n\n\nHistórico\n~339 mil licitaciones y ~1 M adjudicaciones\nCompetencia, precios y estacionalidad",
+    "text": "Tabla 21.1: Señales de aprendizaje\n\n\n\n\n\n\n\n\n\n\nSeñal\nOrigen\nQué enseña\n\n\n\n\nEtiquetas\nBandeja (ya existe)\nQué le sirve al equipo\n\n\nPostulaciones\nEtiqueta postulado (ya existe) + embudo de postulación\nA qué se decide postular\n\n\nResultados\nAdjudicaciones de Datos Abiertos (RUT UAI)\nQué se gana y qué se pierde, contra quién y por cuánto\n\n\nInteracción\nRegistro de uso: clics, aperturas, tiempo de lectura\nInterés implícito por persona y tema\n\n\nHistórico\n~339 mil licitaciones y ~1 M adjudicaciones\nCompetencia, precios y estacionalidad",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
     ]
   },
   {
     "objectID": "futuro/aprendizaje-postulaciones.html#propuestas",
     "href": "futuro/aprendizaje-postulaciones.html#propuestas",
-    "title": "20  Aprendizaje de postulaciones con IA",
-    "section": "20.2 Propuestas",
-    "text": "20.2 Propuestas\n\n20.2.1 Embudo de postulación\nRegistrar el recorrido de cada oportunidad: evaluar → preparar → postular → resultado (ganada / perdida / desierta), con responsables, plazos y documentos. Cruzarlo automáticamente con las adjudicaciones de Datos Abiertos para cerrar el ciclo sin trabajo manual.\n\n\n20.2.2 Un modelo pequeño entrenado con el equipo\nEl triaje con nimble ya mostró que un modelo pequeño puede filtrar sin perder oportunidades (recall de 96 %), pero es un modelo genérico. El siguiente paso es ajustar un modelo pequeño local (~4B) con las etiquetas y resultados del equipo:\n\ndecide en milisegundos los casos claros;\nenvía al LLM grande solo lo dudoso o complejo (bases técnicas largas, PDF);\nse evalúa contra el dataset de referencia y la muestra estratificada antes de reemplazar nada.\n\n\n\n20.2.3 Probabilidad de adjudicación\nCon el histórico de adjudicaciones, estimar la probabilidad de ganar según categoría, comprador, competidores habituales, monto y región, y usarla como un quinto componente del puntaje final.\n\n\n20.2.4 Ranking personalizado\nUn perfil de intereses por persona a partir de su interacción, para ordenar la bandeja de cada usuario dentro de las oportunidades de su organización.",
+    "title": "21  Aprendizaje de postulaciones con IA",
+    "section": "21.2 Propuestas",
+    "text": "21.2 Propuestas\n\n21.2.1 Embudo de postulación\nRegistrar el recorrido de cada oportunidad: evaluar → preparar → postular → resultado (ganada / perdida / desierta), con responsables, plazos y documentos. Cruzarlo automáticamente con las adjudicaciones de Datos Abiertos para cerrar el ciclo sin trabajo manual.\n\n\n21.2.2 Un modelo pequeño entrenado con el equipo\nEl triaje con nimble ya mostró que un modelo pequeño puede filtrar sin perder oportunidades (recall de 96 %), pero es un modelo genérico. El siguiente paso es ajustar un modelo pequeño local (~4B) con las etiquetas y resultados del equipo:\n\ndecide en milisegundos los casos claros;\nenvía al LLM grande solo lo dudoso o complejo (bases técnicas largas, PDF);\nse evalúa contra el dataset de referencia y la muestra estratificada antes de reemplazar nada.\n\n\n\n21.2.3 Probabilidad de adjudicación\nCon el histórico de adjudicaciones, estimar la probabilidad de ganar según categoría, comprador, competidores habituales, monto y región, y usarla como un quinto componente del puntaje final.\n\n\n21.2.4 Ranking personalizado\nUn perfil de intereses por persona a partir de su interacción, para ordenar la bandeja de cada usuario dentro de las oportunidades de su organización.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
     ]
   },
   {
     "objectID": "futuro/aprendizaje-postulaciones.html#riesgos",
     "href": "futuro/aprendizaje-postulaciones.html#riesgos",
-    "title": "20  Aprendizaje de postulaciones con IA",
-    "section": "20.3 Riesgos",
-    "text": "20.3 Riesgos\n\nSesgo hacia lo ya ganado: las adjudicaciones UAI son casi todas docencia; usarlas sin cuidado empuja al sistema hacia capacitación (por eso hoy están desactivadas como ejemplos positivos).\nPocos datos: el centro postula a pocas licitaciones al año; los modelos de resultado deben combinarse con el histórico nacional.\nMedición: cada cambio se valida con la muestra estratificada y la referencia, y se versiona en match.",
+    "title": "21  Aprendizaje de postulaciones con IA",
+    "section": "21.3 Riesgos",
+    "text": "21.3 Riesgos\n\nSesgo hacia lo ya ganado: las adjudicaciones UAI son casi todas docencia; usarlas sin cuidado empuja al sistema hacia capacitación (por eso hoy están desactivadas como ejemplos positivos).\nPocos datos: el centro postula a pocas licitaciones al año; los modelos de resultado deben combinarse con el histórico nacional.\nMedición: cada cambio se valida con la muestra estratificada y la referencia, y se versiona en match.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>20</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
+      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Aprendizaje de postulaciones con IA</span>"
     ]
   },
   {
     "objectID": "futuro/asistentes.html",
     "href": "futuro/asistentes.html",
-    "title": "21  Asistentes de IA",
+    "title": "22  Asistentes de IA",
     "section": "",
-    "text": "21.1 Asistente de perfiles\nLos asistentes son agentes conversacionales que ayudan a las personas en las tareas que hoy requieren más criterio experto: definir qué buscar y preparar una postulación.\nUna institución describe sus capacidades en lenguaje natural («hacemos estudios de movilidad y modelos de transporte para municipios») y el asistente:",
+    "text": "22.1 Asistente de perfiles\nLos asistentes son agentes conversacionales que ayudan a las personas en las tareas que hoy requieren más criterio experto: definir qué buscar y preparar una postulación.\nUna institución describe sus capacidades en lenguaje natural («hacemos estudios de movilidad y modelos de transporte para municipios») y el asistente:",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Asistentes de IA</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Asistentes de IA</span>"
     ]
   },
   {
     "objectID": "futuro/asistentes.html#asistente-de-perfiles",
     "href": "futuro/asistentes.html#asistente-de-perfiles",
-    "title": "21  Asistentes de IA",
+    "title": "22  Asistentes de IA",
     "section": "",
     "text": "propone servicios con descripción, ejemplos y palabras clave;\nbusca en el histórico licitaciones parecidas y las muestra para confirmar o descartar;\nsugiere reglas de exclusión a partir de lo que el usuario rechaza;\nmuestra en vivo qué licitaciones traería y cuáles excluiría (reutilizando «Probar»);\nvigila la salud del perfil: avisa cuando un servicio no trae nada en semanas, cuando una regla bota oportunidades o cuando sube el ruido de un servicio.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Asistentes de IA</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Asistentes de IA</span>"
     ]
   },
   {
     "objectID": "futuro/asistentes.html#asistente-de-postulación",
     "href": "futuro/asistentes.html#asistente-de-postulación",
-    "title": "21  Asistentes de IA",
-    "section": "21.2 Asistente de postulación",
-    "text": "21.2 Asistente de postulación\nPara una licitación marcada para postular:\n\nLectura de bases (PDF técnicas y administrativas): requisitos, garantías, experiencia exigida, criterios de evaluación y plazos, en una ficha resumida.\nChecklist de admisibilidad: documentos y requisitos formales con responsables y fechas.\nEquipo y experiencia: propone integrantes y proyectos previos del centro que cumplen la experiencia exigida.\nReferencias de mercado: montos adjudicados típicos y competidores probables (Organismos compradores).\nBorradores: estructura de la propuesta técnica a partir de propuestas anteriores del centro.",
+    "title": "22  Asistentes de IA",
+    "section": "22.2 Asistente de postulación",
+    "text": "22.2 Asistente de postulación\nPara una licitación marcada para postular:\n\nLectura de bases (PDF técnicas y administrativas): requisitos, garantías, experiencia exigida, criterios de evaluación y plazos, en una ficha resumida.\nChecklist de admisibilidad: documentos y requisitos formales con responsables y fechas.\nEquipo y experiencia: propone integrantes y proyectos previos del centro que cumplen la experiencia exigida.\nReferencias de mercado: montos adjudicados típicos y competidores probables (Organismos compradores).\nBorradores: estructura de la propuesta técnica a partir de propuestas anteriores del centro.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Asistentes de IA</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Asistentes de IA</span>"
     ]
   },
   {
     "objectID": "futuro/asistentes.html#asistente-de-consulta",
     "href": "futuro/asistentes.html#asistente-de-consulta",
-    "title": "21  Asistentes de IA",
-    "section": "21.3 Asistente de consulta",
-    "text": "21.3 Asistente de consulta\nPreguntas en lenguaje natural sobre el mercado: «¿qué gobiernos regionales licitaron estudios de riesgo en 2025?», «¿quién gana las consultorías de PLADECO en la Región de Los Lagos?». Se responde con consultas sobre la base y se citan las licitaciones.",
+    "title": "22  Asistentes de IA",
+    "section": "22.3 Asistente de consulta",
+    "text": "22.3 Asistente de consulta\nPreguntas en lenguaje natural sobre el mercado: «¿qué gobiernos regionales licitaron estudios de riesgo en 2025?», «¿quién gana las consultorías de PLADECO en la Región de Los Lagos?». Se responde con consultas sobre la base y se citan las licitaciones.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Asistentes de IA</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Asistentes de IA</span>"
     ]
   },
   {
     "objectID": "futuro/asistentes.html#principios",
     "href": "futuro/asistentes.html#principios",
-    "title": "21  Asistentes de IA",
-    "section": "21.4 Principios",
-    "text": "21.4 Principios\n\nLocal primero: los documentos del centro y sus propuestas no salen de la máquina.\nHumano en el bucle: el asistente propone, la persona decide.\nTrazable: cada sugerencia cita la licitación, el documento o el dato de origen.\n\n\n\n\n\n\n\nPor completar\n\n\n\nDefinir el alcance del primer asistente a construir (perfiles o postulación) y sus fuentes de documentos internos. pendiente",
+    "title": "22  Asistentes de IA",
+    "section": "22.4 Principios",
+    "text": "22.4 Principios\n\nLocal primero: los documentos del centro y sus propuestas no salen de la máquina.\nHumano en el bucle: el asistente propone, la persona decide.\nTrazable: cada sugerencia cita la licitación, el documento o el dato de origen.\n\n\n\n\n\n\n\nPor completar\n\n\n\nDefinir el alcance del primer asistente a construir (perfiles o postulación) y sus fuentes de documentos internos. pendiente",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>21</span>  <span class='chapter-title'>Asistentes de IA</span>"
+      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Asistentes de IA</span>"
     ]
   },
   {
     "objectID": "futuro/postulacion-automatica.html",
     "href": "futuro/postulacion-automatica.html",
-    "title": "22  Postulación automática",
+    "title": "23  Postulación automática",
     "section": "",
-    "text": "22.1 Niveles de automatización\nLa postulación automática es el horizonte más lejano: que la plataforma no solo encuentre y priorice oportunidades, sino que prepare la oferta lista para revisión y, en casos acotados, la presente.",
+    "text": "23.1 Niveles de automatización\nLa postulación automática es el horizonte más lejano: que la plataforma no solo encuentre y priorice oportunidades, sino que prepare la oferta lista para revisión y, en casos acotados, la presente.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Postulación automática</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Postulación automática</span>"
     ]
   },
   {
     "objectID": "futuro/postulacion-automatica.html#niveles-de-automatización",
     "href": "futuro/postulacion-automatica.html#niveles-de-automatización",
-    "title": "22  Postulación automática",
+    "title": "23  Postulación automática",
     "section": "",
-    "text": "Tabla 22.1: Niveles de automatización\n\n\n\n\n\nNivel\nLa plataforma…\nLa persona…\n\n\n\n\n0 — Hoy\nDetecta, prioriza y avisa\nLee las bases, decide y prepara todo\n\n\n1 — Asistida\nResume bases, arma checklist y borradores (Asistentes)\nDecide, completa y presenta\n\n\n2 — Preparada\nGenera el paquete completo: propuesta técnica, económica y anexos\nRevisa, ajusta, firma y presenta\n\n\n3 — Automática\nPresenta ofertas recurrentes de bajo riesgo según reglas aprobadas\nAprueba las reglas y audita",
+    "text": "Tabla 23.1: Niveles de automatización\n\n\n\n\n\nNivel\nLa plataforma…\nLa persona…\n\n\n\n\n0 — Hoy\nDetecta, prioriza y avisa\nLee las bases, decide y prepara todo\n\n\n1 — Asistida\nResume bases, arma checklist y borradores (Asistentes)\nDecide, completa y presenta\n\n\n2 — Preparada\nGenera el paquete completo: propuesta técnica, económica y anexos\nRevisa, ajusta, firma y presenta\n\n\n3 — Automática\nPresenta ofertas recurrentes de bajo riesgo según reglas aprobadas\nAprueba las reglas y audita",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Postulación automática</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Postulación automática</span>"
     ]
   },
   {
     "objectID": "futuro/postulacion-automatica.html#componentes-necesarios",
     "href": "futuro/postulacion-automatica.html#componentes-necesarios",
-    "title": "22  Postulación automática",
-    "section": "22.2 Componentes necesarios",
-    "text": "22.2 Componentes necesarios\n\nBiblioteca documental del centro: certificados, CV, experiencia, propuestas anteriores y formatos tipo, versionados y con vigencia.\nLectura de bases con extracción estructurada de requisitos y criterios de evaluación.\nGeneración de propuestas a partir de plantillas y casos previos, citando las fuentes.\nPresupuesto apoyado en montos de referencia del mercado y costos internos.\nIntegración con Mercado Público para la presentación, sujeta a los mecanismos de autenticación y firma que exige la plataforma.",
+    "title": "23  Postulación automática",
+    "section": "23.2 Componentes necesarios",
+    "text": "23.2 Componentes necesarios\n\nBiblioteca documental del centro: certificados, CV, experiencia, propuestas anteriores y formatos tipo, versionados y con vigencia.\nLectura de bases con extracción estructurada de requisitos y criterios de evaluación.\nGeneración de propuestas a partir de plantillas y casos previos, citando las fuentes.\nPresupuesto apoyado en montos de referencia del mercado y costos internos.\nIntegración con Mercado Público para la presentación, sujeta a los mecanismos de autenticación y firma que exige la plataforma.",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Postulación automática</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Postulación automática</span>"
     ]
   },
   {
     "objectID": "futuro/postulacion-automatica.html#límites-y-resguardos",
     "href": "futuro/postulacion-automatica.html#límites-y-resguardos",
-    "title": "22  Postulación automática",
-    "section": "22.3 Límites y resguardos",
-    "text": "22.3 Límites y resguardos\n\nLa presentación de una oferta compromete legal y económicamente a la universidad: siempre requiere aprobación humana explícita y firma de quien tenga la facultad.\nLas credenciales de Mercado Público y la firma no deben quedar en manos de un proceso automático sin control.\nCada oferta generada debe ser auditable: qué documentos usó, qué decidió el modelo y quién aprobó.\n\n\n\n\n\n\n\nEstado\n\n\n\nLínea exploratoria. Depende de los asistentes de postulación y del embudo de postulaciones (Aprendizaje de postulaciones). pendiente",
+    "title": "23  Postulación automática",
+    "section": "23.3 Límites y resguardos",
+    "text": "23.3 Límites y resguardos\n\nLa presentación de una oferta compromete legal y económicamente a la universidad: siempre requiere aprobación humana explícita y firma de quien tenga la facultad.\nLas credenciales de Mercado Público y la firma no deben quedar en manos de un proceso automático sin control.\nCada oferta generada debe ser auditable: qué documentos usó, qué decidió el modelo y quién aprobó.\n\n\n\n\n\n\n\nEstado\n\n\n\nLínea exploratoria. Depende de los asistentes de postulación y del embudo de postulaciones (Aprendizaje de postulaciones). pendiente",
     "crumbs": [
       "Trabajos futuros",
-      "<span class='chapter-number'>22</span>  <span class='chapter-title'>Postulación automática</span>"
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Postulación automática</span>"
     ]
   }
 ]

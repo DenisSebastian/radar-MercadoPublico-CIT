@@ -6,19 +6,19 @@ Usuarios define **quién puede hacer qué**. Cada persona tiene una cuenta con u
 
 Los roles van de menos a más, y cada uno incluye todo lo que puede hacer el anterior:
 
-| Rol | Bandeja | Catálogo | Etiquetar | Configuración, Operación y Usuarios |
-|---|:---:|:---:|:---:|:---:|
-| **Lectura** | ✓ | | | |
-| **Analista** | ✓ | ✓ | ✓ | |
-| **Jefatura** | ✓ | ✓ | ✓ | |
-| **Admin** | ✓ | ✓ | ✓ | ✓ |
-| **Superadmin** | ✓ | ✓ | ✓ | ✓ + contraseñas y bajas |
+| Rol | Bandeja | Catálogo | Etiquetar | Histórico | Configuración, Operación y Usuarios |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Lectura** | ✓ | | | | |
+| **Analista** | ✓ | ✓ | ✓ | | |
+| **Jefatura** | ✓ | ✓ | ✓ | ✓ | |
+| **Admin** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Superadmin** | ✓ | ✓ | ✓ | ✓ | ✓ + contraseñas y bajas |
 
 : Roles y permisos {#tbl-roles}
 
 - **Lectura** ve la bandeja y el detalle. Sirve para quien quiere enterarse sin intervenir.
 - **Analista** además edita el **Catálogo** y **etiqueta** licitaciones. Las etiquetas enseñan al juez y calibran los umbrales.
-- **Jefatura** tiene hoy los mismos permisos que analista. Se mantiene como rol aparte para distinguir a quien decide postular.
+- **Jefatura** es quien decide postular: además ve el **Análisis histórico** de competidores y montos.
 - **Admin** además cambia la **Configuración**, usa **Operación** y administra las **personas** de su unidad.
 - **Superadmin** puede todo en todas las unidades y es el único que cambia contraseñas, da de baja o elimina personas, nombra admin o superadmin e importa personas desde un CSV.
 
@@ -123,6 +123,7 @@ Lo que todavía no se registra son los **cambios de criterios**: quién modific�
 | 30-oct-2026 | **Cinco roles** por unidad, de lectura a superadmin. Toda la API exige su permiso, el menú se filtra por rol y nadie puede quitarse su propio acceso. | `263246a` |
 | 30-oct-2026 | Cada persona tiene una **frecuencia de correo**; quién recibe el correo diario se decide en Operación. | `e91361d` |
 | 31-oct-2026 | Los **analistas** también etiquetan; analista y jefatura quedan con los mismos permisos. | `0c23c23` |
+| 11-nov-2026 | Permiso nuevo `historico`: **jefatura** deja de ser igual a analista y además ve el Análisis histórico. | en desarrollo, sin *commit* |
 
 : Bitácora de Usuarios {#tbl-bitacora-usuarios tbl-colwidths="[14,74,12]"}
 

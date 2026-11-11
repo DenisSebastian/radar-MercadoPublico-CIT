@@ -47,6 +47,7 @@ book:
         - plataforma/bandeja.qmd
         - plataforma/vista-general.qmd
         - plataforma/catalogo.qmd
+        - plataforma/historico.qmd
         - plataforma/configuracion.qmd
         - plataforma/operacion.qmd
         - plataforma/usuarios.qmd

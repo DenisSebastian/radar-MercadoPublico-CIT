@@ -7,6 +7,7 @@ Esta parte es el **manual de la web** de Radar MP y, a la vez, su **bitácora**.
 | [Bandeja](bandeja.qmd) | Revisar oportunidades, entender por qué llegaron y etiquetarlas | Lectura (etiquetar: analista) |
 | [Vista general](vista-general.qmd) | Ver cómo vota el equipo: consenso, montos, plazos y acuerdo con el juez | Lectura |
 | [Catálogo](catalogo.qmd) | Describir y probar los servicios de la unidad | Analista |
+| [Análisis histórico](historico.qmd) | Ver en qué ofertó la UAI, contra quién, por cuánto y quién ganó | Jefatura |
 | [Configuración](configuracion.qmd) | Ajustar puntaje, triaje, aprendizaje, alertas y reglas | Admin |
 | [Operación](operacion.qmd) | Ver que todo funcione, reprocesar días, programar la rutina y enviar correos | Admin |
 | [Usuarios](usuarios.qmd) | Crear cuentas, asignar roles y revisar la actividad | Admin |
@@ -21,7 +22,7 @@ Cada persona ve en el menú solo las secciones que su rol permite ([Usuarios](us
 ![La web con la barra lateral: Trabajo arriba, Administración abajo, y la persona con sesión al pie](../images/v3/bandeja-panel.png){#fig-navegacion width="100%"}
 :::
 
-- **Barra lateral.** A la izquierda, las secciones en dos grupos: **Trabajo** (Bandeja, Vista general, Catálogo) y **Administración** (Configuración, Operación, Usuarios). Al pie están la persona con sesión iniciada, su rol y el botón para cerrar sesión. **Compactar** deja solo los íconos; en pantallas angostas la barra se muestra compacta.
+- **Barra lateral.** A la izquierda, las secciones en dos grupos: **Trabajo** (Bandeja, Vista general, Catálogo, Análisis histórico) y **Administración** (Configuración, Operación, Usuarios). Al pie están la persona con sesión iniciada, su rol y el botón para cerrar sesión. **Compactar** deja solo los íconos; en pantallas angostas la barra se muestra compacta.
 - **Encabezado.** Arriba, el nombre de la sección, el rol de quien mira y el interruptor de tema.
 - **Tema claro u oscuro.** El interruptor ☀/☾ cambia el tema. Sin elegir, la web sigue el tema del sistema; la elección se recuerda en cada navegador. Las capturas de este libro están en tema claro.
 
@@ -74,5 +75,6 @@ Esta tabla resume los hitos; el detalle está en la bitácora de cada capítulo.
 | 03-nov-2026 | Operación muestra el avance de una ingesta mientras corre |
 | 04-nov-2026 | Nueva interfaz: barra lateral agrupada en Trabajo y Administración, e interruptor de tema claro/oscuro |
 | 09-nov-2026 | Versión 1: empaquetado para correr en un servidor (`gpu-box`) y web endurecida para exponerla en Internet |
+| 11-nov-2026 | Pantalla Análisis histórico con las ofertas de Datos Abiertos desde 2021 (en desarrollo) |
 
 : Hitos de la plataforma {#tbl-hitos}
