@@ -1,0 +1,19 @@
+<script>
+// Ajusta el alto de cada diagrama archify embebido a su contenido real.
+(function () {
+  function ajustar(f) {
+    try {
+      var d = f.contentDocument;
+      var c = d && d.querySelector('.container');
+      if (!c) return;
+      f.style.height = Math.ceil(c.getBoundingClientRect().bottom + 12) + 'px';
+    } catch (e) { /* origen distinto: se mantiene el alto CSS */ }
+  }
+  function todos() { document.querySelectorAll('iframe.diagrama').forEach(ajustar); }
+  document.querySelectorAll('iframe.diagrama').forEach(function (f) {
+    f.addEventListener('load', function () { ajustar(f); setTimeout(function () { ajustar(f); }, 400); });
+  });
+  window.addEventListener('resize', function () { clearTimeout(window.__diagT); window.__diagT = setTimeout(todos, 150); });
+  window.addEventListener('load', todos);
+})();
+</script>
