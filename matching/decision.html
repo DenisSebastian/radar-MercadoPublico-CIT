@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.31">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Modelos de decisión – Radar MP</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../matching/priorizacion.html" rel="next">
+<link href="../matching/embeddings.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-9b98f18118eee809be1c051eb5cc78e4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../matching/index.html">Matching</a></li><li class="breadcrumb-item"><a href="../matching/decision.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de decisión</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Buscar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Radar MP</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Buscar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Prefacio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introducción</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../objetivos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Objetivos</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../diseno.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Diseño general</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../ingest/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ingest</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ingest/ofertas.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Ofertas</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ingest/organismos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Organismos compradores</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ingest/productos.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Productos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../ingest/categorias.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Categorías</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../matching/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Matching</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../matching/embeddings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Búsqueda por significado</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../matching/decision.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de decisión</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../matching/priorizacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelos de priorización</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../digest/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Digest</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../digest/unidades.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Centros y facultades</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../digest/usuarios.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Usuarios</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../plataforma/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Plataforma</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/bandeja.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Bandeja</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/vista-general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Vista general</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/catalogo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Catálogo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/historico.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Análisis histórico</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/configuracion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Configuración</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/operacion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Operación</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../plataforma/usuarios.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Usuarios</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../futuro/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Trabajos futuros</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Alternar sección">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../futuro/otros-centros.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Integración de otros centros</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../futuro/aprendizaje-postulaciones.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Aprendizaje de postulaciones con IA</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../futuro/asistentes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Asistentes de IA</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../futuro/postulacion-automatica.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Postulación automática</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Bibliografía</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Contenidos</h2>
+   
+  <ul>
+  <li><a href="#capa-1-filtros" id="toc-capa-1-filtros" class="nav-link active" data-scroll-target="#capa-1-filtros"><span class="header-section-number">9.1</span> Capa 1: filtros</a></li>
+  <li><a href="#capa-2-triaje" id="toc-capa-2-triaje" class="nav-link" data-scroll-target="#capa-2-triaje"><span class="header-section-number">9.2</span> Capa 2: triaje</a>
+  <ul class="collapse">
+  <li><a href="#el-problema-que-resuelve" id="toc-el-problema-que-resuelve" class="nav-link" data-scroll-target="#el-problema-que-resuelve"><span class="header-section-number">9.2.1</span> El problema que resuelve</a></li>
+  <li><a href="#la-solución-un-modelo-pequeño-que-responde-con-una-letra" id="toc-la-solución-un-modelo-pequeño-que-responde-con-una-letra" class="nav-link" data-scroll-target="#la-solución-un-modelo-pequeño-que-responde-con-una-letra"><span class="header-section-number">9.2.2</span> La solución: un modelo pequeño que responde con una letra</a></li>
+  <li><a href="#si-duda-no-descarta" id="toc-si-duda-no-descarta" class="nav-link" data-scroll-target="#si-duda-no-descarta"><span class="header-section-number">9.2.3</span> Si duda, no descarta</a></li>
+  </ul></li>
+  <li><a href="#capa-3-el-juez" id="toc-capa-3-el-juez" class="nav-link" data-scroll-target="#capa-3-el-juez"><span class="header-section-number">9.3</span> Capa 3: el juez</a>
+  <ul class="collapse">
+  <li><a href="#qué-lee" id="toc-qué-lee" class="nav-link" data-scroll-target="#qué-lee"><span class="header-section-number">9.3.1</span> Qué lee</a></li>
+  <li><a href="#qué-responde" id="toc-qué-responde" class="nav-link" data-scroll-target="#qué-responde"><span class="header-section-number">9.3.2</span> Qué responde</a></li>
+  <li><a href="#controles-sobre-la-respuesta" id="toc-controles-sobre-la-respuesta" class="nav-link" data-scroll-target="#controles-sobre-la-respuesta"><span class="header-section-number">9.3.3</span> Controles sobre la respuesta</a></li>
+  <li><a href="#lo-que-se-aprendió-ajustándolo" id="toc-lo-que-se-aprendió-ajustándolo" class="nav-link" data-scroll-target="#lo-que-se-aprendió-ajustándolo"><span class="header-section-number">9.3.4</span> Lo que se aprendió ajustándolo</a></li>
+  </ul></li>
+  <li><a href="#qué-tan-bien-deciden" id="toc-qué-tan-bien-deciden" class="nav-link" data-scroll-target="#qué-tan-bien-deciden"><span class="header-section-number">9.4</span> ¿Qué tan bien deciden?</a>
+  <ul class="collapse">
+  <li><a href="#el-ejemplo-de-la-subdere" id="toc-el-ejemplo-de-la-subdere" class="nav-link" data-scroll-target="#el-ejemplo-de-la-subdere"><span class="header-section-number">9.4.1</span> El ejemplo de la Subdere</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../matching/index.html">Matching</a></li><li class="breadcrumb-item"><a href="../matching/decision.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de decisión</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-decision" class="quarto-section-identifier"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Modelos de decisión</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Este capítulo responde la primera pregunta del matching: <strong>¿esta licitación le sirve a la unidad?</strong> La respuesta se construye en tres capas, de la más simple a la más elaborada. Cada capa deja pasar menos licitaciones y guarda el motivo de su decisión.</p>
+<p>Los filtros se aplican antes de la <a href="../matching/embeddings.html">búsqueda por significado</a>, para no calcular <em>embeddings</em> de lo evidentemente ajeno. El triaje y el juez reciben las licitaciones ya ordenadas por cercanía y con un servicio propuesto.</p>
+<div id="tbl-capas" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-capas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;9.1: Las tres capas de decisión
+</figcaption>
+<div aria-describedby="tbl-capas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Capa</th>
+<th>Quién decide</th>
+<th>Pregunta</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Filtros</td>
+<td>Reglas escritas por personas</td>
+<td>¿Es evidentemente algo que la unidad no hace?</td>
+</tr>
+<tr class="even">
+<td>Triaje</td>
+<td>Un modelo de IA pequeño y rápido</td>
+<td>¿Vale la pena que el juez la lea?</td>
+</tr>
+<tr class="odd">
+<td>Juez</td>
+<td>Un modelo de lenguaje más grande</td>
+<td>¿Sirve, para qué servicio y con qué evidencia?</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<section id="capa-1-filtros" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="capa-1-filtros"><span class="header-section-number">9.1</span> Capa 1: filtros</h2>
+<p>La mayoría de las licitaciones se pueden descartar sin inteligencia artificial. Un título que dice «servicio de aseo» o «adquisición de combustible» no necesita análisis. Los filtros son reglas instantáneas que eliminan cerca del <strong>73 %</strong> del día antes de usar cualquier modelo.</p>
+<p>Hay dos tipos de reglas:</p>
+<ul>
+<li><strong>Reglas por título.</strong> Buscan expresiones inequívocas en el título (sin tildes y en minúsculas): guardias, aseo, medicamentos, alimentación, combustibles, vestuario, arriendo de vehículos, pasajes aéreos e inspección técnica de obras (AIF, AIT, ITO). El perfil del CIT tiene 9.</li>
+<li><strong>Reglas por rubro.</strong> Excluyen la licitación si <em>todos</em> sus productos pertenecen a rubros que la unidad nunca provee, como vehículos o equipos médicos (<a href="../ingest/categorias.html">Categorías</a>). El perfil del CIT tiene 43.</li>
+</ul>
+<p>Las reglas son deliberadamente conservadoras: solo excluyen lo inequívoco. Lo dudoso se deja pasar para que lo resuelvan las capas siguientes. Cada exclusión guarda su motivo y se puede revisar en la vista «Excluidas» de la bandeja. Antes de crear una regla nueva, el botón <strong>«Probar»</strong> muestra qué habría excluido en los últimos 30 días y advierte si habría botado alguna oportunidad buena.</p>
+</section>
+<section id="capa-2-triaje" class="level2 page-columns page-full" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="capa-2-triaje"><span class="header-section-number">9.2</span> Capa 2: triaje</h2>
+<section id="el-problema-que-resuelve" class="level3" data-number="9.2.1">
+<h3 data-number="9.2.1" class="anchored" data-anchor-id="el-problema-que-resuelve"><span class="header-section-number">9.2.1</span> El problema que resuelve</h3>
+<p>El juez de la capa 3 es preciso pero lento: tarda unos 13 segundos por licitación. Con ~140 candidatas por día, no alcanza a leerlas todas. La versión anterior resolvía esto juzgando solo las 25 más parecidas a los servicios del centro, pero las que quedaban fuera nunca se evaluaban. En la medición, ese corte <strong>perdía un tercio de las oportunidades reales</strong>.</p>
+</section>
+<section id="la-solución-un-modelo-pequeño-que-responde-con-una-letra" class="level3 page-columns page-full" data-number="9.2.2">
+<h3 data-number="9.2.2" class="anchored" data-anchor-id="la-solución-un-modelo-pequeño-que-responde-con-una-letra"><span class="header-section-number">9.2.2</span> La solución: un modelo pequeño que responde con una letra</h3>
+<p>El triaje usa un <strong>modelo de decisión</strong> (<code>nimble</code>): un modelo de IA pequeño, entrenado para elegir entre opciones y responder solo la letra de la opción elegida. Responde en <strong>un segundo</strong>, así que puede revisar <em>todas</em> las candidatas del día. No explica ni cita evidencia —para eso está el juez—, pero es muy bueno para no dejar escapar casos relevantes.</p>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/10-triaje.html?theme=light&amp;embed=1"></iframe>
+<a class="diagrama-link" href="../diagramas/10-triaje.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
+<p>El triaje hace <strong>dos preguntas</strong> a cada licitación:</p>
+<p><strong>Pregunta 1: ¿debería la unidad postular?</strong> Las opciones son «sí: lo principal es un estudio, consultoría, plan, plataforma de datos o capacitación especializada» o «no: son bienes, obras, licencias, operación, contratación de personal o servicios fuera de su especialidad». Esta pregunta deja pasar casi todo lo relevante, pero también bastante ruido.</p>
+<p><strong>Pregunta 2: ¿qué es lo principal que se pide entregar?</strong> Solo para las que respondieron «sí». El modelo elige entre ocho categorías:</p>
+<div id="tbl-categorias-triaje" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-categorias-triaje-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;9.2: Categorías del entregable
+</figcaption>
+<div aria-describedby="tbl-categorias-triaje-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Categoría</th>
+<th>Ejemplo</th>
+<th>¿Pasa?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Estudio</td>
+<td>Diagnóstico, plan, evaluación, catastro, encuesta, cartografía</td>
+<td><strong>sí</strong></td>
+</tr>
+<tr class="even">
+<td>Plataforma</td>
+<td>Plataforma de datos, observatorio, visor SIG, modelo de IA</td>
+<td><strong>sí</strong></td>
+</tr>
+<tr class="odd">
+<td>Capacitación especializada</td>
+<td>Cursos a funcionarios sobre SIG, datos, planificación, riesgo</td>
+<td><strong>sí</strong></td>
+</tr>
+<tr class="even">
+<td>Capacitación genérica</td>
+<td>Liderazgo, bienestar, docentes, oficios, talleres comunitarios</td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>Una persona</td>
+<td>Contratar a un profesional o analista individual</td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td>Obra</td>
+<td>Construcción, reparación, inspección técnica (AIF, ITO) o diseño de una obra específica</td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>Otra disciplina</td>
+<td>Auditoría, legal, comunicaciones, informática, agronomía</td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td>Operación</td>
+<td>Bienes, licencias, eventos, transporte, alimentación</td>
+<td>no</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Esta segunda pregunta es la que separa, por ejemplo, una <strong>capacitación en SIG para funcionarios municipales</strong> (sirve) de un <strong>taller de autocuidado laboral</strong> (no sirve), aunque ambas digan «capacitación».</p>
+</section>
+<section id="si-duda-no-descarta" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="si-duda-no-descarta"><span class="header-section-number">9.2.3</span> Si duda, no descarta</h3>
+<p>El triaje está diseñado para equivocarse hacia el lado seguro:</p>
+<ul>
+<li>La pregunta de categoría se hace <strong>dos veces</strong>, con las opciones en distinto orden. Si cualquiera de las dos respuestas es una categoría relevante, la licitación pasa.</li>
+<li>Si el modelo falla o responde algo inválido, la licitación <strong>pasa</strong> al juez.</li>
+<li>Lo que el triaje descarta queda como «descartada» y se puede revisar en su vista.</li>
+</ul>
+<p>Las preguntas se hacen en inglés, porque así se entrenaron estos modelos; la licitación se entrega en su idioma original.</p>
+</section>
+</section>
+<section id="capa-3-el-juez" class="level2 page-columns page-full" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="capa-3-el-juez"><span class="header-section-number">9.3</span> Capa 3: el juez</h2>
+<p>Las licitaciones que pasan el triaje (hasta 25 por día) las lee el <strong>juez</strong>: un modelo de lenguaje (<code>qwen3.5</code>, 9.700 millones de parámetros) que corre localmente.</p>
+<div class="column-page-right diagrama-wrap">
+<iframe class="diagrama" src="../diagramas/04-juez.html?theme=light&amp;embed=1"></iframe>
+<a class="diagrama-link" href="../diagramas/04-juez.html" target="_blank">abrir diagrama interactivo ↗</a>
+</div>
+<section id="qué-lee" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="qué-lee"><span class="header-section-number">9.3.1</span> Qué lee</h3>
+<ul>
+<li>Las <strong>instrucciones</strong>: el catálogo de servicios de la unidad y sus criterios. Por ejemplo: la venta de bienes o la operación no son relevantes; una mantención menor dentro de un estudio es un riesgo, no un motivo de rechazo; las fechas no se consideran, porque el plazo se puntúa aparte.</li>
+<li>La <strong>licitación</strong>: título, descripción, comprador, sector y productos.</li>
+<li>Hasta cuatro <strong>casos parecidos</strong> que el equipo ya etiquetó, con sus comentarios, para que el juez aprenda del criterio del equipo (<a href="../matching/priorizacion.html">Modelos de priorización</a>).</li>
+</ul>
+</section>
+<section id="qué-responde" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="qué-responde"><span class="header-section-number">9.3.2</span> Qué responde</h3>
+<p>El juez debe responder con un formato fijo, que se valida automáticamente:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"analisis"</span><span class="fu">:</span>   <span class="st">"razonamiento breve"</span><span class="fu">,</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"relevante"</span><span class="fu">:</span>  <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"score"</span><span class="fu">:</span>      <span class="dv">76</span><span class="fu">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"servicio"</span><span class="fu">:</span>   <span class="st">"politicas-publicas-evaluacion"</span><span class="fu">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"evidencia"</span><span class="fu">:</span>  <span class="ot">[</span><span class="st">"cita textual de la licitación"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"riesgos"</span><span class="fu">:</span>    <span class="ot">[</span><span class="st">"requiere experiencia previa en ..."</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"integra_uai"</span><span class="fu">:</span><span class="st">"si | posible | no"</span><span class="fu">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"resumen"</span><span class="fu">:</span>    <span class="st">"por qué sirve y cómo postular"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>El campo <code>servicio</code> solo admite los servicios del catálogo (o «ninguno»): el modelo no puede inventar uno. <code>integra_uai</code> indica si el trabajo permitiría involucrar estudiantes o investigación de la universidad.</p>
+</section>
+<section id="controles-sobre-la-respuesta" class="level3" data-number="9.3.3">
+<h3 data-number="9.3.3" class="anchored" data-anchor-id="controles-sobre-la-respuesta"><span class="header-section-number">9.3.3</span> Controles sobre la respuesta</h3>
+<p>No se confía ciegamente en el modelo. El código aplica cuatro controles:</p>
+<ol type="1">
+<li>Cada <strong>cita de evidencia</strong> se busca en el texto de la licitación; si no aparece literalmente, se descarta. Así el modelo no puede inventar evidencia.</li>
+<li>Una licitación es relevante solo si el <strong>puntaje es 60 o más</strong> y el servicio no es «ninguno». El número manda sobre lo que el modelo haya escrito en <code>relevante</code>.</li>
+<li>Evidencia y riesgos se limitan a tres cada uno.</li>
+<li>Si el juez falla, la licitación queda «sin evaluar» y el día sigue procesándose.</li>
+</ol>
+</section>
+<section id="lo-que-se-aprendió-ajustándolo" class="level3" data-number="9.3.4">
+<h3 data-number="9.3.4" class="anchored" data-anchor-id="lo-que-se-aprendió-ajustándolo"><span class="header-section-number">9.3.4</span> Lo que se aprendió ajustándolo</h3>
+<p>Dos errores detectados al revisar días pasados cambiaron las instrucciones:</p>
+<ul>
+<li>El juez rechazaba una <strong>plataforma de analítica de $650 millones</strong> porque incluía mantención. Se aclaró que la mantención secundaria es un riesgo, no un rechazo.</li>
+<li>Un estudio socioeconómico bajaba de 95 a 10 puntos porque «ya estaba cerrado». Se quitó la fecha de las instrucciones: el plazo lo evalúa la priorización.</li>
+</ul>
+</section>
+</section>
+<section id="qué-tan-bien-deciden" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="qué-tan-bien-deciden"><span class="header-section-number">9.4</span> ¿Qué tan bien deciden?</h2>
+<p>Para medir los modelos hace falta una respuesta correcta con la que compararlos, que no sea el propio juez. Por eso se construyó el <strong>dataset de referencia <code>decision-v1</code></strong>: 297 licitaciones reales de diciembre de 2025 y octubre de 2026, elegidas por muestreo estratificado y etiquetadas a ciegas según una rúbrica escrita (<code>backend/reference/decision-v1/RUBRICA.md</code>). De ellas, 27 son relevantes. Las etiquetas iniciales las hizo un modelo de referencia (Claude Opus); el equipo las corrige al revisar los casos en disputa.</p>
+<div id="tbl-referencia" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-referencia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabla&nbsp;9.3: Resultados sobre la referencia decision-v1. La fila del triaje incluye la regla que excluye inspección técnica de obras (AIF, AIT, ITO); sin ella, la precisión era 52 %
+</figcaption>
+<div aria-describedby="tbl-referencia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 26%">
+<col style="width: 26%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Sistema</th>
+<th style="text-align: right;">Recall</th>
+<th style="text-align: right;">Precisión</th>
+<th style="text-align: right;">% que deja pasar</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Versión anterior (juez sobre las 25 más parecidas)</td>
+<td style="text-align: right;">67 %</td>
+<td style="text-align: right;">41 %</td>
+<td style="text-align: right;">15 %</td>
+</tr>
+<tr class="even">
+<td>Juez solo</td>
+<td style="text-align: right;">95 %</td>
+<td style="text-align: right;">35 %</td>
+<td style="text-align: right;">49 %</td>
+</tr>
+<tr class="odd">
+<td>Triaje: solo pregunta sí/no</td>
+<td style="text-align: right;">100 %</td>
+<td style="text-align: right;">20 %</td>
+<td style="text-align: right;">45 %</td>
+</tr>
+<tr class="even">
+<td><strong>Triaje: sí/no + categoría</strong></td>
+<td style="text-align: right;"><strong>96 %</strong></td>
+<td style="text-align: right;"><strong>54 %</strong></td>
+<td style="text-align: right;"><strong>16 %</strong></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>La lectura es directa: el triaje con dos preguntas <strong>encuentra casi todas las oportunidades</strong> (96 %) y <strong>más de la mitad de lo que deja pasar sirve</strong> (54 %), mejor que el juez solo. La mayoría de los errores del juez eran capacitaciones genéricas, contrataciones de una persona, obras y consultorías de otras disciplinas: justo lo que la pregunta de categoría filtra.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Validación pendiente
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>La pregunta de categoría se diseñó mirando los errores de esta misma muestra, así que su resultado puede ser optimista. Hay que confirmarlo en días nuevos y con etiquetas del equipo. <span class="pendiente">pendiente</span></p>
+</div>
+</div>
+<section id="el-ejemplo-de-la-subdere" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="el-ejemplo-de-la-subdere"><span class="header-section-number">9.4.1</span> El ejemplo de la Subdere</h3>
+<p>La <em>Consultoría diseño modelo gobernanza</em> (<code>761-27-LP26</code>) no tenía palabras de las reglas de exclusión y pedía un servicio de consultoría, así que pasó los filtros. En el triaje, <code>nimble</code> respondió <strong>«sí»</strong> a la primera pregunta y eligió <strong>estudio</strong> en la segunda, con las opciones en ambos órdenes. El juez le dio <strong>92 puntos</strong>, la asignó al servicio <em>Políticas públicas, evaluación y planificación estratégica</em> y citó como evidencia el texto «Consultoría diseño de modelo de gobernanza para planes de desarrollo de zonas extremas y zonas en desarrollo». Su resumen fue: <em>«Es una oportunidad directa para postular bajo el servicio de políticas públicas y planificación estratégica…»</em>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+En resumen
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Reglas, triaje y juez deciden en capas, de lo evidente a lo fino.</li>
+<li>El triaje permite revisar todas las candidatas sin perder oportunidades.</li>
+<li>Saber que algo sirve no dice qué revisar primero: eso es la priorización.</li>
+</ul>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script>
+// Ajusta el alto de cada diagrama archify embebido a su contenido real.
+(function () {
+  function ajustar(f) {
+    try {
+      var d = f.contentDocument;
+      var c = d && d.querySelector('.container');
+      if (!c) return;
+      f.style.height = Math.ceil(c.getBoundingClientRect().bottom + 12) + 'px';
+    } catch (e) { /* origen distinto: se mantiene el alto CSS */ }
+  }
+  function todos() { document.querySelectorAll('iframe.diagrama').forEach(ajustar); }
+  document.querySelectorAll('iframe.diagrama').forEach(function (f) {
+    f.addEventListener('load', function () { ajustar(f); setTimeout(function () { ajustar(f); }, 400); });
+  });
+  window.addEventListener('resize', function () { clearTimeout(window.__diagT); window.__diagT = setTimeout(todos, 150); });
+  window.addEventListener('load', todos);
+})();
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copiado");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copiado");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../matching/embeddings.html" class="pagination-link" aria-label="Búsqueda por significado">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Búsqueda por significado</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../matching/priorizacion.html" class="pagination-link" aria-label="Modelos de priorización">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Modelos de priorización</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2026, <a href="https://cit.uai.cl/">Centro de Inteligencia Territorial</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Radar MP · versión 1 del libro</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

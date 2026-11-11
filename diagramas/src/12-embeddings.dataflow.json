@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "De texto a cercanía: cómo se usan los embeddings",
+    "quality_profile": "showcase",
+    "viewBox": [1068, 520]
+  },
+  "stages": [
+    {"label": "Texto"},
+    {"label": "Modelo"},
+    {"label": "Vectores (pgvector)"},
+    {"label": "Comparación"},
+    {"label": "Resultado"}
+  ],
+  "nodes": [
+    {"id": "lic", "type": "external", "label": "Licitación", "sublabel": "título e ítems", "stage": 0, "row": 0},
+    {"id": "svc", "type": "frontend", "label": "Servicio", "sublabel": "texto y ejemplos", "stage": 0, "row": 2},
+    {"id": "model", "type": "backend", "label": "embeddinggemma", "sublabel": "texto → 768 números", "tag": "Ollama", "stage": 1, "row": 1},
+    {"id": "te", "type": "database", "label": "tender_embedding", "sublabel": "1 por licitación", "stage": 2, "row": 0},
+    {"id": "sv", "type": "database", "label": "service_vector", "sublabel": "4 a 6 por servicio", "stage": 2, "row": 2},
+    {"id": "cos", "type": "backend", "label": "Coseno máximo", "sublabel": "el más parecido", "stage": 3, "row": 1},
+    {"id": "ret", "type": "backend", "label": "Retrieval", "sublabel": "+ palabras clave", "stage": 4, "row": 1}
+  ],
+  "flows": [
+    {"id": "f-lic", "from": "lic", "to": "model", "label": "documento", "variant": "emphasis"},
+    {"id": "f-svc", "from": "svc", "to": "model", "label": "consulta", "variant": "emphasis"},
+    {"id": "f-te", "from": "model", "to": "te", "label": "cada día"},
+    {"id": "f-sv", "from": "model", "to": "sv", "label": "al guardar"},
+    {"id": "f-te-cos", "from": "te", "to": "cos", "label": "licitación", "variant": "emphasis"},
+    {"id": "f-sv-cos", "from": "sv", "to": "cos", "label": "servicios", "variant": "emphasis"},
+    {"id": "f-ret", "from": "cos", "to": "ret", "label": "0,30–0,60 → 0–1", "variant": "emphasis"}
+  ],
+  "cards": [
+    {"dot": "emerald", "title": "Se calcula una vez", "items": ["Cada texto guarda un hash", "Solo se recalcula si cambia"]},
+    {"dot": "cyan", "title": "Basta un ejemplo", "items": ["Se usa el vector más parecido", "Más variedad, más alcance"]},
+    {"dot": "amber", "title": "Ordena, no decide", "items": ["Propone el servicio", "El triaje y el juez deciden"]}
+  ]
+}

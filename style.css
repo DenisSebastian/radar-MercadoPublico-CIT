@@ -1,0 +1,319 @@
+body {
+  text-align: justify;
+}
+
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p{
+  font-size: 16px
+}
+
+
+dl {
+  font-size: 13px
+}
+p code {
+  white-space: inherit;
+}
+
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+  font-size: 14px
+}
+
+ul, li{
+  font-size: 16px
+}
+
+
+h1{
+  font-size: 28px
+}
+
+h2{
+  font-size: 25px
+}
+
+h3{
+  font-size: 22px
+}
+
+h4{
+  font-size: 18px
+}
+figcaption.figure-caption{
+  font-size: 15px
+}
+
+.diagram-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  border: 0;
+  border-radius: 8px;
+  background: #fafaf7;
+}
+
+.diagram-embed {
+  position: relative;
+  width: 100%;
+  margin: 1.25rem 0 0.5rem;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafaf7;
+}
+
+.diagram-open {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.diagram-open::after {
+  content: "Ampliar";
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  padding: 8px 12px;
+  border: 1px solid rgba(49, 49, 53, 0.24);
+  border-radius: 6px;
+  background: rgba(250, 250, 247, 0.94);
+  color: #313135;
+  font: 600 12px Roboto, Arial, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.diagram-open:hover::after,
+.diagram-open:focus-visible::after {
+  border-color: #245fd6;
+  color: #245fd6;
+}
+
+.diagram-open:focus-visible {
+  outline: 3px solid rgba(36, 95, 214, 0.42);
+  outline-offset: -3px;
+}
+
+.diagram-open__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.diagram-modal {
+  width: min(96vw, 1500px);
+  max-width: none;
+  height: min(94vh, 920px);
+  max-height: none;
+  padding: 0;
+  border: 1px solid rgba(49, 49, 53, 0.22);
+  border-radius: 8px;
+  background: #fafaf7;
+  color: #313135;
+}
+
+.diagram-modal::backdrop {
+  background: rgba(18, 18, 20, 0.68);
+}
+
+.diagram-modal__panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.diagram-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(49, 49, 53, 0.14);
+  background: #fafaf7;
+}
+
+.diagram-modal__title {
+  margin: 0;
+  color: #313135;
+  font: 600 16px Roboto, Arial, sans-serif;
+  text-align: left;
+}
+
+.diagram-modal__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.diagram-modal__link,
+.diagram-modal__close {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid rgba(49, 49, 53, 0.22);
+  border-radius: 6px;
+  background: transparent;
+  color: #313135;
+  font: 600 12px Roboto, Arial, sans-serif;
+  text-decoration: none;
+}
+
+.diagram-modal__link:hover,
+.diagram-modal__link:focus-visible,
+.diagram-modal__close:hover,
+.diagram-modal__close:focus-visible {
+  border-color: #245fd6;
+  color: #245fd6;
+}
+
+.diagram-modal__close {
+  cursor: pointer;
+}
+
+.diagram-modal__frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fafaf7;
+}
+
+@media (max-width: 700px) {
+  .diagram-frame {
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  .diagram-modal {
+    width: 100vw;
+    height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .diagram-modal__header {
+    align-items: flex-start;
+  }
+
+  .diagram-modal__title {
+    font-size: 14px;
+  }
+
+  .diagram-modal__link {
+    display: none;
+  }
+}
+.tabla-indicador {
+  max-width: 400px;
+  margin: 1em auto;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed; /* importante para forzar anchos */
+}
+
+.tabla-indicador th,
+.tabla-indicador td {
+  border: 1px solid #ccc;
+  padding-bottom: 5px;
+  line-height: 1;     /* compacta verticalmente */
+}
+
+/* Establecer ancho relativo de columnas (etapa amplia, estado angosta) */
+.tabla-indicador td:first-child,
+.tabla-indicador th:first-child {
+  width: 75%;            /* Etapa: más ancha */
+  font-size: 15px;    /* opcional: ajustar tamaño de letra */
+}
+
+.tabla-indicador td:last-child,
+.tabla-indicador th:last-child {
+  width: 25%;           /* Estado: más angosta */
+  text-align: center;
+  font-size: 15px;   /* íconos emoji más visibles */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
+.tabla-reuniones {
+  max-width: 600px;
+  margin: 1em auto;
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15px
+  table-layout: fixed; /* importante para forzar anchos */
+}
+
+
+.tabla-reuniones td:last-child,
+.tabla-reuniones th:last-child {
+  width: 55%;           /* Estado: más angosta */
+  /*  font-size: 15px;   /* íconos emoji más visibles */
+  padding-left: 0;
+  padding-right: 0;
+}
+
+
+
+
+/* Aplica a tablas con clase 'tabla-avance' */
+.tabla-avance td {
+  font-size: 13px;        /* Tamaño general del texto */
+}
+
+.tabla-avance thead th {
+  font-size: 14px;        /* Tamaño de letra del encabezado */
+  font-weight: bold;
+}
+
+/* Radar MP: diagramas interactivos (archify) y capturas */
+.diagrama {
+  width: 100%;
+  height: 560px;
+  border: 1px solid #e3e6ea;
+  border-radius: 8px;
+  background: #fff;
+}
+.diagrama.alto { height: 720px; }
+.diagrama.bajo { height: 360px; }
+.diagrama-link {
+  display: block;
+  text-align: right;
+  font-size: 13px;
+  margin: 2px 0 18px;
+}
+.captura img {
+  border: 1px solid #e3e6ea;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.pendiente {
+  color: #b45309;
+  font-weight: 600;
+}
+.diagrama-wrap { margin: 8px 0 4px; }
+.captura .quarto-figure-center,
+.captura figure { text-align: center; }
+.captura img { display: inline-block; }
